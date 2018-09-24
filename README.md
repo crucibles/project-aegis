@@ -1,8 +1,8 @@
-# Upgoe
+# PROJECT AEGIS
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
+Automated Education Gamified Instruction System (correct this if wrong)
 
-A project for gamification of education currently developing by:
+A project for gamification of education by:
 <ul>
 <li>[@asumandang](https://github.com/asumandang)</li>
 <li>[@crucibles](https://github.com/crucibles)</li>
