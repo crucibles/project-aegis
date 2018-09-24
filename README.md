@@ -20,3 +20,6 @@ MongoDB server should be used and run. MongoServer is at `http://localhost:3000/
 Run `ng build` to build the project. The build artifacts will be stored in the `public/` directory.
 
 
+## DTR
+
+Link: https://docs.google.com/spreadsheets/d/1JteO9-EI1kHj9ishR2URVCTScbQUnaJJZ2O_rmc5P40/edit?usp=sharing
