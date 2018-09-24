@@ -1,0 +1,12 @@
+<input type="checkbox" id="slide" name="" value="" (click)="clickMenuButton()" [checked]="isShowSideTab" />
+<div class=container>
+	<label for="slide" style="margin: 30px 10px" class="toggle">☰</label>
+	<ul class="vert-tab">
+		<li>
+			<img [src]="image" alt="Cat">
+		</li>
+		<li *ngIf="currentUser">
+			{{currentUser.getUserFullName()}}
+		</li>
+	</ul>
+</div>

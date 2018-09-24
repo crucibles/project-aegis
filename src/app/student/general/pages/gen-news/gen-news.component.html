@@ -1,0 +1,65 @@
+<!--Top Navigation Bar-->
+
+<body>
+  <!--Side Tab-->
+
+  <div class="side-body">
+    <div class="container">
+      <div class="row row-edited">
+
+        <ng-container *ngIf="!commentPosts || commentPosts.length == 0">
+          <h6>This is the general News Feed page. Welcome!
+            <br>
+            <br>All teacher announcements from all your enrolled courses will be posted here.
+            <br> Currently you have no announcements.</h6>
+        </ng-container>
+
+        <div class="col-sm-offset-1 col-sm-8 post-container" *ngFor="let post of commentPosts; let i = index">
+          <div class="panel panel-white post panel-shadow" (click)="openSectionPage(post.getSectionId())">
+            <div class="post-heading" *ngIf="allPostersLoaded[i] | async">
+              <div class="pull-left image">
+                <img src="{{this.posters[i].getUserPhoto()}}" class="img-circle avatar" alt="user profile image">
+              </div>
+              <div class="pull-left meta">
+                <div class="title h5">
+                  <a href="#">
+                    <b>{{this.posters? this.posters[i].getUserFullName(): ""}}</b>
+                  </a>
+                  made a post.
+                </div>
+                <h6 class="text-muted time">{{this.displayTimeDate(post.getPostDate())}}</h6>
+              </div>
+            </div>
+            <div class="post-description">
+              <p>{{post.getPostContent()}}</p>
+              <div *ngIf="post.getPostData()">
+                <button (click)="download(post.getPostData())" type="button" class="btn btn-success">
+                  <i class="fa fa-download"></i>
+                </button>
+                {{post.getPostData()}}
+              </div>
+              <br class="clear" />
+              <div class="action-box" style="padding-top: 20px">
+                <a>Click on this post to show comments or reply to this post...</a>
+              </div>
+              <br class="clear" />
+
+              <!--<div class="stats">
+                <a href="#" class="btn btn-default stat-item">
+                  <i class="fa fa-thumbs-up icon"></i>2
+                </a>
+                <a href="#" class="btn btn-default stat-item">
+                  <i class="fa fa-thumbs-down icon"></i>12
+                </a>
+              </div>-->
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+</body>
