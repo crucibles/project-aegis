@@ -8,19 +8,31 @@
 </div>
 
 <div>
-	Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! This is where you can create quests and form your
+	Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! This is where you can create quests and form
+	your
 	section's questmap.
 	<span *ngIf="questMap && questMap.getMaxEXP() == 0">
-		<br><br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating your quest and
+		<br><br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating your
+		quest and
 		questmap
 		<br>
 	</span>
 	<br>Edit your section's max EXP below.
 </div>
 
+<!--Input field for MAX EXP-->
 <div>
 	<input #maxEXP type="number" [value]="questMap? questMap.getMaxEXP(): 0">
 	<button type="submit" (click)="setMaxEXP(maxEXP.value)">
+		Submit
+	</button>
+</div>
+
+<br>Edit the percentage grade for the students in order to gain a grade of 1.00.
+<!--Input field for flat-one percentage (for setting of blue line in the performance graph)-->
+<div>
+	<input #flatOnePerc type="number" [value]="questMap? questMap.getFlatOnePerc(): 0">
+	<button type="submit" (click)="setFlatOnePerc(flatOnePerc.value)">
 		Submit
 	</button>
 </div>
@@ -81,7 +93,7 @@
 						Quest Title
 					</div>
 					<div class="col-md-7">
-						<input type="text" formControlName="questTitle" class="information-input remove-border" required/>
+						<input type="text" formControlName="questTitle" class="information-input remove-border" required />
 					</div>
 					<div *ngIf="questTitle.invalid" class="col-md-2 required-text">*required</div>
 				</div>
@@ -124,7 +136,8 @@
 						Deadline:
 					</div>
 					<div class="col-md-7">
-						<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border" required/>
+						<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border"
+						 required />
 					</div>
 					<div *ngIf="questEndDate.invalid" class="col-md-2 required-text">
 						<span *ngIf="questEndDate.errors.required">
@@ -140,7 +153,7 @@
 						EXP gained:
 					</div>
 					<div class="col-md-7">
-						<input id="questEXP" type="text" formControlName="questEXP" class="information-input remove-border" required/>
+						<input id="questEXP" type="text" formControlName="questEXP" class="information-input remove-border" required />
 					</div>
 					<div *ngIf="questEXP.errors" class="col-md-2 required-text">
 						<span *ngIf="questEXP.errors.required">
@@ -195,7 +208,8 @@
 				<br> + {{this.questClicked.getQuestXp()}} XP
 				<br> + {{this.questClicked.getQuestHp()}} HP
 				<br>
-				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if achieved at least 80% when graded) </ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if achieved at least
+					80% when graded) </ng-container>
 			</div>
 			<div class="col-sm-6">
 				Started on:

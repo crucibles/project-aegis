@@ -258,6 +258,35 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		this.createQuestForm.reset();
 	}
 
+	setFlatOnePerc(flatOne: number){
+		if (flatOne <= 0 || flatOne > 100) {
+			this.toastr.error(
+				"Invalid input of percentage! Number must be 0 - 100.",
+				"Flat One Percentage Error!"
+			);
+		} else {
+			this.toastr.success(
+				"Successfully set the section flat one percentage to " + flatOne,
+				"Setting Percentage Success!"
+			);
+			//AHJ: unimplemneted - set flat one in the database
+			// this.questService.setMaxEXP(this.questMap.getQuestMapId(), flatOne).subscribe((x) => {
+			// 	if (x) {
+			// 		this.toastr.success(
+			// 			"Successfully set the section max EXP to " + flatOne,
+			// 			"Grade Submission Success!"
+			// 		);
+			// 		this.questMap.setMaxEXP(flatOne);
+			// 	} else {
+			// 		this.toastr.error(
+			// 			"The system failed to set your max EXP.",
+			// 			"Max EXP Error!"
+			// 		);
+			// 	}
+			// })
+		}
+	}
+
 	setMaxEXP(maxEXP: number) {
 		if (maxEXP <= 0) {
 			this.toastr.error(
@@ -283,7 +312,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
-    * Sets the quest map based on the data received.
+    * Sets the quest map (the GUI graph) based on the data received.
 	* @param data string where the quests and its respective coordinates will be located
     */
 	setQuestMap() {
