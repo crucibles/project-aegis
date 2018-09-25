@@ -147,6 +147,7 @@ export class SpecificNewsComponent implements OnInit {
 
 		this.commentPostService.addCommentPost(newPost).subscribe(x => {
 			console.log(x);
+			this.bsModalRef.hide();
 		});
 	}
 
