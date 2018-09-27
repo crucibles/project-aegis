@@ -29,7 +29,6 @@ import {
 import Chart = require('chart.js');
 
 /* AHJ: Remove once the services are implemented properly */
-
 const SECTIONS: any[] = [
     {
         course_name: "CMSC 128",
@@ -149,7 +148,22 @@ export class GenProfileComponent implements OnInit {
         this.lineChartLabels = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
         this.lineChartOptions = {
             legend: {
-                display: true
+                labels: {
+                    filter: (legendItem, chartData) => {
+                        return legendItem.text != undefined;
+                    }
+                },
+                onClick: function(e, legendItem){
+                    var ci = this.chart;
+                    var index = legendItem.datasetIndex;
+                    var isHidden = ci.config.data.datasets[index+1].hidden;
+
+                    //toggles both the current section and its flat-one-percentage line (value obtain from chart)
+                    ci.config.data.datasets[index].hidden = isHidden == null? null: !isHidden;
+                    ci.config.data.datasets[index+1].hidden = isHidden == null? null: !isHidden;
+
+                    ci.update();
+                }
             },
             plugins: {
 				datalabels: {
@@ -215,12 +229,28 @@ export class GenProfileComponent implements OnInit {
                             pointHoverBorderColor: color.pointHoverBorderColor
                         };
 
+                        //AHJ: unimplemented; change dummy values once perc-grade-1.00 is retrievable from database
+                        let flatOnePerc: number = 80;
+                        let flatOneArr: any[] = [];
+                        this.lineChartLabels.forEach(label => {
+                            flatOneArr.push(flatOnePerc);
+                        });
+                        let flatOneLine: any = {
+                            data: flatOneArr,
+                            borderColor: color.borderColor,
+                            radius: 0,
+                            fill: false,
+                            borderWidth: 1,
+                            hidden: false
+                        }
+
+                        
+                        this.lineChartData.push(dataLine);
+                        this.lineChartData.push(flatOneLine);
 
                         if (!this.chart || this.lineChartData.length == 0) {
-                            this.lineChartData.push(dataLine);
                             this.setPerformanceGraph();
                         } else {
-                            this.lineChartData.push(dataLine);
                             this.chart.config.data.datasets = this.lineChartData;
                             this.chart.update();
                         }

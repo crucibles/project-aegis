@@ -123,6 +123,9 @@ export class SpecificProfileComponent implements OnInit {
                     this.userSubmission = submissions.map(submission => new Experience(submission))[0];
 
                     let grades = this.userSubmission.getWeeklyAccumulativeGrades();
+                    //AHJ: unimplemented; change dummy number if able to get flat one perc from database
+                    let flatOnePerc = 80;
+                    let flatOneArr: number[] = [];
                     grades.forEach(grade => {
                         // get the decimal percentage
                         let percentage: number = (grade / MAXXP) * 100;
@@ -131,12 +134,28 @@ export class SpecificProfileComponent implements OnInit {
                         dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
                     });
 
+                    // flat one array
+                    this.lineChartLabels.forEach(label => {
+                        flatOneArr.push(flatOnePerc);
+                    });
+
+                    //setting student's data for the graph
                     let dataLine: any = {
                         data: dataGrade,
                         label: this.sectionService.getCurrentCourse().getCourseName() + " - " + this.currentSection.getSectionName()
                     };
 
                     this.lineChartData.push(dataLine);
+
+                    let flatOneLine: any = {
+                        data: flatOneArr,
+                        label: "Flat One Line",
+                        radius: 0,
+                        fill: false,
+                        borderWidth: 1
+                    }
+
+                    this.lineChartData.push(flatOneLine);
                     this.isChartReady = true;
                 }
             });
