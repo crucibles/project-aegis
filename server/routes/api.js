@@ -577,6 +577,8 @@ router.post('/questmaps', (req, res) => {
         editQuestMapCoordinateAt(req, res);
     } else if (req.body.method && req.body.method == "setMaxEXP") {
         setMaxEXP(req, res);
+    } else if (req.body.method && req.body.method == "setFlatOnePercentage") {
+        setFlatOnePercentage(req, res);
     }
 
     function addQuestMapCoordinates(req, res) {
@@ -681,6 +683,29 @@ router.post('/questmaps', (req, res) => {
                     {
                         $set: {
                             max_exp: req.body.max_exp
+                        }
+                    }
+                )
+                .then(section => {
+                    res.json(true);
+                    console.log("================set max exp success====================");
+                })
+                .catch(err => {
+                    sendError(err, res);
+                });
+        })
+    }
+
+    function setFlatOnePercentage(req, res) {
+        console.log("================set max exp====================");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('questmaps')
+                .updateOne(
+                    { _id: ObjectID(req.body.quest_map_id) },
+                    {
+                        $set: {
+                            flat_one_perc: req.body.flat_one_perc
                         }
                     }
                 )
