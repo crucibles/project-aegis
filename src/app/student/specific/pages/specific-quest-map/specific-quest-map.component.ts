@@ -346,6 +346,7 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.questService.joinQuest(user_id, quest_id, section_id).subscribe((result) => {
 			this.setNewSection(quest_id);
 			this.questModalRef.hide();
+			this.toaster.success('Added quest','Quest Joined');
 		});
 
 	}
@@ -375,6 +376,7 @@ export class SpecificQuestMapComponent implements OnInit {
 			this.commentBox = "";
 			this.setNewExperience();
 			this.questModalRef.hide();
+			this.toaster.success('Quest done','Quest Submitted');
 		});
 	}
 
