@@ -52,16 +52,12 @@ export class QuestMap {
 		return this.max_exp;
 	}
 
-	getFlatOnePerc(): number {
+	getFlatOnePercentage(): number {
 		return this.flat_one_perc;
 	}
 
 	getQuestMapId() {
 		return this._id;
-	}
-
-	setMaxEXP(maxEXP: number) {
-		this.max_exp = maxEXP;
 	}
 
 	getQuestLabel(questId: string): string{
@@ -87,8 +83,12 @@ export class QuestMap {
 		return questArray;
 	}
 
-	setFlatOnePerc(flatOne: number){
+	setFlatOnePercentage(flatOne: number){
 		this.flat_one_perc = flatOne? flatOne: 80;
+	}
+
+	setMaxEXP(maxEXP: number) {
+		this.max_exp = maxEXP;
 	}
 
 	setQuestMapDataSet(data: any, quests: Quest[], isTeacher) {

@@ -258,32 +258,29 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		this.createQuestForm.reset();
 	}
 
-	setFlatOnePerc(flatOne: number){
+	setFlatOnePercentage(flatOne: number) {
 		if (flatOne <= 0 || flatOne > 100) {
 			this.toastr.error(
 				"Invalid input of percentage! Number must be 0 - 100.",
 				"Flat One Percentage Error!"
 			);
 		} else {
-			this.toastr.success(
-				"Successfully set the section flat one percentage to " + flatOne,
-				"Setting Percentage Success!"
-			);
 			//AHJ: unimplemneted - set flat one in the database
-			// this.questService.setMaxEXP(this.questMap.getQuestMapId(), flatOne).subscribe((x) => {
-			// 	if (x) {
-			// 		this.toastr.success(
-			// 			"Successfully set the section max EXP to " + flatOne,
-			// 			"Grade Submission Success!"
-			// 		);
-			// 		this.questMap.setMaxEXP(flatOne);
-			// 	} else {
-			// 		this.toastr.error(
-			// 			"The system failed to set your max EXP.",
-			// 			"Max EXP Error!"
-			// 		);
-			// 	}
-			// })
+			console.log(flatOne);
+			this.questService.setFlatOnePercentage(this.questMap.getQuestMapId(), flatOne).subscribe((x) => {
+				if (x) {
+					this.toastr.success(
+						"Successfully set the section flat one percentage to " + flatOne,
+						"Setting Grade Percentage Success!"
+					);
+					this.questMap.setFlatOnePercentage(flatOne);
+				} else {
+					this.toastr.error(
+						"The system failed to set the class' flat-one percentage.",
+						"Setting Grade Percentage Error!"
+					);
+				}
+			});
 		}
 	}
 
@@ -471,7 +468,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	getBadgeName(badge_id: any) {
-		if(badge_id){
+		if (badge_id) {
 			this.badgeService.getBadge(badge_id).subscribe(res => {
 				this.badgeName = new Badge(res).getBadgeName();
 			});

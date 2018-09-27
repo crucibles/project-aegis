@@ -31,8 +31,8 @@
 <br>Edit the percentage grade for the students in order to gain a grade of 1.00.
 <!--Input field for flat-one percentage (for setting of blue line in the performance graph)-->
 <div>
-	<input #flatOnePerc type="number" [value]="questMap? questMap.getFlatOnePerc(): 0">
-	<button type="submit" (click)="setFlatOnePerc(flatOnePerc.value)">
+	<input #flatOnePerc type="number" [value]="questMap? questMap.getFlatOnePercentage(): 0">
+	<button type="submit" (click)="setFlatOnePercentage(flatOnePerc.value)">
 		Submit
 	</button>
 </div>
