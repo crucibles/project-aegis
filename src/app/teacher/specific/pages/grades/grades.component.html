@@ -1,6 +1,6 @@
 <!-- Grades page (if all quests are loaded)-->
 <ng-container *ngIf="quests">
-    
+
     <h2>{{sectionService.getCurrentCourse().getCourseName()}} - {{currentSection.getSectionName()}}</h2>
 
     <select #questSelect (click)="getQuestGrades(questSelect.value)">
@@ -32,13 +32,23 @@
                     <tr *ngFor="let student of studentGrades">
                         <td>{{student.student.getUserSchoolId()}}</td>
                         <td>{{student.student.getUserFullName()}}</td>
-                        <td>{{student.grade}}</td>
+                        <td>{{student.total}}</td>
                     </tr>
                 </ng-container>
             </tbody>
         </table>
     </ng-container>
     <!--End of summary table (Class record)-->
+    <ng-container *ngIf="studentGrades && questSelect.value=='summary'">
+        <div class="row">
+            <div style="display: block">
+                <canvas id="summary-graph" baseChart width="650" height="300"></canvas>
+            </div>
+        </div>
+    </ng-container>
+    <!--Summary Line Graph-->
+
+    <!--End of summary line graph-->
 
     <!--Quest table (table of a particular quest submission)-->
     <ng-container *ngIf="questSelect.value != 'summary'">
@@ -65,13 +75,9 @@
                         <td>{{this.toStudentName(submission.getUserId())}}</td>
                         <td>
                             <!-- <form class="form-horizontal"> -->
-                            <input #inputGrade 
-                                    type="number" 
-                                    [value]="submission.getQuestSubmissionGrade(questSelect.value)" 
-                                    [disabled]="!isGraded[i]"/>
-                            <button *ngIf="isGraded[i]" 
-                                    type="submit" 
-                                    (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value, i)">Submit
+                            <input #inputGrade type="number" [value]="submission.getQuestSubmissionGrade(questSelect.value)"
+                                [disabled]="!isGraded[i]" />
+                            <button *ngIf="isGraded[i]" type="submit" (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value, i)">Submit
                             </button>
                             <!-- </form> -->
                         </td>

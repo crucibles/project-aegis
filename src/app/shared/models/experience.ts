@@ -39,9 +39,9 @@ export class Experience {
 
     getTotalExperience(): number {
         let totalEXP = 0;
-        if(this.quests_taken.length > 0){
+        if (this.quests_taken.length > 0) {
             this.quests_taken.forEach(quest => {
-                totalEXP = quest.quest_grade && quest.is_graded ? totalEXP + Number(quest.quest_grade) : totalEXP; 
+                totalEXP = quest.quest_grade && quest.is_graded ? totalEXP + Number(quest.quest_grade) : totalEXP;
             });
         }
         return totalEXP;
@@ -80,11 +80,11 @@ export class Experience {
      */
     getQuestSubmissionDate(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-    
+
         return questSubmission.length > 0 && questSubmission[0].date_submitted ? questSubmission[0].date_submitted : "";
     }
 
-    hasSubmittedQuest(quest_id): boolean{
+    hasSubmittedQuest(quest_id): boolean {
         return this.getQuestSubmissionDate(quest_id) != "";
     }
 
@@ -94,7 +94,7 @@ export class Experience {
      */
     getQuestSubmissionComment(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-  
+
         return questSubmission.length > 0 && questSubmission[0].comment ? questSubmission[0].comment : "";
     }
 
@@ -109,7 +109,7 @@ export class Experience {
 
     setIsGraded(quest_id) {
         this.quests_taken = this.quests_taken.map(quest => {
-            if(quest.quest_id == quest_id) {
+            if (quest.quest_id == quest_id) {
                 quest.is_graded = true;
             }
             return quest;
@@ -121,8 +121,8 @@ export class Experience {
         let totalWeekGrades: any[] = [];
         let latestWeek = 0;
         weekGrade.forEach(questGrade => {
-            latestWeek = latestWeek < questGrade.week? questGrade.week: latestWeek;
-            if(totalWeekGrades.length == 0 || totalWeekGrades.filter(weekGrade => weekGrade.week == questGrade.week).length == 0){
+            latestWeek = latestWeek < questGrade.week ? questGrade.week : latestWeek;
+            if (totalWeekGrades.length == 0 || totalWeekGrades.filter(weekGrade => weekGrade.week == questGrade.week).length == 0) {
                 let weekGrade = {
                     week: questGrade.week,
                     grades: questGrade.grade
@@ -137,12 +137,33 @@ export class Experience {
         return accumulativeWeekGrades;
     }
 
-    private getAccumulativeGrades(weeklyGrades: any[], latestWeek: number): number[]{
+    /**
+     * Returns the student's weekly grade by percentage.
+     * Particularly used for the performance graph.
+     * @param max 
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    getWeeklyPercentageGrades(max: number): number[] {
+        let dataGrade: number[] = [];
+        let grades = this.getWeeklyAccumulativeGrades();
+        grades.forEach(grade => {
+            // get the decimal percentage
+            let percentage: number = (grade / max) * 100;
+
+            // round the decimal up to two decimal points
+            dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+        });
+
+        return dataGrade;
+    }
+
+    private getAccumulativeGrades(weeklyGrades: any[], latestWeek: number): number[] {
         let accumulativeGrades: number[] = [];
         accumulativeGrades.push(0);
-        for(let i = 1; i <= latestWeek; i++){
+        for (let i = 1; i <= latestWeek; i++) {
             let index = weeklyGrades.findIndex(weekGrade => i == weekGrade.week);
-            let weekGrade = index < 0? 0: weeklyGrades[index].grades;
+            let weekGrade = index < 0 ? 0 : weeklyGrades[index].grades;
             accumulativeGrades.push(accumulativeGrades[i - 1] + weekGrade);
         }
         return accumulativeGrades;
@@ -156,7 +177,7 @@ export class Experience {
             let date = new Date(quest.date_submitted);
             let index = Math.floor(date.getTime()) / (1000 * 60 * 60 * 24 * 7);
             index = Math.floor(index);
-            if(smallestIndex < 0 || smallestIndex > index){
+            if (smallestIndex < 0 || smallestIndex > index) {
                 smallestIndex = index;
             }
             week.push({
@@ -164,7 +185,7 @@ export class Experience {
                 grade: Number.parseFloat(quest.quest_grade)
             })
         });
-        smallestIndex--; 
+        smallestIndex--;
         week = week.map(week => {
             let newWeek = week.week - smallestIndex;
             return {
@@ -172,7 +193,7 @@ export class Experience {
                 grade: week.grade
             }
         });
-        
+
         return week;
     }
 }

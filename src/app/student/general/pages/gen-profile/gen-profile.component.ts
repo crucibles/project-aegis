@@ -209,18 +209,11 @@ export class GenProfileComponent implements OnInit {
                         .subscribe(sectionSubmissions => {
                             let courseSec = courseSection;
                             if (sectionSubmissions.length > 0) {
-                                let submissions = sectionSubmissions.map(submission => new Experience(submission))[0];
+                                let submissions: Experience = sectionSubmissions.map(submission => new Experience(submission))[0];
                                 let section = new Section(courseSec.section);
                                 let dataGrade: number[] = [];
 
-                                let grades = submissions.getWeeklyAccumulativeGrades();
-                                grades.forEach(grade => {
-                                    // get the decimal percentage
-                                    let percentage: number = (grade / maxEXP) * 100;
-
-                                    // round the decimal up to two decimal points
-                                    dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
-                                });
+                                dataGrade = submissions.getWeeklyPercentageGrades(maxEXP);
 
                                 this.lineChartColors = this.pageService.lineChartColors;
                                 let rand: number = this.lineChartData && this.lineChartData.length ? this.lineChartData.length % this.lineChartColors.length : 0;
