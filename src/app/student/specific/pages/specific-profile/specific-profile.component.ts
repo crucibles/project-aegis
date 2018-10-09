@@ -120,7 +120,6 @@ export class SpecificProfileComponent implements OnInit {
         // Obtaining max EXP & flat-one grade percentage
         this.questService.getSectionQuestMap(this.currentSection.getSectionId())
             .subscribe(questmap => {
-                console.log(questmap);
                 let questMap = new QuestMap(questmap, []);
                 console.log(questMap);
                 let max: number = questMap.getMaxEXP() ? questMap.getMaxEXP() : 10;
@@ -132,17 +131,10 @@ export class SpecificProfileComponent implements OnInit {
                         if (submissions.length > 0) {
                             this.userSubmission = submissions.map(submission => new Experience(submission))[0];
 
-                            let grades = this.userSubmission.getWeeklyAccumulativeGrades();
-                            let flatOneArr: number[] = [];
-                            grades.forEach(grade => {
-                                // get the decimal percentage
-                                let percentage: number = (grade / max) * 100;
-
-                                // round the decimal up to two decimal points
-                                dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
-                            });
-
+                            dataGrade = this.userSubmission.getWeeklyPercentageGrades(max);
+                            
                             // flat one array (just filling flat one array with percentage-grade values)
+                            let flatOneArr: number[] = [];
                             this.lineChartLabels.forEach(label => {
                                 flatOneArr.push(flatOnePerc);
                             });
@@ -162,7 +154,8 @@ export class SpecificProfileComponent implements OnInit {
                                 borderWidth: 1
                             }
 
-                            //IMPORTANT ORDER: dataline must be pushed first before the flat-one line
+                            //IMPORTANT ORDER: dataline must be pushed first before the flat-one line; 
+                            // reason: indexing changes the line chart properties 
                             this.lineChartData.push(dataLine);
                             this.lineChartData.push(flatOneLine);
                             this.isChartReady = true;
