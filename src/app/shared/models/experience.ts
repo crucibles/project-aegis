@@ -66,7 +66,7 @@ export class Experience {
     }
 
     /**
-     * Retrieves a student's grade for a particular quest
+     * Retrieves a student's grade for a particular quest.
      * @param quest_id the id of the quest whose user submission is to be retrieved.
      */
     isQuestGraded(quest_id): boolean {

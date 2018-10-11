@@ -315,8 +315,8 @@ export class SectionQuest {
      * Identifies whether a student is a participant of a quest or not. Returns true if student is a participant of the quest; false if otherwise
      * @param user_id Id of the student whose participation is needed to be confirmed
      */
-    searchParticipant(user_id: string): string{
-        let participant = this.quest_participants.filter(id => user_id == id)[0];
-        return participant;
+    searchParticipant(user_id: string): boolean{
+        let participant = this.quest_participants.filter(id => user_id == id);
+        return participant.length > 0;
     }
 }
