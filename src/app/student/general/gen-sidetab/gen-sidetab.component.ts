@@ -161,7 +161,6 @@ export class GenSidetabComponent implements OnInit {
 		if (this.isProfile) {
 			this.getUserSections(this.currentUser.getUserId());
 		} else {
-			console.warn("refreshing quests");
 			this.getQuests(this.currentUser.getUserId());
 		}
 	}
@@ -249,14 +248,12 @@ export class GenSidetabComponent implements OnInit {
 	getQuests(user_id): void {
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
-				console.warn(quests);
 				quests.forEach(quest => {
 					this.quests.push(new Quest(quest.questData));
 					this.questCourses.push(quest.course + '-' + quest.section);
 					this.questSectionIds.push(quest.section_id);
 				});
 
-				console.warn(this.quests);
 				this.timeDisplays();
 			});
 	}

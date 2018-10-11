@@ -55,6 +55,9 @@ const SECTIONS: any[] = [
 //TOTXP - total accumulative weekly experience points of current student
 const TOTXP: number[] = [1000, 2123, 3439, 4655, 6053, 6104];
 
+//MAXXP - the max experience points to obtain a 1.0 grade
+const MAXXP: number = 10000;
+
 @Component({
     selector: 'app-gen-profile',
     templateUrl: './gen-profile.component.html',
@@ -111,15 +114,12 @@ export class GenProfileComponent implements OnInit {
                 this.badgeService.getCurrentStudentSystemBadges().subscribe((x) => {
                     let y = [];
                     y.push(x);
-                    console.warn(y);
                     let bs = y.map(z => {
                         return z.map((a) => {
                             return new Badge(a);
                         });
                     });
                     this.badges = bs[0];
-
-                    console.warn(bs);
                 });
             });
 

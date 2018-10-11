@@ -76,18 +76,21 @@ import {
 	ToastOptions
 } from 'ng2-toastr/ng2-toastr';
 
-
-
 import { 
 	AlertModule 
 } from 'ngx-bootstrap';
+
+import { 
+	VerifyEmailComponent 
+} from 'sign-up/verify-email/verify-email.component';
 
 @NgModule({
 	declarations: [
 		AppComponent,
 		LogInComponent,
 		SignUpComponent,
-		ChangePasswordComponent
+		ChangePasswordComponent,
+		VerifyEmailComponent
 	],
 	imports: [
 		AppRoutingModule,

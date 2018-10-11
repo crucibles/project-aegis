@@ -1,0 +1,28 @@
+<div class="container">
+    <div class="container-header">
+        <h2>Email Verification</h2>
+    </div>
+
+    <div class="container-body">
+        <br>
+        <p *ngIf="email && code">
+            Hello USER! <br>Your email {{email}} is now verified!
+        </p>
+
+        <p *ngIf="!email && code">
+            Hello USER! <br>The verification failed. You can't login to the system.
+        </p>
+
+        <p *ngIf="!email && !code">
+            Restricted access detected! <br>This will not serve you anything.
+        </p>
+
+    </div>
+
+    <div class="container-footer">
+        <button type="button" 
+                class="btn btn-primary btn-sm"
+                (click)="goToLogin()"> Login Now
+        </button>
+    </div>
+</div>

@@ -254,7 +254,6 @@ export class BadgeService {
             params: params
         }).pipe(
             tap(data => {
-                console.warn(data);
                 return data;
             })
         );

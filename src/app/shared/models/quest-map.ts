@@ -8,6 +8,8 @@ export class QuestMap {
 
 	private _id: String;
 	private datasets;
+	private minX: number;
+	private maxX: number;
 	private flat_one_perc: number;
 	private max_exp: number;
 	private mainquestY: number;

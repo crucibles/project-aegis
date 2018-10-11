@@ -202,15 +202,12 @@ export class CommentPostService {
 		
     let params = new HttpParams()
 			.set('sections', sections);
-			
-		console.log(sections);
 
     return this.http.get<CommentPost[]>(url, {
       params: params
     }).pipe(
       tap(posts => {
         const outcome = posts ? 'fetched commentposts ' + sections : 'did not find commentposts ' + sections;
-        console.log(outcome);
       }),
       catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${sections}`))
     );
