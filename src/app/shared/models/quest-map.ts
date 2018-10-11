@@ -1,4 +1,7 @@
 import { Quest } from "shared/models/quest";
+import { SectionQuest } from "shared/models/section";
+import { User } from "shared/models/user";
+import { Experience } from "shared/models/experience";
 
 
 /**
@@ -12,20 +15,37 @@ export class QuestMap {
 	private max_exp: number;
 	private mainquestY: number;
 	private questCoordinates: any[];
+	private tempquestCoord: any[];
 	private quests: Quest[];
 
-	constructor(data, quests: Quest[], isTeacher?: boolean) {
+	/**
+	 * Constructor for Quest Map 
+	 * @param data data containing quest map's id and section's max EXP and flat-one grade percentage 
+	 * @param quests quests included in the section
+	 * @param sectionQuests quests attribute of the section (which includes the quest's participants & prereq; for student's use only)
+	 * @param isTeacher determines if user requesting quest map data is from a teacher or not (for '+' points in the graph)
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	constructor(data) {
 		this.mainquestY = 25;
-		this.quests = this.sortQuestsByDate(quests);
 		this._id = data._id;
 		this.max_exp = data && data.max_exp ? data.max_exp : 0;
-		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 80; 
-		this.setQuestMapDataSet(data, quests, isTeacher);
+		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 80;
+		this.tempquestCoord = data.quest_coordinates;
 	}
 
-	private sortQuestsByDate(quests: Quest[]): Quest[]{
+	/**
+	 * Sorts the quests according to date.
+	 * Used especially for correct quest map label/tags (e.g A, J1, Z15 on the quest points)
+	 * @param quests the quests to sort
+	 * @returns sorted quests by date
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	private sortQuestsByDate(quests: Quest[]): Quest[] {
 		quests = quests.map(quest => new Quest(quest));
-		quests.sort((a, b)=> {
+		quests.sort((a, b) => {
 			return this.getTime(a.getQuestStartTimeDate()) - this.getTime(b.getQuestStartTimeDate());
 		})
 		return quests;
@@ -35,10 +55,10 @@ export class QuestMap {
 	 * Returns time of the received date; useful for undefined checking 
 	 * @param date date whose time is to be retrieved
 	 */
-    private getTime(date?: Date) {
-        date = new Date(date);
-        return date != null ? date.getTime() : 0;
-    }
+	private getTime(date?: Date) {
+		date = new Date(date);
+		return date != null ? date.getTime() : 0;
+	}
 
 	/**
 	 * Returns questmap datasets.
@@ -46,6 +66,12 @@ export class QuestMap {
 	 */
 	getQuestMapDataSet() {
 		return this.datasets;
+	}
+
+	hasSubmitted(questId: string) {
+		this.datasets.forEach((set, i) => {
+			set
+		});
 	}
 
 	getMaxEXP(): number {
@@ -60,19 +86,22 @@ export class QuestMap {
 		return this._id;
 	}
 
-	getQuestLabel(questId: string): string{
+	getQuestLabel(questId: string): string {
 		let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		let index = this.quests.findIndex(quest => quest.getQuestId() == questId);
 		let addtlIndex: string = "";
-		if(index > alphabet.length - 1){
-			addtlIndex = (index / alphabet.length) + "";
+
+		if (index > alphabet.length - 1) {
+			addtlIndex = Math.floor(index / alphabet.length) + "";
 			index = index % alphabet.length;
 		}
 
-		return index < 0? "?": alphabet.charAt(index) + addtlIndex;
+		let label: string = alphabet.charAt(index) + addtlIndex;
+
+		return index < 0 ? "?" : label;
 	}
 
-	getQuestInformationArray(){
+	getQuestInformationArray() {
 		let questArray: any[] = [];
 		this.quests.forEach((quest) => {
 			questArray.push({
@@ -83,16 +112,73 @@ export class QuestMap {
 		return questArray;
 	}
 
-	setFlatOnePercentage(flatOne: number){
-		this.flat_one_perc = flatOne? flatOne: 80;
+	setFlatOnePercentage(flatOne: number) {
+		this.flat_one_perc = flatOne ? flatOne : 80;
 	}
 
 	setMaxEXP(maxEXP: number) {
 		this.max_exp = maxEXP;
 	}
 
-	setQuestMapDataSet(data: any, quests: Quest[], isTeacher) {
-		let questMapDetails = this.getQuestMapDetails(data.quest_coordinates);
+	/**
+	 * Determines if the user has accomplished all quest prerequisite for a certain quest.
+	 * A quest is only considered accomplished if the submission has been graded by the teacher.
+	 * @param questId the id of the quest whose quest prerequisites are to be checked 
+	 * @returns true if all quest prerequisites had graded submissions; false if not.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	passQuestPrerequisites(questId: string, experience: Experience) {
+		let hasPass: boolean = true;
+		let questPrereq: string[] = this.quests.filter(quest => quest.getQuestId() == questId).length > 0 ?
+			this.quests.filter(quest => quest.getQuestId() == questId)[0].getQuestPrerequisite() : [];
+
+		questPrereq.forEach(quest_id => {
+			if (!experience.isQuestGraded(quest_id)) {
+				hasPass = false;
+			}
+		})
+		return hasPass;
+	}
+
+	// lock - grey - #c0c0c0; open - green - #008421; ongoing - blue - #0073aa; done - orange - #FF8000
+	getQuestPointColor(quest: Quest, secQuests: SectionQuest[], user: User, experience: Experience): string {
+		let tempArr: SectionQuest[] = quest ? secQuests.filter(sectionquest =>
+			sectionquest.getSectionQuestId() == quest.getQuestId()) : [];
+		if (tempArr.length == 0) {
+			return "#FFFFFF";
+		} else {
+			let sectionQuest: SectionQuest = tempArr[0];
+			// if user is not a participant (either 'locked' or 'open')
+			if (sectionQuest.getQuestParticipants().length == 0 || !sectionQuest.searchParticipant(user.getUserId())) {
+				if (this.passQuestPrerequisites(quest.getQuestId(), experience)) {
+					console.log("PASSPREREQ!");
+					return "#008421";
+				} else {
+					console.log("NOPASSPREREQ!");
+					return "#C0C0C0";
+				}
+			} else { // if user is participant (either 'ongoing' or 'done')	
+				if (experience.hasSubmittedQuest(quest.getQuestId())) {
+					return "#FF8000";
+				} else {
+					return "#0073aa";
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the quest map's datasets which is used in the HTML graph.
+	 * @param quests All quests of the section
+	 * @param sectionQuests Section quest which includes participants and quest prerequisite
+	 * @param user The current user (mostly used when requesting user is student)
+	 * @param experience The user's experience (used to know if user submitted quest; for students only)
+	 * @param isTeacher Determines whether the requesting user is a teacher or not
+	 */
+	setQuestMapDataSet(quests: Quest[], sectionQuests: SectionQuest[], user: User, experience: Experience, isTeacher) {
+		this.quests = this.sortQuestsByDate(quests);
+		let questMapDetails = this.getQuestMapDetails(this.tempquestCoord);
 
 		let exclude: any[] = questMapDetails.exclude;
 		let questPositions = questMapDetails.questPositions;
@@ -107,6 +193,7 @@ export class QuestMap {
 		for (let questPosition of questPositions) {
 			let quest = quests.filter(quest => quest.getQuestId() == questPosition.questId);
 			let questLabel = quest.length == 0 ? "?" : this.getQuestLabel(quest[0].getQuestId());
+			let color: string = isTeacher ? "#000" : this.getQuestPointColor(quest[0], sectionQuests, user, experience);
 			var title = quest.length == 0 ? "<No title>" : quest[0].getQuestTitle();
 			if (questPosition.type === "scatter") {
 				dataset = {
@@ -117,8 +204,8 @@ export class QuestMap {
 						x: questPosition.x,
 						y: questPosition.y
 					}],
-					backgroundColor: "#000",
-					borderColor: "#000",
+					backgroundColor: color,
+					borderColor: color,
 					pointHoverRadius: 9,
 					radius: 10,
 					showLine: false

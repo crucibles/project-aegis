@@ -200,7 +200,7 @@ export class GenProfileComponent implements OnInit {
             this.questService.getSectionQuestMap(currSection.getSectionId())
                 .subscribe(questmap => {
                     console.log(questmap);
-                    let questMap = new QuestMap(questmap, []);
+                    let questMap = new QuestMap(questmap);
                     console.log(questMap);
                     let maxEXP: number = questMap.getMaxEXP() ? questMap.getMaxEXP() : 10;
                     let flatOnePerc: number = questMap.getFlatOnePercentage() ? questMap.getFlatOnePercentage() : 70;

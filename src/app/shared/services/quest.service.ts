@@ -98,13 +98,14 @@ export class QuestService {
 
 	}
 
-	addQuestMapCoordinates(section_id: String, quest_map_id: String, newQuestCoord: any[]): Observable<QuestMap> {
+	addQuestMapCoordinates(section_id: String, quest_map_id: String, newQuestCoord: any[], prereq: any[]): Observable<QuestMap> {
 		let url = this.questMapUrl;
 		return this.http.post<QuestMap>(url, {
 			method: "addQuestMapCoordinates",
 			section_id: section_id,
 			quest_map_id: quest_map_id,
-			quest_coordinates: newQuestCoord
+			quest_coordinates: newQuestCoord,
+			quest_prerequisite: prereq
 		})
 			.pipe(
 				tap(data => {
