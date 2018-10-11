@@ -565,8 +565,6 @@ export class SectionService {
 
 		let enrolledSections = [];
 
-		console.log(this.currentUserSections);
-
 		this.currentUserSections.map((section) => {
 			console.log(section.section);
 			console.log(section.section.students);
@@ -574,7 +572,6 @@ export class SectionService {
 				enrolledSections.push(section.section._id);
 			}
 		});
-		console.log(enrolledSections);
 
 		return enrolledSections;
 	}

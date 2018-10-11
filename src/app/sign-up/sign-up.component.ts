@@ -19,7 +19,10 @@ import {
 import {
     UserService
 } from 'shared/services';
-import { ToastsManager } from 'ng2-toastr';
+
+import { 
+    ToastsManager 
+} from 'ng2-toastr';
 
 @Component({
     selector: 'app-sign-up',
@@ -85,6 +88,7 @@ export class SignUpComponent implements OnInit {
             left_arm: "",
             right_arm: "",
         }
+        let verified = false;
 
         this.userService.register(
             schoolId,
@@ -98,12 +102,13 @@ export class SignUpComponent implements OnInit {
             contactNumber,
             securityQuestion,
             securityAnswer,
-            userConditions
+            userConditions,
+            verified
         ).subscribe(newUser => {
             if (newUser) {
                 // Successful registration of user and redirects to login page.
                 this.router.navigate(['/log-in']);
-                this.toastr.success("Try logging in!", "Account created!");
+                this.toastr.success("An email has been sent to " + email + ". Please verify before loggin in.", "Verifying Account");
             } else {
                 // Unsuccessful registration of new user because of email already existing.
                 // Sets signal to prompt warning message of already existing email.

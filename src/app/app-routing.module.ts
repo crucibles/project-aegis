@@ -29,6 +29,10 @@ import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
+import {
+  VerifyEmailComponent
+} from 'sign-up/verify-email/verify-email.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -55,6 +59,10 @@ const routes: Routes = [
     path: 'sign-up',
     component: SignUpComponent,
     canActivate: [AuthGuardService] 
+  },
+  {
+    path: 'sign-up/verify-email',
+    component: VerifyEmailComponent
   },
   {
     path: 'change-password',

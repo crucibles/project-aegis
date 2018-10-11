@@ -1,6 +1,5 @@
 <!-- Grades page (if all quests are loaded)-->
 <ng-container *ngIf="quests">
-
     <h2>{{sectionService.getCurrentCourse().getCourseName()}} - {{currentSection.getSectionName()}}</h2>
 
     <select #questSelect (click)="getQuestGrades(questSelect.value)">

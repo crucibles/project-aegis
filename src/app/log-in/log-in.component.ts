@@ -46,7 +46,6 @@ export class LogInComponent implements OnInit {
     private isLoggingIn: boolean = false;
     returnUrl: string;
     private loginForm: FormGroup;
-    private warning: boolean;
 
     constructor(
         formBuilder: FormBuilder,
@@ -65,7 +64,6 @@ export class LogInComponent implements OnInit {
 
     ngOnInit() {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
-        this.warning = false;
         this.isLoggingIn = false;
     }
 
@@ -81,7 +79,7 @@ export class LogInComponent implements OnInit {
                         this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
                         this.router.navigateByUrl(this.returnUrl? this.returnUrl: user.getUserType()+'/general/select-course');
                     } else {
-                        this.warning = true;
+                        this.toastr.warning("Invalid email or password.", "Error");
                         this.isLoggingIn = false;
                     }
                 }, error => {
@@ -89,10 +87,6 @@ export class LogInComponent implements OnInit {
                     this.alertService.error(error);
                 }
             );
-    }
-
-    keyPressed() {
-        this.warning = false;
     }
 
     userSignUp() {

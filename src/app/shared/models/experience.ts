@@ -94,7 +94,6 @@ export class Experience {
      */
     getQuestSubmissionComment(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-
         return questSubmission.length > 0 && questSubmission[0].comment ? questSubmission[0].comment : "";
     }
 
@@ -193,7 +192,6 @@ export class Experience {
                 grade: week.grade
             }
         });
-
         return week;
     }
 }

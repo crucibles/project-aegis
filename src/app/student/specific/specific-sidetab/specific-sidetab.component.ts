@@ -231,8 +231,6 @@ export class SpecificSidetabComponent implements OnInit {
 					}
 				});
 			});
-
-
 		}
 	}
 

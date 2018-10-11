@@ -529,13 +529,16 @@ router.post('/login', (req, res) => {
             })
             .then((user) => {
                 if (user) {
-
-                    user.user_password = '';
-                    response.data = user;
-                    res.json(user);
-
+                    if(user.user_verified) {
+                        // Login in user if account is verified.
+                        response.data = user;
+                        res.json(user);
+                    } else {
+                        // Deny user login, account is unverified.
+                        res.json(false);
+                    }
                 } else {
-
+                    // User is does not exist.
                     res.json(false);
                 }
             })
@@ -1697,7 +1700,8 @@ router.post('/signup', (req, res) => {
             user_photo: null,
             user_security_question: req.body.securityQuestion,
             user_security_answer: req.body.securityAnswer,
-            user_conditions: req.body.userConditions
+            user_conditions: req.body.userConditions,
+            user_verified: req.body.verified
         };
 
         myDB.collection('users')
@@ -1718,7 +1722,25 @@ router.post('/signup', (req, res) => {
                             if (err) {
                                 response.message = err;
                                 throw err;
+                            } else {
+                                // Mail content that is to be sent.
+                                var mailOptions = {
+                                    from: 'UPGOE Admin <donevirdensinghynson@gmail.com>',
+                                    to: newUserObj.user_email,
+                                    subject: 'Email Verification',
+                                    text: 'Hi ' + newUserObj.user_fname + '. Please go to this link to verify your email: ' +
+                                            'http://localhost:4200/sign-up/verify-email?verify=' + result.insertedId +
+                                            '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
+                                };
+
+                                // Sends the email.
+                                transporter.sendMail(mailOptions, function (err, res) {
+                                    if (err) {
+                                        throw (err);
+                                    }
+                                });
                             }
+
                             response.data = newUserObj;
                             res.json(result);
                         });
@@ -1728,6 +1750,43 @@ router.post('/signup', (req, res) => {
                 sendError(err, res);
             })
     });
+});
+
+/**
+ * @description portal for requests regarding email verification. api/userVerificatoin
+ * @author Donevir Hynson
+ */
+router.post('/userVerification', (req, res) => {
+    if(req.body.code.length < 12) {
+        res.json(false);
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('users')
+                .findOne(ObjectID(req.body.code))
+                .then((user) => {
+                    if(user) {
+                        // User account is verified.
+                        myDB.collection('users')
+                            .updateOne(
+                                { _id: ObjectID(req.body.code) },
+                                {
+                                    $set: {
+                                        user_verified: true
+                                    }
+                                }
+                            );
+                        res.json(user.user_email);
+                    } else {
+                        // User account is not verified.
+                        res.json(false);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
 });
 
 /**

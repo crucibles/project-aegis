@@ -177,7 +177,6 @@ export class GenSelcourseComponent implements OnInit {
 	getUserSections(user_id): void {
 		this.sectionService.getUserSections(user_id)
 			.subscribe(sections => {
-				console.warn(sections);
 				this.courseSections = sections;
 				this.sections = sections.map(section => new Section(section.section));
 				this.sections = this.sectionService.getSortedSections(
