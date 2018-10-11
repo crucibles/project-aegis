@@ -10,16 +10,18 @@ export class QuestMap {
 	private datasets;
 	private minX: number;
 	private maxX: number;
+	private flat_one_perc: number;
 	private max_exp: number;
 	private mainquestY: number;
 	private questCoordinates: any[];
 	private quests: Quest[];
 
 	constructor(data, quests: Quest[], isTeacher?: boolean) {
-		this._id = data._id;
 		this.mainquestY = 25;
 		this.quests = this.sortQuestsByDate(quests);
+		this._id = data._id;
 		this.max_exp = data && data.max_exp ? data.max_exp : 0;
+		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 80; 
 		this.setQuestMapDataSet(data, quests, isTeacher);
 	}
 
@@ -40,6 +42,10 @@ export class QuestMap {
         return date != null ? date.getTime() : 0;
     }
 
+	/**
+	 * Returns questmap datasets.
+	 * @returns array of datasets with properties such as type, label, data (array), fill, radius, etc.
+	 */
 	getQuestMapDataSet() {
 		return this.datasets;
 	}
@@ -48,12 +54,12 @@ export class QuestMap {
 		return this.max_exp;
 	}
 
-	getQuestMapId() {
-		return this._id;
+	getFlatOnePercentage(): number {
+		return this.flat_one_perc;
 	}
 
-	setMaxEXP(maxEXP: number) {
-		this.max_exp = maxEXP;
+	getQuestMapId() {
+		return this._id;
 	}
 
 	getQuestLabel(questId: string): string{
@@ -77,6 +83,14 @@ export class QuestMap {
 			})
 		})
 		return questArray;
+	}
+
+	setFlatOnePercentage(flatOne: number){
+		this.flat_one_perc = flatOne? flatOne: 80;
+	}
+
+	setMaxEXP(maxEXP: number) {
+		this.max_exp = maxEXP;
 	}
 
 	setQuestMapDataSet(data: any, quests: Quest[], isTeacher) {

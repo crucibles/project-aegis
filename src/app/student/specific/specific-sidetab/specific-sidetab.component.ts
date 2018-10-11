@@ -36,8 +36,8 @@ import {
 
 //Application Imports
 import {
-	User, 
-	Quest, 
+	User,
+	Quest,
 	Badge,
 	Section
 } from 'shared/models';
@@ -47,7 +47,8 @@ import {
 	PageService,
 	UserService,
 	SectionService,
-	BadgeService
+	BadgeService,
+	ExperienceService
 } from 'shared/services';
 
 import {
@@ -113,7 +114,8 @@ export class SpecificSidetabComponent implements OnInit {
 		private route: ActivatedRoute,
 		private sectionService: SectionService,
 		private toastr: ToastsManager,
-		private badgeService: BadgeService
+		private badgeService: BadgeService,
+		private experienceService: ExperienceService
 	) {
 		this.image = imageDir + "not-found.jpg";
 		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
@@ -143,7 +145,7 @@ export class SpecificSidetabComponent implements OnInit {
 	}
 
 	getBadgeName(badge_id: any) {
-		if(badge_id){
+		if (badge_id) {
 			this.badgeService.getBadge(badge_id).subscribe(res => {
 				this.badgeName = new Badge(res).getBadgeName();
 			});
@@ -203,13 +205,24 @@ export class SpecificSidetabComponent implements OnInit {
 	setQuests(user_id): void {
 		this.quests = [];
 		let counter = 0;
-		if(this.sectionService.getCurrentSection()){
+		if (this.sectionService.getCurrentSection()) {
+
+
 			this.sectionService.getCurrentSection().getQuests().map((sq) => {
 				this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
-	
+
+					quest = new Quest(quest);
 					sq.getQuestParticipants().forEach(qp => {
 						if (qp == user_id) {
-							this.quests.push(new Quest(quest));
+
+							// removing the submitted quests in the side tabs
+							this.experienceService.getUserExpRecord(new User(this.currentUser).getUserId(), this.currentSection.getSectionId()).subscribe(res => {
+								res.quests_taken.forEach((x) => {
+									if (x.quest_id == quest.getQuestId() && x.date_submitted == "") {
+										this.quests.push(new Quest(quest));
+									}
+								});
+							});
 						}
 					});
 					counter++;

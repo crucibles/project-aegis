@@ -258,6 +258,32 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		this.createQuestForm.reset();
 	}
 
+	setFlatOnePercentage(flatOne: number) {
+		if (flatOne <= 0 || flatOne > 100) {
+			this.toastr.error(
+				"Invalid input of percentage! Number must be 0 - 100.",
+				"Flat One Percentage Error!"
+			);
+		} else {
+			//AHJ: unimplemneted - set flat one in the database
+			console.log(flatOne);
+			this.questService.setFlatOnePercentage(this.questMap.getQuestMapId(), flatOne).subscribe((x) => {
+				if (x) {
+					this.toastr.success(
+						"Successfully set the section flat one percentage to " + flatOne,
+						"Setting Grade Percentage Success!"
+					);
+					this.questMap.setFlatOnePercentage(flatOne);
+				} else {
+					this.toastr.error(
+						"The system failed to set the class' flat-one percentage.",
+						"Setting Grade Percentage Error!"
+					);
+				}
+			});
+		}
+	}
+
 	setMaxEXP(maxEXP: number) {
 		if (maxEXP <= 0) {
 			this.toastr.error(
@@ -283,7 +309,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
-    * Sets the quest map based on the data received.
+    * Sets the quest map (the GUI graph) based on the data received.
 	* @param data string where the quests and its respective coordinates will be located
     */
 	setQuestMap() {
@@ -442,7 +468,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	getBadgeName(badge_id: any) {
-		if(badge_id){
+		if (badge_id) {
 			this.badgeService.getBadge(badge_id).subscribe(res => {
 				this.badgeName = new Badge(res).getBadgeName();
 			});

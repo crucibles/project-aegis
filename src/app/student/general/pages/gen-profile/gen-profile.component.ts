@@ -15,7 +15,8 @@ import {
     User,
     Badge,
     Section,
-    Experience
+    Experience,
+    QuestMap
 } from 'shared/models';
 
 import {
@@ -29,7 +30,6 @@ import {
 import Chart = require('chart.js');
 
 /* AHJ: Remove once the services are implemented properly */
-
 const SECTIONS: any[] = [
     {
         course_name: "CMSC 128",
@@ -146,11 +146,26 @@ export class GenProfileComponent implements OnInit {
         this.lineChartLabels = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
         this.lineChartOptions = {
             legend: {
-                display: true
+                labels: {
+                    filter: (legendItem, chartData) => {
+                        return legendItem.text != undefined;
+                    }
+                },
+                onClick: function (e, legendItem) {
+                    var ci = this.chart;
+                    var index = legendItem.datasetIndex;
+                    var isHidden = ci.config.data.datasets[index + 1].hidden;
+
+                    //toggles both the current section and its flat-one-percentage line (value obtain from chart)
+                    ci.config.data.datasets[index].hidden = isHidden == null ? null : !isHidden;
+                    ci.config.data.datasets[index + 1].hidden = isHidden == null ? null : !isHidden;
+
+                    ci.update();
+                }
             },
             plugins: {
-				datalabels: {
-					display: false,
+                datalabels: {
+                    display: false,
                 }
             },
             responsive: true,
@@ -179,49 +194,67 @@ export class GenProfileComponent implements OnInit {
     * Sets the performance graph's displayed data in the profile page
     */
     setPerformanceGraphData() {
-        let max: number = MAXXP ? MAXXP : 10;
         this.courseSections.forEach(courseSection => {
-            this.experienceService.getSectionGrades(new Section(courseSection.section).getSectionId(), this.user.getUserId())
-            .subscribe(sectionSubmissions => {
-                let courseSec = courseSection;
-                if (sectionSubmissions.length > 0) {
-                    let submissions = sectionSubmissions.map(submission => new Experience(submission))[0];
-                    let section = new Section(courseSec.section);
-                    let dataGrade: number[] = [];
-                    
-                        let grades = submissions.getWeeklyAccumulativeGrades();
-                        grades.forEach(grade => {
-                            // get the decimal percentage
-                            let percentage: number = (grade / MAXXP) * 100;
-                            
-                            // round the decimal up to two decimal points
-                            dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+            let currSection: Section = new Section(courseSection.section);
+
+            this.questService.getSectionQuestMap(currSection.getSectionId())
+                .subscribe(questmap => {
+                    console.log(questmap);
+                    let questMap = new QuestMap(questmap, []);
+                    console.log(questMap);
+                    let maxEXP: number = questMap.getMaxEXP() ? questMap.getMaxEXP() : 10;
+                    let flatOnePerc: number = questMap.getFlatOnePercentage() ? questMap.getFlatOnePercentage() : 70;
+
+                    this.experienceService.getSectionGrades(currSection.getSectionId(), this.user.getUserId())
+                        .subscribe(sectionSubmissions => {
+                            let courseSec = courseSection;
+                            if (sectionSubmissions.length > 0) {
+                                let submissions: Experience = sectionSubmissions.map(submission => new Experience(submission))[0];
+                                let section = new Section(courseSec.section);
+                                let dataGrade: number[] = [];
+
+                                dataGrade = submissions.getWeeklyPercentageGrades(maxEXP);
+
+                                this.lineChartColors = this.pageService.lineChartColors;
+                                let rand: number = this.lineChartData && this.lineChartData.length ? this.lineChartData.length % this.lineChartColors.length : 0;
+                                let color = this.lineChartColors[rand];
+                                let dataLine: any = {
+                                    data: dataGrade,
+                                    label: courseSec.course_name + " - " + section.getSectionName(),
+                                    backgroundColor: color.backgroundColor,
+                                    borderColor: color.borderColor,
+                                    pointBackgroundColor: color.pointBackgroundColor,
+                                    pointBorderColor: color.pointBorderColor,
+                                    pointHoverBackgroundColor: color.pointHoverBackgroundColor,
+                                    pointHoverBorderColor: color.pointHoverBorderColor
+                                };
+                                
+                                let flatOneArr: any[] = [];
+                                this.lineChartLabels.forEach(label => {
+                                    flatOneArr.push(flatOnePerc);
+                                });
+                                let flatOneLine: any = {
+                                    data: flatOneArr,
+                                    borderColor: color.borderColor,
+                                    radius: 0,
+                                    fill: false,
+                                    borderWidth: 1,
+                                    hidden: false
+                                }
+
+
+                                this.lineChartData.push(dataLine);
+                                this.lineChartData.push(flatOneLine);
+
+                                if (!this.chart || this.lineChartData.length == 0) {
+                                    this.setPerformanceGraph();
+                                } else {
+                                    this.chart.config.data.datasets = this.lineChartData;
+                                    this.chart.update();
+                                }
+                            }
                         });
-                        
-                        this.lineChartColors = this.pageService.lineChartColors;
-                        let rand: number = this.lineChartData && this.lineChartData.length? this.lineChartData.length % this.lineChartColors.length: 0;
-                        let color = this.lineChartColors[rand];
-                        let dataLine: any = {
-                            data: dataGrade,
-                            label: courseSec.course_name + " - " + section.getSectionName(),
-                            backgroundColor: color.backgroundColor,
-                            borderColor: color.borderColor,
-                            pointBackgroundColor: color.pointBackgroundColor,
-                            pointBorderColor: color.pointBorderColor,
-                            pointHoverBackgroundColor: color.pointHoverBackgroundColor,
-                            pointHoverBorderColor: color.pointHoverBorderColor
-                        };
 
-
-                        if (!this.chart || this.lineChartData.length == 0) {
-                            this.lineChartData.push(dataLine);
-                            this.setPerformanceGraph();
-                        } else {
-                            this.lineChartData.push(dataLine);
-                            this.chart.config.data.datasets = this.lineChartData;
-                            this.chart.update();
-                        }
-                    }
                 });
         });
     }

@@ -381,6 +381,30 @@ export class QuestService {
 		);
 	}
 
+	/**
+	 * Sets the flat-one grade percentage in the database.
+	 * @param questMapId id of the questmap whose grade percentage is to be set
+	 * @param flatOne the grade percentage to be set
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	setFlatOnePercentage(questMapId: String, flatOne: number) {
+		const url = this.questMapUrl;
+
+		let body = {
+			method: "setFlatOnePercentage",
+			quest_map_id: questMapId,
+			flat_one_perc: flatOne
+		}
+
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
+	}
+
 	/**\
 	 * Submits student's quest submission.
 	 * @description Submits the user's submission and removes user from the quest participant's list 
