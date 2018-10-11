@@ -122,7 +122,7 @@ export class GradesComponent implements OnInit {
         this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
             //obtain section questmap (for flat one perc and max EXP for this section)
             this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-                let questMap = new QuestMap(questmap, []);
+                let questMap = new QuestMap(questmap);
                 console.log(questMap);
                 let max: number = questMap.getMaxEXP() ? questMap.getMaxEXP() : 10;
                 let flatOnePerc: number = questMap.getFlatOnePercentage() ? questMap.getFlatOnePercentage() : 70;

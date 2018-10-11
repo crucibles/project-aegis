@@ -237,32 +237,17 @@ router.post('/createQuest', (req, res) => {
             quest_party: req.body.quest_party
         };
 
-        async.waterfall([
-            insertQuest,
-            addQuestToSection
-        ], function (err, resultId) {
-            if (err) {
-                response.message = err;
-                throw err;
-            }
+        insertQuest();
+        // async.waterfall([
+        //     insertQuest,
+        // ], function (err, resultId) {
+        //     if (err) {
+        //         response.message = err;
+        //         throw err;
+        //     }
+        // });
 
-            let questObj = {
-                _id: resultId,
-                quest_title: req.body.quest_title,
-                quest_description: req.body.quest_description,
-                quest_retakable: req.body.quest_retakable,
-                quest_badge: req.body.quest_badge,
-                quest_xp: req.body.quest_xp,
-                quest_hp: req.body.quest_hp,
-                quest_item: req.body.quest_item,
-                quest_start_date: req.body.quest_start_date,
-                quest_end_date: req.body.quest_end_date,
-                quest_party: req.body.quest_party
-            }
-            res.json(questObj);
-        });
-
-        function insertQuest(callback) {
+        function insertQuest() {
             const myDB = db.db('up-goe-db');
             myDB.collection('quests')
                 .insertOne(newQuestObj, function (err, result) {
@@ -271,30 +256,50 @@ router.post('/createQuest', (req, res) => {
                         throw err;
                     }
                     response.data = newQuestObj;
-                    callback(null, result.insertedId);
+                    let questObj = {
+                        _id: result.insertedId,
+                        quest_title: req.body.quest_title,
+                        quest_description: req.body.quest_description,
+                        quest_retakable: req.body.quest_retakable,
+                        quest_badge: req.body.quest_badge,
+                        quest_xp: req.body.quest_xp,
+                        quest_hp: req.body.quest_hp,
+                        quest_item: req.body.quest_item,
+                        quest_start_date: req.body.quest_start_date,
+                        quest_end_date: req.body.quest_end_date,
+                        quest_party: req.body.quest_party
+                    }
+                    console.log("END!");
+                    res.json(questObj);
+                    //callback(null, result.insertedId);
                 });
         }
 
-        function addQuestToSection(resultId, callback) {
-            const myDB = db.db('up-goe-db');
-            myDB.collection('sections')
-                .update(
-                    { _id: req.body.section_id },
-                    {
-                        $push: {
-                            quests: {
-                                quest_id: resultId,
-                                quest_participants: [],
-                                quest_prerequisite: []
-                            }
-                        }
-                    },
-                    function (err, section) {
-                        response.data = section;
-                        callback(null, resultId);
-                    }
-                );
-        };
+        // function addQuestToSection(resultId, callback) {
+        //     const myDB = db.db('up-goe-db');
+        //     console.log("req.body.quest_prerequisite");
+        //     console.log(req.body.quest_prerequisite);
+        //     myDB.collection('sections')
+        //     .update(
+        //         { _id: req.body.section_id },
+        //         {
+        //             $push: {
+        //                 quests: {
+        //                     quest_id: resultId,
+        //                     quest_prerequisite: "prereq2",
+        //                     quest_participants: [],
+        //                 }
+        //             }
+        //             },
+        //             function (err, section) {
+        //                 console.log("RESULT");
+        //                 console.log(req.body.quest_prerequisite);
+        //                 console.log(section.result);
+        //                 response.data = section;
+        //                 callback(null, resultId);
+        //             }
+        //         );
+        // };
     });
 });
 
@@ -420,7 +425,7 @@ router.post('/experiences', (req, res) => {
                             .find(ObjectID(req.body.quest_id))
                             .toArray()
                             .then((quests) => {
-                                if(req.body.grade >= (quests[0].quest_xp * 0.8)){
+                                if (req.body.grade >= (quests[0].quest_xp * 0.8)) {
                                     isEarning = true;
                                 }
                                 if (quests[0] && quests[0].quest_badge != "") {
@@ -445,7 +450,7 @@ router.post('/experiences', (req, res) => {
                                             )
                                             .then(x => {
                                                 holder = holder.toString().trim();
-                                                if(isEarning){
+                                                if (isEarning) {
                                                     connection((db) => {
                                                         const myDB = db.db('up-goe-db');
                                                         myDB.collection('badges')
@@ -653,7 +658,12 @@ router.post('/questmaps', (req, res) => {
 
     function addQuestToSection(req, res) {
         connection((db) => {
+            //AHJ: unimplemented; dili ko kabalo sa pagpush ug array T_T okay lng sya if string or hardcore array though....
             const myDB = db.db('up-goe-db');
+            console.log("req.body.quest_prerequisite");
+            console.log(req.body.quest_prerequisite);
+            let prereq_array = [];
+            prereq_array = req.body.quest_prerequisite;
             myDB.collection('sections')
                 .update(
                     { _id: ObjectID(req.body.section_id) },
@@ -662,7 +672,7 @@ router.post('/questmaps', (req, res) => {
                             quests: {
                                 quest_id: req.body.quest_coordinates.quest_id,
                                 quest_participants: [],
-                                quest_prerequisite: []
+                                quest_prerequisite: prereq_array
                             }
                         }
                     }
@@ -1482,7 +1492,7 @@ router.get('/getSectionQuests', (req, res) => {
                 "section_id": req.query.section_id
             })
             .then(questmap => {
-                if(questmap) {
+                if (questmap) {
                     let questIds = [];
                     questmap.quest_coordinates.forEach(coord => {
                         if (coord.quest_id) {
@@ -1601,28 +1611,26 @@ router.get('/sections/quests', (req, res) => {
                                         });
 
                                         let user_section_ids = [];
-                                            user_section_ids = AllUserQuests.map(quest => {
-                                                return quest.section_id + ""
-                                            });
+                                        user_section_ids = AllUserQuests.map(quest => {
+                                            return quest.section_id + ""
+                                        });
 
-                                            myDB.collection('experiences').find({
-                                                user_id: 
+                                        myDB.collection('experiences').find({
+                                            user_id:
                                                 req.query.id,
-                                                section_id: {$in: user_section_ids}
-                                            }).toArray()
-                                                .then(expArr => {
-                                                    expArr.forEach(exp => 
-                                                        {
-                                                        exp.quests_taken = exp.quests_taken.filter(q => {
-                                                            if (q.date_submitted != '') 
-                                                            {
-                                                                return q.quest_id;
-                                                            }
+                                            section_id: { $in: user_section_ids }
+                                        }).toArray()
+                                            .then(expArr => {
+                                                expArr.forEach(exp => {
+                                                    exp.quests_taken = exp.quests_taken.filter(q => {
+                                                        if (q.date_submitted != '') {
+                                                            return q.quest_id;
                                                         }
+                                                    }
                                                     );
 
                                                     AllUserQuests = AllUserQuests.filter(
-                                                            uq => {
+                                                        uq => {
                                                             let isIncluded = true;
                                                             exp.quests_taken.forEach(id => {
                                                                 if (id.quest_id == (uq.questData._id + '')) {
@@ -2171,7 +2179,7 @@ router.post('/userReqPass', (req, res) => {
                         to: user.user_email,
                         subject: 'Password Retrieval',
                         text: 'Hi ' + user.user_fname + '. Your password is \'' + user.user_password + '\'.' +
-                                '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
+                            '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
                     };
 
                     // Sends the email.

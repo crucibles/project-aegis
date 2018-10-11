@@ -7,72 +7,75 @@
 	<img class="loading-icon" src="/assets/images/loading.gif" />
 </div>
 
-<div>
-	Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! This is where you can create quests and form
-	your
-	section's questmap.
-	<span *ngIf="questMap && questMap.getMaxEXP() == 0">
-		<br><br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating your
-		quest and
-		questmap
-		<br>
-	</span>
-	<br>Edit your section's max EXP below.
-</div>
+<div *ngIf="quests">
+	<div>
+		Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! This is where you can create quests and form
+		your
+		section's questmap.
+		<span *ngIf="questMap && questMap.getMaxEXP() == 0">
+			<br><br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating
+			your
+			quest and
+			questmap
+			<br>
+		</span>
+		<br>Edit your section's max EXP below.
+	</div>
 
-<!--Input field for MAX EXP-->
-<div>
-	<input #maxEXP type="number" [value]="questMap? questMap.getMaxEXP(): 0">
-	<button type="submit" (click)="setMaxEXP(maxEXP.value)">
-		Submit
-	</button>
-</div>
+	<!--Input field for MAX EXP-->
+	<div>
+		<input #maxEXP type="number" [value]="questMap? questMap.getMaxEXP(): 0">
+		<button type="submit" (click)="setMaxEXP(maxEXP.value)">
+			Submit
+		</button>
+	</div>
 
-<br>Edit the percentage grade for the students in order to gain a grade of 1.00.
-<!--Input field for flat-one percentage (for setting of blue line in the performance graph)-->
-<div>
-	<input #flatOnePerc type="number" [value]="questMap? questMap.getFlatOnePercentage(): 0">
-	<button type="submit" (click)="setFlatOnePercentage(flatOnePerc.value)">
-		Submit
-	</button>
-</div>
+	<br>Edit the percentage grade for the students in order to gain a grade of 1.00.
+	<!--Input field for flat-one percentage (for setting of blue line in the performance graph)-->
+	<div>
+		<input #flatOnePerc type="number" [value]="questMap? questMap.getFlatOnePercentage(): 0">
+		<button type="submit" (click)="setFlatOnePercentage(flatOnePerc.value)">
+			Submit
+		</button>
+	</div>
 
-<!--Graph for quest map-->
-<div [class.hidden]="(quests && quests.length == 0) || (questMap && (questMap.getMaxEXP() <= 0))">
-	<div class="row">
-		<div style="display: block">
-			<canvas id="quest-map" baseChart width="500" height="500" #chartCanvas></canvas>
+	<!--Graph for quest map-->
+	<div [class.hidden]="(quests && quests.length == 0) || (questMap && (questMap.getMaxEXP() <= 0))">
+		<div class="row">
+			<div style="display: block">
+				<canvas id="quest-map" baseChart width="500" height="500" #chartCanvas></canvas>
+			</div>
 		</div>
 	</div>
-</div>
 
-<table id="hor-zebra" *ngIf="quests && questMap && quests.length > 0" class="quest-table">
-	<thead></thead>
-	<tbody>
-		<tr>
-			<td class="row-header">Quest</td>
-			<td *ngFor="let quest of questMap.getQuestInformationArray()">
-				{{quest.questLabel}}
-			</td>
-		</tr>
-		<tr>
-			<td class="row-header">Max EXP</td>
-			<td *ngFor="let quest of questMap.getQuestInformationArray()">
-				{{quest.quest.getQuestXp()}}
-			</td>
-		</tr>
-		<tr>
-			<td class="row-header">Max HP</td>
-			<td *ngFor="let quest of questMap.getQuestInformationArray()">
-				{{quest.quest.getQuestHp()}}
-			</td>
-		</tr>
-	</tbody>
-</table>
+	<table id="hor-zebra" *ngIf="quests && questMap && quests.length > 0" class="quest-table">
+		<thead></thead>
+		<tbody>
+			<tr>
+				<td class="row-header">Quest</td>
+				<td *ngFor="let quest of questMap.getQuestInformationArray()">
+					{{quest.questLabel}}
+				</td>
+			</tr>
+			<tr>
+				<td class="row-header">Max EXP</td>
+				<td *ngFor="let quest of questMap.getQuestInformationArray()">
+					{{quest.quest.getQuestXp()}}
+				</td>
+			</tr>
+			<tr>
+				<td class="row-header">Max HP</td>
+				<td *ngFor="let quest of questMap.getQuestInformationArray()">
+					{{quest.quest.getQuestHp()}}
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
-<div *ngIf="isCreateModalReady && quests && quests.length == 0">
-	<br>You have no quest yet. Click
-	<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
+	<div *ngIf="isCreateModalReady && quests && quests.length == 0">
+		<br>You have no quest yet. Click
+		<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
+	</div>
 </div>
 
 <ng-container *ngIf="isCreateModalReady">
@@ -120,7 +123,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-3">
-						Quest Badgee:
+						Quest Badge:
 					</div>
 					<div class="col-md-7">
 						<label formArrayName="questBadges" style="margin-right: 5px" *ngFor="let badge of questBadgesArray.controls; let i = index">
@@ -129,6 +132,29 @@
 							</ng-container>
 							{{questBadges[i].badgeName}}
 						</label>
+						<label *ngIf="questBadges.length == 0">
+							No badges for this section yet.
+						</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Quest Prerequisite:
+					</div>
+					<div class="col-md-7">
+						<label formArrayName="questPrerequisite" style="margin-right: 5px" *ngFor="let prereq of questPrerequisite.controls; let i = index">
+							<ng-container [formGroupName]="i">
+								<select formControlName="questId">
+									<option value="''">
+										Select quest prerequisite...
+									</option>
+									<option *ngFor="let quest of quests" [value]="quest.getQuestId()">
+										{{quest.getQuestTitle()}}
+									</option>
+								</select>
+							</ng-container>
+						</label>
+						<label class="clickable" (click)="addQuestPrerequisite()">+ Add a quest prerequisite</label>
 					</div>
 				</div>
 				<div class="row">
@@ -208,6 +234,15 @@
 				<br> + {{this.questClicked.getQuestXp()}} XP
 				<br> + {{this.questClicked.getQuestHp()}} HP
 				<br>
+				<br>Quest Prerequisite:
+				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length > 0">
+					<ng-container *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">
+						<br>{{this.getQuestTitle(prereq)}}
+					</ng-container>
+				</ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length == 0">
+					<br>None
+				</ng-container>
 				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if achieved at least
 					80% when graded) </ng-container>
 			</div>
