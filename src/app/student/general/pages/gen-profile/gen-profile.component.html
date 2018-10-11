@@ -1,0 +1,34 @@
+<!--Performance Section-->
+<section class="performance">
+
+  <h3>My Performance</h3>
+
+  <ng-container *ngIf="!courseSections || courseSections.length == 0">
+    <h6>This is where all your performance in each course will be shown.
+      <br>
+      <br>
+    </h6>Currently you have no enrolled courses or graded tasks.
+  </ng-container>
+  <!--Line Graph for performance-->
+  <div class="row">
+    <div style="display: block">
+      <canvas id="performance-graph" baseChart width="650" height="300" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+    </div>
+  </div>
+
+</section>
+
+<!--Badges Section-->
+<section class="badges">
+  <h3>My Badges</h3>
+  <!--Shows badges if badges exist-->
+  <ng-container *ngIf="badges && badges.length != 0">
+    <div *ngFor="let badge of badges">
+      <img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" />
+    </div>
+  </ng-container>
+  <!--Informs user if he or she has no badges yet-->
+  <ng-container *ngIf="!badges || badges.length == 0">
+    <h6>You have no badges yet.</h6>
+  </ng-container>
+</section>

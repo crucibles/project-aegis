@@ -1,0 +1,86 @@
+<ng-container *ngIf="sections">
+	<!--Search bar-->
+	<div class="search-container">
+		<form (keydown.enter)="search()">
+			<input type="text" placeholder="Search.." [(ngModel)]="course_search" name="course_search">
+			<button type="submit">
+				<i class="fa fa-search"></i>
+			</button>
+		</form>
+	</div>
+
+	<!--Course/Search-Result List Table (also contains search result list)-->
+	<table id="hor-zebra" summary="Course List" sortable-table (sorted)="onSorted($event)">
+		<thead>
+			<tr>
+				<th scope="col" sortable-column="courseName" sort-direction="asc">Course Name</th>
+				<th scope="col" sortable-column="sectionName">Section</th>
+				<th scope="col">Day</th>
+				<th scope="col">Time</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!--Shows if user is searching-->
+			<ng-container *ngIf="isSearching">
+				<!--Shows if no course of same code/name has been found-->
+				<tr *ngIf="!course_found || course_found.length == 0">
+					<td colspan="3" style="text-align: center">Course not found!</td>
+				</tr>
+				<!--Shows if course has been found-->
+				<ng-container *ngIf="course_found && course_found.length != 0" [class.odd]="true">
+					<tr *ngFor="let section of course_found; let i = index;" [class.odd]="i%2 == 0">
+						<td>
+							<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
+						</td>
+						<td>{{section.section.section_name}}</td>
+						<td>
+							<div *ngFor="let schedule of section.section.schedule">
+								{{schedule.day}}
+							</div>
+						</td>
+						<td>
+							<div *ngFor="let schedule of section.section.schedule">
+								{{schedule.minTime}} - {{schedule.maxTime}}
+							</div>
+						</td>
+					</tr>
+				</ng-container>
+			</ng-container>
+			<ng-container *ngIf="!isSearching">
+				<!--Shows if user has no enrolled course-->
+				<tr *ngIf="!sections || sections.length == 0">
+					<td colspan="3" style="text-align: center">You have no course created yet!
+						<br>Create a course now.
+					</td>
+				</tr>
+				<!--AHJ: Fix zebra form-->
+				<ng-container *ngIf="sections != null && sections.length != 0">
+					<tr *ngFor="let section of sections; let i = index;" [class.odd]="i%2 == 0">
+						<ng-container>
+							<td>
+								<a class="clickable" (click)="openSectionPage(section.section._id, section.section)">{{section.course_name}}</a>
+							</td>
+							<td>{{section.section.section_name}}</td>
+							<td>
+								<div *ngFor="let schedule of section.section.schedule">
+									{{schedule.day}}
+								</div>
+							</td>
+							<td>
+								<div *ngFor="let schedule of section.section.schedule">
+									{{schedule.minTime}} - {{schedule.maxTime}}
+								</div>
+							</td>
+						</ng-container>
+					</tr>
+				</ng-container>
+			</ng-container>
+		</tbody>
+	</table>
+</ng-container>
+
+<create-course></create-course>
+
+<ng-container *ngIf="!sections">
+	Loading...
+</ng-container>

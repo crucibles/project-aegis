@@ -1,0 +1,92 @@
+<!--Whole My Course Page (If both course & section has been obtained)-->
+<ng-container *ngIf="currentCourse && currentSection">
+	<div class="course-section">
+		<h3 class="heading">{{currentCourse.getCourseName()}} - {{currentSection.getSectionName()}}</h3>
+		<h6 class="table-label">My Students</h6>
+		<!-- Table for classmate -->
+		<table id="table-classmate" summary="Classmate List">
+			<!-- Table header -->
+			<thead>
+				<tr>
+					<th scope="col">Name</th>
+					<th scope="col">Birthdate</th>
+					<th scope="col">Email</th>
+					<th scope="col">Status</th>
+				</tr>
+			</thead>
+
+			<!-- Table Content -->
+			<tbody>
+				<!--Shows if user has no classmates yet-->
+				<tr *ngIf="!classmates || classmates.length == 0">
+					<td colspan="4" style="text-align: center">
+						You have no students yet!
+					</td>
+				</tr>
+				<!--Shows list of classmates and their respective information-->
+				<ng-container *ngIf="classmates != null && classmates.length != 0">
+					<tr *ngFor="let classmate of classmates; let i = index;" [class.odd]="i%2 == 0">
+						<td>
+							<a class="clickable" (click)="openClassmateProfile(studentTemplate, classmate)">{{classmate.getUserFullName()}}</a>
+						</td>
+						<td>{{classmate.getUserFormattedBirthdate()}}</td>
+						<td>{{classmate.getUserEmail()}}</td>
+						<td [class.clickable]="this.getStudentStatus(classmate.getUserId()) == 'Approve'" (click)="approveStudent(classmate.getUserId())" >
+							{{this.getStudentStatus(classmate.getUserId())}}
+						</td>
+					</tr>
+				</ng-container>
+			</tbody>
+		</table>
+	</div>
+
+	<h4 class="badge-section-title">{{currentCourse.getCourseName()}} Badges</h4>
+	<div class="section-badge" style="margin-top: 20px">
+		<div *ngIf="!this.sectionBadges || this.sectionBadges.length == 0">
+			This section has no badges yet.
+		</div>
+		<!-- Badge Display -->
+		<div *ngIf="this.sectionBadges && this.sectionBadges.length != 0" class="badge-display">
+			<ng-container *ngFor="let badge of sectionBadges">
+				<img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" />
+			</ng-container>
+		</div>
+	</div>
+
+</ng-container>
+<!--Whole My Course Page End-->
+
+<!--If either the course & section has not been loading yet-->
+<ng-container *ngIf="!currentCourse || !currentSection">
+	Loading...
+</ng-container>
+
+
+
+<!-- Modal Template for Students-->
+<ng-template #studentTemplate>
+
+	<!--Modal Header-->
+	<div class="modal-header">
+		<h4 class="modal-title">Student's Profile</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<!--Modal Body-->
+	<div class="modal-body">
+		<div class="row" style="margin-top: 20px">
+
+			<div class="col-sm-4">
+				<img [src]="this.classmateClicked.getUserPhoto()" />
+			</div>
+			<div class="col-sm-8">
+				Name: {{this.classmateClicked.getUserFullName()}}
+				<br> Student No.: {{this.classmateClicked.getUserSchoolId()}}
+				<br> Email: {{this.classmateClicked.getUserEmail()}}
+				<br> Birthdate: {{this.classmateClicked.getUserFormattedBirthdate()}}
+			</div>
+		</div>
+	</div>
+</ng-template>
