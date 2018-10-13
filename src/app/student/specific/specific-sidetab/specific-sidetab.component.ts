@@ -272,7 +272,6 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param questId id of the quest to be submitted
 	 */
 	submitQuest(questId: String, res: any) {
-		console.log(res);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
 

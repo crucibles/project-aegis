@@ -108,7 +108,6 @@ export class GradesComponent implements OnInit {
 	 */
     getCurrentSection() {
         this.currentSection = this.sectionService.getCurrentSection();
-        console.log(this.currentSection);
     }
 
     /**
@@ -123,11 +122,9 @@ export class GradesComponent implements OnInit {
             //obtain section questmap (for flat one perc and max EXP for this section)
             this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
                 let questMap = new QuestMap(questmap);
-                console.log(questMap);
                 let max: number = questMap.getMaxEXP() ? questMap.getMaxEXP() : 10;
                 let flatOnePerc: number = questMap.getFlatOnePercentage() ? questMap.getFlatOnePercentage() : 70;
 
-                console.log(quests);
                 this.quests = quests.map(quest => new Quest(quest));
 
                 //obtain section experiences
@@ -139,14 +136,12 @@ export class GradesComponent implements OnInit {
                         let sectionId = this.currentSection.getSectionId();
                         this.sectionService.getSectionStudents(sectionId).subscribe((students) => {
                             if (students) {
-                                console.log(students);
                                 students.forEach(student => {
                                     //obtain student total EXP
                                     if (student && student.length > 1) {
                                         this.userService.getUser(student).subscribe((user) => {
                                             this.experienceService.getUserExpRecord(new User(user).getUserId(), sectionId).subscribe(res => {
                                                 if (res) {
-                                                    console.log(res);
                                                     this.studentGrades.push({
                                                         student: new User(user),
                                                         total: new Experience(res).getTotalExperience(),
@@ -156,7 +151,6 @@ export class GradesComponent implements OnInit {
 
                                                 this.lineChartData = [];
 
-                                                console.log(this.studentGrades);
                                                 this.studentGrades.forEach(student => {
                                                     this.lineChartColors = this.pageService.lineChartColors;
                                                     let rand: number = this.lineChartData && this.lineChartData.length ? this.lineChartData.length % this.lineChartColors.length : 0;
@@ -174,8 +168,6 @@ export class GradesComponent implements OnInit {
 
                                                     this.lineChartData.push(dataLine);
                                                 });
-
-                                                console.log(this.lineChartData);
 
                                                 if (!this.chart || this.lineChartData.length == 0) {
                                                     let flatOneArr: any[] = [];

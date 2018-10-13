@@ -285,7 +285,6 @@ export class GenSidetabComponent implements OnInit {
 	}
 
 	submitQuest(questId: String, res: any) {
-		console.log(res);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
 
@@ -305,11 +304,7 @@ export class GenSidetabComponent implements OnInit {
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.questSectionIds[this.indexClicked];
 
-		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
-			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-			// 	console.log(x);
-			// })
-		});
+		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {});
 		this.bsModalRef.hide();
 	}
 

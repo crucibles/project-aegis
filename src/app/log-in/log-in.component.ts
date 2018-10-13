@@ -1,8 +1,7 @@
 // Core imports
 import {
     Component,
-    OnInit,
-    ViewChild
+    OnInit
 } from '@angular/core';
 
 import {
@@ -13,7 +12,8 @@ import {
 } from '@angular/forms';
 
 import {
-    Router, ActivatedRoute
+    ActivatedRoute,
+    Router
 } from '@angular/router';
 
 // 3rd Party imports
@@ -25,11 +25,10 @@ import {
     ToastsManager
 } from 'ng2-toastr';
 
+// Application imports
 import {
     User
 } from 'shared/models';
-
-// Application imports
 
 import {
     UserService
@@ -42,18 +41,22 @@ import {
 })
 export class LogInComponent implements OnInit {
     public signupForm: FormGroup;
-
-    private isLoggingIn: boolean = false;
-    returnUrl: string;
     private loginForm: FormGroup;
+    returnUrl: string;
+
+    /**
+     * Determines whether the user is still logging in or not.
+     * Mainly used for the log-in button (whether it is 'Log In' or 'Logging In...')
+     */
+    private isLoggingIn: boolean = false;
 
     constructor(
         formBuilder: FormBuilder,
-        private userService: UserService,
+        private alertService: AlertService,
         private router: Router,
         private route: ActivatedRoute,
-        private alertService: AlertService,
-        private toastr: ToastsManager
+        private toastr: ToastsManager,
+        private userService: UserService,
     ) {
         this.loginForm = formBuilder.group({
             email: [null, Validators.email],

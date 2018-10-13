@@ -190,7 +190,6 @@ export class SpecificQuestMapComponent implements OnInit {
 						console.log(questmap);
 						this.questMap = new QuestMap(questmap);
 						this.questMap.setQuestMapDataSet(this.quests, this.currentSection.getQuests(), this.currentUser, this.sectionEXP, false);
-						console.log(this.questMap.getQuestInformationArray())
 						this.setQuestMap();
 					});
 				});

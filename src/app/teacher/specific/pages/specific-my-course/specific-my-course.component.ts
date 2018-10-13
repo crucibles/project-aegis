@@ -65,7 +65,6 @@ export class SpecificMyCourseComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		console.log(this.sectionService.getCurrentSection());
 		// this.route.paramMap.subscribe(params => {
 		// 	let section_id = params.get('sectionId');
 		// 	console.log(section_id);

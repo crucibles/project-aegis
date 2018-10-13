@@ -130,6 +130,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 	) {
 		this.currentUser = this.userService.getCurrentUser();
+		this.currentSection = new Section(this.sectionService.getCurrentSection());
 	}
 
 	ngOnInit() {
@@ -200,8 +201,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			questPrerequisite: this.formBuilder.array([])
 		});
 
-		console.log(this.createQuestForm);
-		console.log(this.questBadgesArray);
 		this.isCreateModalReady = true;
 	}
 
@@ -238,9 +237,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				this.quests[i].setQuestPrerequisite(tempQuest.getQuestPrerequisite());
 			});
 
-			console.log(this.quests);
-			console.log(this.currentSection);
-
 			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
 				this.questMap = new QuestMap(questmap);
 				this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
@@ -276,8 +272,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	getQuestTitle(questId: string){
 		let quests = this.quests.filter(quest => quest.getQuestId() == questId);
 		let questTitle = quests.length > 0? quests[0].getQuestTitle(): "<No title>";
-		console.log(quests);
-		console.log(questTitle);
 		return this.questMap.getQuestLabel(questId) + " - " + questTitle;
 	}
 
@@ -299,8 +293,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				"Flat One Percentage Error!"
 			);
 		} else {
-			//AHJ: unimplemneted - set flat one in the database
-			console.log(flatOne);
 			this.questService.setFlatOnePercentage(this.questMap.getQuestMapId(), flatOne).subscribe((x) => {
 				if (x) {
 					this.toastr.success(
@@ -441,7 +433,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		if (points.length != 0) {
 			this.x = points[0]._model.x / (this.chartWidth / this.xTick);
 			this.y = (this.chartHeight - points[0]._model.y) / (this.chartHeight / this.yTick);
-			console.log(points);
+
 			if ((this.x % 5 != 0 || this.y % 5 !== 0) || this.questMap.getQuestIdOf(this.x, this.y) == "") {
 				if (!this.questMap.hasQuestPointAtDirection(this.x, this.y)) {
 					this.openCreateQuestModal();
@@ -460,9 +452,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	addQuestPrerequisite() {
-		console.log(this.createQuestForm.value.questPrerequisite);
 		this.questPrerequisite.push(this.formBuilder.group({ questId: "" }));
-		console.log(this.createQuestForm.value.questPrerequisite);
 	}
 
 	openCreateQuestModal(isFromHTML?: boolean) {
@@ -533,7 +523,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			if (newQuestCoordinates.length > 0) {
 				this.questService.addQuestMapCoordinates(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), newQuestCoordinates, prereq).subscribe(questmap => {
 					this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-						console.log("addquestmap");
 						this.questMap = new QuestMap(questmap);
 						this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
 						this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
@@ -553,7 +542,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 			this.questService.editQuestMapCoordinateAt(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), quest._id, basisX, basisY).subscribe(() => {
 				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-					console.log("editquestmap");
 					this.questMap = new QuestMap(questmap);
 					this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
 					this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();

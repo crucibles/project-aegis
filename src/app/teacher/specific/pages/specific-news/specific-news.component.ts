@@ -146,7 +146,6 @@ export class SpecificNewsComponent implements OnInit {
 		);
 
 		this.commentPostService.addCommentPost(newPost).subscribe(x => {
-			console.log(x);
 			this.bsModalRef.hide();
 		});
 	}
@@ -182,7 +181,6 @@ export class SpecificNewsComponent implements OnInit {
 					this.commenters[index] = [];
 					this.comments[index] = [];
 					this.posters = [];
-					console.log(post);
 					this.userService.getUser(post.getUserId()).subscribe(user => {
 						console.warn(user);
 						let newUser = new User(user);
@@ -190,7 +188,6 @@ export class SpecificNewsComponent implements OnInit {
 						post.getPostComments().forEach(postId => {
 							let newComment = newComments.find(comment => comment.getPostCommentId() == postId);
 							if (newComment) {
-								console.log(newComment);
 								this.commentObserver.next({ parent_index: index, comment: newComment });
 							}
 						});
@@ -217,9 +214,6 @@ export class SpecificNewsComponent implements OnInit {
 				return this.getTime(a.getPostDate()) - this.getTime(b.getPostDate());
 			});
 		}
-
-		console.log(this.commentPosts);
-		console.log(this.comments);
 	}
 
 	/**
@@ -282,7 +276,6 @@ export class SpecificNewsComponent implements OnInit {
 		//creates a CommentPost instance of the new comment
 		let newComment: CommentPost = new CommentPost();
 		newComment.setCommentPost(this.section_id, this.currentUser.getUserId(), this.commentContent[parentPostIndex], "", new Date(), true, false, "");
-		console.log(newComment);
 		//add comment to the database
 		//Note to self: must change appendComment to accomodate comment instead of comment_id for fewer querying
 		this.commentPostService.attachComment(newComment, this.commentPosts[parentPostIndex].getPostCommentId()).subscribe(() => {
