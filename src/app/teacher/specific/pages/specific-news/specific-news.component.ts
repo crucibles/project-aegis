@@ -100,6 +100,7 @@ export class SpecificNewsComponent implements OnInit {
 			this.toastr.success("Well done!", "Upload success!");
 			this.fileName = JSON.parse(response).uploadName;
 			this.createNewPost();
+			this.fileName = "";
 		};
 
 		this.setDefault();
@@ -126,6 +127,7 @@ export class SpecificNewsComponent implements OnInit {
 
 	createNewPost() {
 		if (this.createPostForm.invalid) {
+			console.log("invald create post form");
 			//AHJ: unimplemented; how to toaster
 			return;
 		}
@@ -146,8 +148,36 @@ export class SpecificNewsComponent implements OnInit {
 		);
 
 		this.commentPostService.addCommentPost(newPost).subscribe(x => {
+			this.reset();
+			this.appendNewPost(newPost, this.currentUser)
 			this.bsModalRef.hide();
 		});
+	}
+
+	/**
+	 * Appends the newly create post in the commentposts.
+	 * Places the new post in the first index by pushing the existing commentposts.
+	 * @param newPost the newly create post to be appended
+	 * @param poster the poster of the new post
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	appendNewPost(newPost, poster) {
+		this.commentPosts.unshift(newPost);
+		this.posters.unshift(poster);
+		this.commenters.unshift([])
+		this.comments.unshift([]);
+	}
+
+	/**
+	 * Resets the information regarding creating new post.
+	 * Resets the post file and content field.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	reset() {
+		this.createPostForm.reset();
+		this.uploader.clearQueue();
 	}
 
 	/**
@@ -251,7 +281,8 @@ export class SpecificNewsComponent implements OnInit {
 	initializeForm() {
 		this.createPostForm = this.formBuilder.group({
 			commentable: new FormControl("Y", Validators.required),
-			postContent: new FormControl("", Validators.required)
+			postContent: new FormControl("", Validators.required),
+			postFile: new FormControl("")
 		});
 	}
 

@@ -141,10 +141,10 @@
 												<i class="fa fa-paperclip"></i>
 											</label>
 											<!-- File input for the file-upload plugin, with special ng2-file-upload directive called ng2FileSelect -->
-											<input id="file" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader" />
+											<input id="file" formControlName="postFile" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader" />
 										</li>
 										<li *ngIf="uploader.queue.length > 0">
-											<label>
+											<label style="height: 100%; width: 100%">
 												{{uploader.queue[0].file.name}}
 											</label>
 										</li>
