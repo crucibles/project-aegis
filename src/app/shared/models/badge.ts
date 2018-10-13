@@ -40,6 +40,18 @@ export class Badge {
         }
     }
 
+    /**
+     * Sets the badge properties
+     * @param badge_name Name of the badge
+     * @param badge_photo Photo url of the badge
+     * @param badge_description Badge's description
+     * @param badge_conditions Conditions of badge (in Badge model)
+     * @param is_system_badge Determines whether the badge is a system badge or a section badge; 
+     * true if system badge
+     * @param badge_attainers Array of users who owns this badge
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
     setBadge(
         badge_name,
         badge_photo,
@@ -65,11 +77,12 @@ export class Badge {
     }
 
     /**
-     * Returns image with directory
+     * Returns the badge's image directory.
+     * If the badge has no badge photo directory or is empty, the default directory is (imageDir)+"not-found.jpg"
+     * @returns the image directory of the badge
+     * 
+     * @author Sumandang, AJ Ruth H.
      */
-    // getBadgePhoto(): string{
-    //     return this.badge_photo;
-    // }
     getBadgePhoto(): string {
         let image: string = "";
         // if image does not exist or if user has not set an image
@@ -127,6 +140,11 @@ export class Badge {
     }
 }
 
+/**
+ * A class to represent badge conditions.
+ * @property hp, xp, ailment, log_in_streak,log_in_total, 
+ * items, items_used, items_owned, head, left_leg, left_arm, right_leg, right_arm
+ */
 export class Conditions {
     hp: number;
     xp: number;

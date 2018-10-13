@@ -158,7 +158,6 @@ export class InventoryComponent implements OnInit {
 
 	createItem() {
 		console.log("description:" + this.itemForm.value.itemName);
-
 	}
 
 	initializeForm() {

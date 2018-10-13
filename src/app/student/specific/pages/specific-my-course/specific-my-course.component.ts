@@ -99,10 +99,6 @@ export class SpecificMyCourseComponent implements OnInit {
 			this.currentSection = new Section(this.sectionService.getCurrentSection());
 			this.currentCourse = new Course(this.sectionService.getCurrentCourse());
 			this.classmates = [];
-			/*console.log(STUDENTS);
-			STUDENTS.forEach(student => {
-				this.classmates.push(new User(student));
-			});*/
 			this.sectionService.getSectionStudents(sectionId).subscribe((students) => {
 				console.warn(students);
 				students.forEach(student => {

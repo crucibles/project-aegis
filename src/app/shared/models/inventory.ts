@@ -1,6 +1,5 @@
 /**
  * A class to represent inventories
- * @class
  *
  * @property user_id identification of the user owning the inventory
  * @property section_id id of the section where the user inventory belongs to

@@ -536,7 +536,6 @@ export class SectionService {
 			this.currentUserSections.map((section) => {
 				let students = section.section ? section.section.students : section.students;
 				if (this.multiFilter(students, filter).length > 0) {
-					console.log(section);
 					enrolledSections.push(section);
 				}
 			});
@@ -566,8 +565,6 @@ export class SectionService {
 		let enrolledSections = [];
 
 		this.currentUserSections.map((section) => {
-			console.log(section.section);
-			console.log(section.section.students);
 			if (this.multiFilter(section.section.students, filter).length > 0) {
 				enrolledSections.push(section.section._id);
 			}

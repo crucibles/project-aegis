@@ -78,6 +78,13 @@ export class Item {
         return this.item_name;
     }
 
+    /**
+     * Returns the items's image directory.
+     * If the item has no image directory or is empty, the default directory is (imageDir)+"not-found.jpg"
+     * @returns the image directory of the item
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
     getItemPhoto() {
         let image: string = "";
 
