@@ -260,6 +260,63 @@ export class BadgeService {
     }
 
     /**
+     * Gets the default badges for sections.
+     * @returns array of the default section badges (in JSON object)
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    getDefaultSectionBadges(){
+        let badges: any[] = [];
+        let defaultBadges : any[] = [
+            {
+                badge_name: "Rookie Badge",
+                badge_description: "Congratulations on your first badge out of the six ranked badges. Get more EXP to gain the other remaining badges!",
+                badge_photo: "rookie_badge.png"
+            },
+            {
+                badge_name: "Adept Badge",
+                badge_description: "This is the second badge out of the six ranked badges. Get more EXP to gain the other remaining badges.",
+                badge_photo: "adept_badge.png"
+            },
+            {
+                badge_name: "Novice Badge",
+                badge_description: "This is the third badge out of the six ranked badges. Get more EXP to gain the other remaining badges!",
+                badge_photo: "novice_badge.png"
+            },
+            {
+                badge_name: "Intermediate Badge",
+                badge_description: "The fourth badge! Two more to gain and you're good to go!",
+                badge_photo: "intermediate_badge.png"
+            },
+            {
+                badge_name: "Expert Badge",
+                badge_description: "The fifth badge out of six ranked badges. You're almost there!",
+                badge_photo: "expert_badge.png"
+            },
+            {
+                badge_name: "Master Badge",
+                badge_description: "Rewarded to those loyal and faithful enough to complete their given quest. Congratulations!",
+                badge_photo: "master_badge.png"
+            },
+        ];
+
+        let conditions = new Conditions();
+
+        defaultBadges.forEach(badge => {
+            badges.push({
+                badge_name: badge.badge_name,
+                badge_description: badge.badge_description,
+                badge_photo: badge.badge_photo,
+                badge_conditions: conditions.getJSONObject(),
+                is_system_badge: false,
+                badge_attainers: []
+            });
+        }); 
+
+        return badges;
+    }
+
+    /**
      * Handle Http operation that failed.
      * Let the app continue.
      * @param operation - name of the operation that failed

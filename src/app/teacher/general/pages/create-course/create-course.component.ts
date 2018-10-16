@@ -13,17 +13,22 @@ import {
 	Validators
 } from '@angular/forms';
 
+//Third-party Imports
+import {
+	ToastsManager
+} from 'ng2-toastr';
+
 // Application Imports
 import {
 	User, Section, Course
 } from 'shared/models';
 
 import {
+	BadgeService,
 	PageService,
 	UserService,
 	SectionService
 } from 'shared/services';
-import { ToastsManager } from 'ng2-toastr';
 
 @Component({
 	selector: 'create-course',
@@ -52,6 +57,7 @@ export class CreateCourseComponent implements OnInit {
 	isShowSideTab: boolean = false;
 
 	constructor(
+		private badgeService: BadgeService,
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
 		private pageService: PageService,
@@ -151,15 +157,15 @@ export class CreateCourseComponent implements OnInit {
 		let sched = [];
 		sched = this.sectionForm.value.scheduleDays;
 		let schedule = sched.filter((sched) => {
-			if(sched.isChecked){
+			if (sched.isChecked) {
 				return sched;
 			}
 		}).map((sched) => {
 			sched.maxTime = new Date(sched.maxTime).toLocaleTimeString();
 			sched.minTime = new Date(sched.minTime).toLocaleTimeString();
 			return sched;
-		})
-		
+		});
+
 		newSection.setSection("", this.sectionForm.value.courseSection, [], this.currentUser.getUserFullName(), [], [], [], schedule);
 		console.warn("NEW SECTION", newSection);
 		let newCourse: Course = new Course();
@@ -173,7 +179,7 @@ export class CreateCourseComponent implements OnInit {
 			this.currentUser.getUserId(),
 			[],
 			[],
-			[],
+			this.badgeService.getDefaultSectionBadges(),
 			schedule
 		).subscribe(marj => {
 			this.pageService.isCourseCreated(true);

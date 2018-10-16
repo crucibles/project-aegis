@@ -252,6 +252,25 @@ export class Conditions {
         return this.right_arm;
     }
 
+    getJSONObject(){
+        let badge: any = {
+            hp: this.hp,
+            xp: this.xp,
+            ailment: this.ailment,
+            log_in_streak: this.log_in_streak,
+            log_in_total: this.log_in_total,
+            items: this.items,
+            items_used: this.items_used,
+            items_owned: this.items_owned,
+            head: this.head,
+            left_leg: this.left_leg,
+            right_leg: this.right_leg,
+            left_arm: this.left_arm,
+            right_arm: this.right_arm
+        }
+        return badge;
+    }
+
     setHp(hp) {
         this.hp = hp;
     }
