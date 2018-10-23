@@ -21,7 +21,7 @@ export class QuestMap {
 		this.quests = this.sortQuestsByDate(quests);
 		this._id = data._id;
 		this.max_exp = data && data.max_exp ? data.max_exp : 0;
-		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 80; 
+		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 0; 
 		this.setQuestMapDataSet(data, quests, isTeacher);
 	}
 
@@ -121,7 +121,7 @@ export class QuestMap {
 					}],
 					backgroundColor: "#000",
 					borderColor: "#000",
-					pointHoverRadius: 9,
+					pointHoverRadius: 12,
 					radius: 10,
 					showLine: false
 				};

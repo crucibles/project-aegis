@@ -31,8 +31,6 @@ import {
 })
 export class SignUpComponent implements OnInit {
     private signupForm: FormGroup;
-    // To determine the a duplicate email upon input.
-    duplicate: string = null;
     // Stored here is the security questions in the sign up form.
     private questions: string[] = new Array();
 
@@ -43,35 +41,37 @@ export class SignUpComponent implements OnInit {
         private toastr: ToastsManager
     ) {
         this.signupForm = formBuilder.group({
-            schoolId: null,
             firstName: null,
             middleName: null,
             lastName: null,
             birthdate: null,
+            schoolId: null,
+            contactNumber: null,
             // Validates the format of the email input.
             email: [null, Validators.email],
+            home: null,
             password: null,
             confirmPassword: null,
-            type: null,
-            contactNumber: null,
             securityQuestion: null,
-            securityAnswer: null
+            securityAnswer: null,
+            type: null
         });
-        this.duplicate = null;
     }
 
     submit() {
-        let schoolId = this.signupForm.value.schoolId;
         let firstName = this.signupForm.value.firstName;
         let middleName = this.signupForm.value.middleName;
         let lastName = this.signupForm.value.lastName;
         let birthdate = this.signupForm.value.birthdate;
-        let email = this.signupForm.value.email;
-        let password = this.signupForm.value.password;
-        let type = this.signupForm.value.type;
+        let schoolId = this.signupForm.value.schoolId;
         let contactNumber = this.signupForm.value.contactNumber;
+        let email = this.signupForm.value.email;
+        let home = this.signupForm.value.home;
+        let password = this.signupForm.value.password;
         let securityQuestion = this.signupForm.value.securityQuestion;
         let securityAnswer = this.signupForm.value.securityAnswer;
+        let type = this.signupForm.value.type;
+        let verified = false;
         let userConditions = {
             hp: "",
             xp: 0,
@@ -88,22 +88,22 @@ export class SignUpComponent implements OnInit {
             left_arm: "",
             right_arm: "",
         }
-        let verified = false;
 
         this.userService.register(
-            schoolId,
             firstName,
             middleName,
             lastName,
             birthdate,
-            email,
-            password,
-            type,
+            schoolId,
             contactNumber,
+            email,
+            home,
+            password,
             securityQuestion,
             securityAnswer,
-            userConditions,
-            verified
+            type,
+            verified,
+            userConditions
         ).subscribe(newUser => {
             if (newUser) {
                 // Successful registration of user and redirects to login page.
@@ -111,9 +111,7 @@ export class SignUpComponent implements OnInit {
                 this.toastr.success("An email has been sent to " + email + ". Please verify before loggin in.", "Verifying Account");
             } else {
                 // Unsuccessful registration of new user because of email already existing.
-                // Sets signal to prompt warning message of already existing email.
-                this.toastr.warning("Email already existed", "Failed to register");
-                this.duplicate = email;
+                this.toastr.warning("Email " + email + " already existed.", "Failed to register");
             }
         });
     }
@@ -127,12 +125,41 @@ export class SignUpComponent implements OnInit {
         });
     }
 
-    // Resets the form inputs and the duplicate email warning signal.
+    // Resets the form inputs.
     reset() {
-        this.duplicate = null;
         this.signupForm.reset();
     }
 
+    // Checks if the input in the 'confirmPassword' form is not correct.
+    // Used to call the ".errConfirmClass" in the CSS file. Cannot be combined with "confirmPass()".
+    errConfirmPass() {
+        if (
+            this.signupForm.get('confirmPassword').dirty && 
+            (this.signupForm.get('confirmPassword').value != this.signupForm.get('password').value)
+        ) {
+            return true;
+        } else return false;
+    }
+
+    // Checks if the input in the 'confirmPassword' form is correct.
+    // Used to call the ".confirmClass" in the CSS file. Cannot be combined with "errConfirmPass()".
+    confirmPass() {
+        if (
+            this.signupForm.get('confirmPassword').dirty && 
+            (this.signupForm.get('confirmPassword').value == this.signupForm.get('password').value)
+        ) {
+            return true;
+        } else return false;
+    }
+
+    // Checks if the input in the 'securityQuestion' is set.
+    selectSecurityQuestion() {
+        if (this.signupForm.get('securityQuestion').dirty && this.signupForm.get('securityQuestion').valid) {
+            return true;
+        } else return false;
+    }
+
+    // Redirects the user in the login page.
     userLogin() {
         this.router.navigate(['/log-in']);
     }
@@ -159,6 +186,10 @@ export class SignUpComponent implements OnInit {
 
     get email() {
         return this.signupForm.get('email') as FormControl;
+    }
+
+    get home() {
+        return this.signupForm.get('home') as FormControl;
     }
 
     get password() {

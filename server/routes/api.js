@@ -1680,20 +1680,21 @@ router.post('/signup', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         var newUserObj = {
-            user_school_id: req.body.schoolId,
             user_fname: req.body.firstName,
             user_mname: req.body.middleName,
             user_lname: req.body.lastName,
             user_birthdate: req.body.birthdate,
-            user_email: req.body.email,
-            user_password: req.body.password,
-            user_type: req.body.type,
+            user_school_id: req.body.schoolId,
             user_contact_no: req.body.contactNumber,
-            user_photo: null,
+            user_email: req.body.email,
+            user_home: req.body.home,
+            user_password: req.body.password,
             user_security_question: req.body.securityQuestion,
             user_security_answer: req.body.securityAnswer,
-            user_conditions: req.body.userConditions,
-            user_verified: req.body.verified
+            user_photo: null,
+            user_type: req.body.type,
+            user_verified: req.body.verified,
+            user_conditions: req.body.userConditions
         };
 
         myDB.collection('users')

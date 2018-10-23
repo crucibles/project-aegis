@@ -38,6 +38,7 @@
 </div>
 
 <!--Graph for quest map-->
+<!-- <div [class.hidden]="(quests && quests.length == 0) || (questMap && (questMap.getMaxEXP() <= 0))"> -->
 <div [class.hidden]="(quests && quests.length == 0) || (questMap && (questMap.getMaxEXP() <= 0))">
 	<div class="row">
 		<div style="display: block">
@@ -70,7 +71,7 @@
 	</tbody>
 </table>
 
-<div *ngIf="isCreateModalReady && quests && quests.length == 0">
+<div *ngIf="isCreateModalReady && questMap && questMap.getFlatOnePercentage() != 0 && questMap.getMaxEXP() != 0 && quests.length == 0">
 	<br>You have no quest yet. Click
 	<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
 </div>
@@ -120,7 +121,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-3">
-						Quest Badgee:
+						Quest Badge:
 					</div>
 					<div class="col-md-7">
 						<label formArrayName="questBadges" style="margin-right: 5px" *ngFor="let badge of questBadgesArray.controls; let i = index">
