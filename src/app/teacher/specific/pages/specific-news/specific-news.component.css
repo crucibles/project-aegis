@@ -202,6 +202,8 @@ margin-right: 7px;
   height: auto;
 }
 .class-posts .post .post-description {
+  display: block;
+  width: 100%;
   padding: 15px;
 }
 

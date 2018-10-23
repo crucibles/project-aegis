@@ -48,7 +48,7 @@ import {
 	UserService,
 	QuestService,
 	LeaderboardService,
-    ExperienceService,
+	ExperienceService,
 	BadgeService
 } from 'shared/services';
 
@@ -146,7 +146,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	getBadgeName(badge_id: any) {
-		if(badge_id){
+		if (badge_id) {
 			this.badgeService.getBadge(badge_id).subscribe(res => {
 				this.badgeName = new Badge(res).getBadgeName();
 			});
@@ -172,6 +172,14 @@ export class SpecificQuestMapComponent implements OnInit {
 	loadQuestMap() {
 		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
 			this.quests = quests.map(quest => new Quest(quest));
+			//inserts quest prerequisite from the Section('quests' field) to the Quests 
+			this.quests.forEach((quest, i) => {
+				let tempQuests: SectionQuest[] = this.currentSection.getQuests().filter(
+					sectionQuest => sectionQuest.getSectionQuestId() == quest.getQuestId()
+				);
+				let tempQuest: SectionQuest = tempQuests.length > 0 ? tempQuests[0] : new SectionQuest();
+				this.quests[i].setQuestPrerequisite(tempQuest.getQuestPrerequisite());
+			});
 			this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
 				.subscribe(EXP => {
 					if (EXP && EXP.length > 0) {
@@ -180,8 +188,8 @@ export class SpecificQuestMapComponent implements OnInit {
 					this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
 						console.log("QUESTMAP LOADEd");
 						console.log(questmap);
-						this.questMap = new QuestMap(questmap, this.quests);
-						console.log(this.questMap.getQuestInformationArray())
+						this.questMap = new QuestMap(questmap);
+						this.questMap.setQuestMapDataSet(this.quests, this.currentSection.getQuests(), this.currentUser, this.sectionEXP, false);
 						this.setQuestMap();
 					});
 				});
@@ -344,18 +352,28 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.joinQuest(user_id, quest_id, section_id).subscribe((result) => {
-			this.setNewSection(quest_id);
+			console.log("result");
+			console.log(result);
+			this.setNewSection();
 			this.questModalRef.hide();
-			this.toaster.success('Added quest','Quest Joined');
+			this.toaster.success('Added quest', 'Quest Joined');
 		});
-
 	}
 
-	setNewSection(quest_id) {
+	setNewSection() {
 		this.sectionService.getUserSections(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(
 			sections => {
+				console.log("old section");
+				console.log(this.currentSection);
+				console.log("new section");
+				console.log(sections[0].section);
 				this.sectionService.setCurrentSection(sections[0].section);
 				this.currentSection = new Section(this.sectionService.getCurrentSection());
+				console.log("new section");
+				console.log(this.currentSection);
+				this.questMap.setQuestMapDataSet(this.quests, this.currentSection.getQuests(), this.currentUser, this.sectionEXP, false);
+				this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
+				this.chart.update();
 			}
 		);
 	}
@@ -371,12 +389,13 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.submitQuest(res, this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
+			this.setNewSection();
 			this.isQuestTakn = true;
 			this.pending = true;
 			this.commentBox = "";
 			this.setNewExperience();
 			this.questModalRef.hide();
-			this.toaster.success('Quest done','Quest Submitted');
+			this.toaster.success('Quest done', 'Quest Submitted');
 		});
 	}
 
@@ -407,12 +426,29 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.questModalRef.hide();
 	}
 
+	/**
+	 * Retrieve quest title of a certain quest.
+	 * Used for HTML on displaying quest title for the quest modal.
+	 * @param questId id of the quest whose title is to be retrieved
+	 * @returns the title of the quest
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	getQuestTitle(questId: string) {
+		let quests = this.quests.filter(quest => quest.getQuestId() == questId);
+		let questTitle = quests.length > 0 ? quests[0].getQuestTitle() : "<No title>";
+		console.log(quests);
+		console.log(questTitle);
+		return this.questMap.getQuestLabel(questId) + " - " + questTitle;
+	}
+
 	isParticipating(quest_id: string): boolean {
 		let isParticipant = this.currentSection.isQuestParticipant(this.currentUser.getUserId(), quest_id);
 
 		return isParticipant;
 	}
 
+	//AHJ: unoptimized: is this deprecated?
 	isQuestTaken(quest_id: string): boolean {
 		let isQuestTaken = this.isQuestTakn;
 		//AHJ: unimplemented; if questService.getQuestExp working, then uncomment comment below

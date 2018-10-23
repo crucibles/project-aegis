@@ -164,7 +164,6 @@ export class CreateCourseComponent implements OnInit {
 		console.warn("NEW SECTION", newSection);
 		let newCourse: Course = new Course();
 		newCourse.setCourse(this.sectionForm.value.courseName, this.sectionForm.value.courseDescription);
-		console.log(newCourse);
 		//AHJ: unimplemented; use section service to add section and course to the database
 		this.sectionService.createCourseSection(
 			this.sectionForm.value.courseName,

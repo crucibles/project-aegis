@@ -239,6 +239,7 @@ export class Student {
      * @param showFullWord (optional) Shows full word instead of single character; default is false
      * - True if full word ("Enrolled" or "Requesting")
      * - False if single character only
+     * @returns (string) status of the student; single char or full word depending on the received parameter.
      */
     getStatus(showFullWord?: boolean) {
         let studentStatus: string = this.status;
@@ -312,11 +313,14 @@ export class SectionQuest {
     }
 
     /**
-     * Identifies whether a student is a participant of a quest or not. Returns true if student is a participant of the quest; false if otherwise
+     * Identifies whether a student is a participant of a quest or not.
      * @param user_id Id of the student whose participation is needed to be confirmed
+     * @returns True if student is a participant of the quest; false if otherwise
+     * 
+     * @author Sumandang, AJ Ruth H.
      */
-    searchParticipant(user_id: string): string{
-        let participant = this.quest_participants.filter(id => user_id == id)[0];
-        return participant;
+    searchParticipant(user_id: string): boolean{
+        let participant = this.quest_participants.filter(id => user_id == id);
+        return participant.length > 0;
     }
 }

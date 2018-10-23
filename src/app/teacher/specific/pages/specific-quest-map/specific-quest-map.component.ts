@@ -49,7 +49,8 @@ import {
 	SectionQuest,
 	User,
 	QuestMap,
-	Badge
+	Badge,
+	Experience
 } from 'shared/models';
 
 import {
@@ -130,6 +131,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 	) {
 		this.currentUser = this.userService.getCurrentUser();
+		this.currentSection = new Section(this.sectionService.getCurrentSection());
 	}
 
 	ngOnInit() {
@@ -176,6 +178,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			badges => {
 				console.warn(badges);
 				badges = badges.map(badge => new Badge(badge));
+				this.questBadges = [];
 				this.questBadges = badges.map(function week(badge) {
 					let obj = {
 						badgeId: badge.getBadgeId(),
@@ -202,7 +205,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			questEXP: new FormControl("", [Validators.required, Validators.pattern("[0-9]+")]),
 			questHP: new FormControl("", Validators.pattern("[0-9]+")),
 			questBadges: this.buildBadges(),
-			questEndDate: new FormControl("", Validators.required)
+			questEndDate: new FormControl("", Validators.required),
+			questPrerequisite: this.formBuilder.array([])
 		});
 
 		this.isCreateModalReady = true;
@@ -232,8 +236,18 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	loadQuestMap() {
 		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
 			this.quests = quests.map(quest => new Quest(quest));
+			//inserts quest prerequisite from the Section('quests' field) to the Quests 
+			this.quests.forEach((quest, i) => {
+				let tempQuests: SectionQuest[] = this.currentSection.getQuests().filter(
+					sectionQuest => sectionQuest.getSectionQuestId() == quest.getQuestId()
+				);
+				let tempQuest: SectionQuest = tempQuests.length > 0 ? tempQuests[0] : new SectionQuest();
+				this.quests[i].setQuestPrerequisite(tempQuest.getQuestPrerequisite());
+			});
+
 			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-				this.questMap = new QuestMap(questmap, this.quests, true);
+				this.questMap = new QuestMap(questmap);
+				this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
 				this.setQuestMap();
 			});
 		});
@@ -256,6 +270,20 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
+	 * Retrieve quest title of a certain quest.
+	 * Used for HTML on displaying quest title for the quest modal.
+	 * @param questId id of the quest whose title is to be retrieved
+	 * @returns the title of the quest
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	getQuestTitle(questId: string){
+		let quests = this.quests.filter(quest => quest.getQuestId() == questId);
+		let questTitle = quests.length > 0? quests[0].getQuestTitle(): "<No title>";
+		return this.questMap.getQuestLabel(questId) + " - " + questTitle;
+	}
+
+	/**
 	 * Sets all the default less-related functions/properties of the component
 	 */
 	setDefault() {
@@ -273,8 +301,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				"Flat One Percentage Error!"
 			);
 		} else {
-			//AHJ: unimplemneted - set flat one in the database
-			console.log(flatOne);
 			this.questService.setFlatOnePercentage(this.questMap.getQuestMapId(), flatOne).subscribe((x) => {
 				if (x) {
 					this.toastr.success(
@@ -415,12 +441,13 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		if (points.length != 0) {
 			this.x = points[0]._model.x / (this.chartWidth / this.xTick);
 			this.y = (this.chartHeight - points[0]._model.y) / (this.chartHeight / this.yTick);
-			console.log(points);
+
 			if ((this.x % 5 != 0 || this.y % 5 !== 0) || this.questMap.getQuestIdOf(this.x, this.y) == "") {
 				if (!this.questMap.hasQuestPointAtDirection(this.x, this.y)) {
 					this.openCreateQuestModal();
 				} else {
-					this.addNewQuestLine();
+					//AHJ: unimplemented/unoptimized; this is deprecated because empty quest points are no longer displayed (QUEST TAG "?")
+					this.addNewQuestLine("", []);
 				}
 			} else {
 				var questId = this.questMap.getQuestIdOf(this.x, this.y);
@@ -430,6 +457,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				}
 			}
 		}
+	}
+
+	addQuestPrerequisite() {
+		this.questPrerequisite.push(this.formBuilder.group({ questId: "" }));
 	}
 
 	openCreateQuestModal(isFromHTML?: boolean) {
@@ -445,14 +476,21 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 	createQuest() {
 		let questBadgesArr = [];
+		let questPrereq = [];
 
 		this.createQuestForm.value.questBadges.forEach(badge => {
 			if (badge.isChecked) {
 				questBadgesArr.push(badge.badge);
 			}
-		})
+		});
+
+		this.createQuestForm.value.questPrerequisite.forEach(prereq => {
+			if (prereq.questId != "''") {
+				questPrereq.push(prereq.questId);
+			}
+		});
+
 		let newQuest: Quest = new Quest();
-		//newQuest.setQuest()
 		this.questService.createQuest(
 			this.currentSection.getSectionId(),
 			this.questTitle.value,
@@ -465,11 +503,11 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			new Date(),
 			this.questEndDate.value,
 			"",
-			""
+			questPrereq
 		).subscribe(quest => {
 			quest = new Quest(quest);
 			this.quests.push(quest);
-			this.addNewQuestLine(quest);
+			this.addNewQuestLine(quest, questPrereq);
 			this.bsModalRef.hide();
 			this.resetQuest();
 			// this.loadQuestMap();
@@ -485,16 +523,17 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		this.badgeName = "";
 	}
 
-	addNewQuestLine(quest?) {
+	addNewQuestLine(quest, prereq) {
 		//AHJ: unimplemented; add to database so questmap is refreshed
 		// if the clicked point is a '+' sign
 		if (this.x % 5 != 0 || this.y % 5 != 0) {
 			let newQuestCoordinates: any[] = this.questMap.addNewQuestLine(this.x, this.y, quest);
 
 			if (newQuestCoordinates.length > 0) {
-				this.questService.addQuestMapCoordinates(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), newQuestCoordinates).subscribe(questmap => {
+				this.questService.addQuestMapCoordinates(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), newQuestCoordinates, prereq).subscribe(questmap => {
 					this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-						this.questMap = new QuestMap(questmap, this.quests, true);
+						this.questMap = new QuestMap(questmap);
+						this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
 						this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
 						this.chart.update();
 					});
@@ -513,7 +552,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 			this.questService.editQuestMapCoordinateAt(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), quest._id, basisX, basisY).subscribe(() => {
 				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-					this.questMap = new QuestMap(questmap, this.quests, true);
+					this.questMap = new QuestMap(questmap);
+					this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
 					this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
 					this.chart.update();
 				});
@@ -542,8 +582,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		return this.createQuestForm.get('questBadges') as FormArray;
 	}
 
-	get questDescription(): FormArray {
-		return this.createQuestForm.get('questDescription') as FormArray;
+	get questDescription() {
+		return this.createQuestForm.get('questDescription');
 	}
 
 	get questRetakable() {
@@ -556,6 +596,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 	get questEndDate() {
 		return this.createQuestForm.get('questEndDate');
+	}
+
+	get questPrerequisite(): FormArray {
+		return this.createQuestForm.get('questPrerequisite') as FormArray;
 	}
 
 	get questEXP() {

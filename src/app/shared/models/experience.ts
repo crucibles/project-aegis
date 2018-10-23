@@ -60,18 +60,9 @@ export class Experience {
      * Retrieves a student's grade for a particular quest
      * @param quest_id the id of the quest whose user submission is to be retrieved.
      */
-    getQuestSubmissionGrade(quest_id): any {
+    getQuestSubmissionComment(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        return questSubmission.length > 0 && questSubmission[0].quest_grade ? questSubmission[0].quest_grade : "";
-    }
-
-    /**
-     * Retrieves a student's grade for a particular quest
-     * @param quest_id the id of the quest whose user submission is to be retrieved.
-     */
-    isQuestGraded(quest_id): boolean {
-        let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        return questSubmission.length > 0 && questSubmission[0].is_graded ? questSubmission[0].is_graded : false;
+        return questSubmission.length > 0 && questSubmission[0].comment ? questSubmission[0].comment : "";
     }
 
     /**
@@ -84,35 +75,13 @@ export class Experience {
         return questSubmission.length > 0 && questSubmission[0].date_submitted ? questSubmission[0].date_submitted : "";
     }
 
-    hasSubmittedQuest(quest_id): boolean {
-        return this.getQuestSubmissionDate(quest_id) != "";
-    }
-
     /**
      * Retrieves a student's grade for a particular quest
      * @param quest_id the id of the quest whose user submission is to be retrieved.
      */
-    getQuestSubmissionComment(quest_id): any {
+    getQuestSubmissionGrade(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        return questSubmission.length > 0 && questSubmission[0].comment ? questSubmission[0].comment : "";
-    }
-
-    /**
-     * Retrieves a student's grade for a particular quest
-     * @param quest_id the id of the quest whose user submission is to be retrieved.
-     */
-    isStudentQuestGraded(quest_id): any {
-        let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        return questSubmission.length > 0 && questSubmission[0].is_graded ? questSubmission[0].is_graded : false;
-    }
-
-    setIsGraded(quest_id) {
-        this.quests_taken = this.quests_taken.map(quest => {
-            if (quest.quest_id == quest_id) {
-                quest.is_graded = true;
-            }
-            return quest;
-        });
+        return questSubmission.length > 0 && questSubmission[0].quest_grade ? questSubmission[0].quest_grade : "";
     }
 
     getWeeklyAccumulativeGrades(): number[] {
@@ -193,5 +162,53 @@ export class Experience {
             }
         });
         return week;
+    }
+
+    /**
+     * Determines if user had accomplished the quest.
+     * @param quest_id Id of the quest whose user's completion is to be checked.
+     * @return true if user had accomplished the quest; false if not
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    hasSubmittedQuest(quest_id): boolean {
+        return this.getQuestSubmissionDate(quest_id) != "";
+    }
+
+    /**
+     * Retrieves a student's grade for a particular quest.
+     * @param quest_id the id of the quest whose user submission is to be retrieved.
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    isQuestGraded(quest_id): boolean {
+        let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
+        return questSubmission.length > 0 && questSubmission[0].is_graded ? questSubmission[0].is_graded : false;
+    }
+
+    /**
+     * Retrieves a student's grade for a particular quest
+     * @param quest_id the id of the quest whose user submission is to be retrieved.
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    isStudentQuestGraded(quest_id): any {
+        let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
+        return questSubmission.length > 0 && questSubmission[0].is_graded ? questSubmission[0].is_graded : false;
+    }
+
+    /**
+     * Sets that a quest is already graded.
+     * @param quest_id id of the quest who graded status is to be affirm.
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    setIsGraded(quest_id) {
+        this.quests_taken = this.quests_taken.map(quest => {
+            if (quest.quest_id == quest_id) {
+                quest.is_graded = true;
+            }
+            return quest;
+        });
     }
 }

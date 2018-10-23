@@ -126,6 +126,13 @@ export class Quest {
         return this.quest_start_date;
     }
 
+    /**
+     * Returns a formatted time of the quest.
+     * @param date_obj Date object to be formatted.
+     * @returns the formatted time of format HH:MM AM/PM
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
     getQuestFormatTime(date_obj) {
 		// formats a javascript Date object into a 12h AM/PM time string
 		var hour = date_obj.getHours();

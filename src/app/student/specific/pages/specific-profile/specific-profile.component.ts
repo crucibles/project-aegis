@@ -120,8 +120,7 @@ export class SpecificProfileComponent implements OnInit {
         // Obtaining max EXP & flat-one grade percentage
         this.questService.getSectionQuestMap(this.currentSection.getSectionId())
             .subscribe(questmap => {
-                let questMap = new QuestMap(questmap, []);
-                console.log(questMap);
+                let questMap = new QuestMap(questmap);
                 let max: number = questMap.getMaxEXP() ? questMap.getMaxEXP() : 10;
                 let flatOnePerc: number = questMap.getFlatOnePercentage() ? questMap.getFlatOnePercentage() : 70;
 

@@ -1,4 +1,19 @@
-import { Quest } from "shared/models/quest";
+//Application Imports
+import {
+	Experience
+} from "shared/models/experience";
+
+import {
+	Quest
+} from "shared/models/quest";
+
+import {
+	SectionQuest
+} from "shared/models/section";
+
+import {
+	User
+} from "shared/models/user";
 
 
 /**
@@ -14,20 +29,33 @@ export class QuestMap {
 	private max_exp: number;
 	private mainquestY: number;
 	private questCoordinates: any[];
+	private tempquestCoord: any[];
 	private quests: Quest[];
 
-	constructor(data, quests: Quest[], isTeacher?: boolean) {
+	/**
+	 * Constructor for Quest Map 
+	 *  
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	constructor(data) {
 		this.mainquestY = 25;
-		this.quests = this.sortQuestsByDate(quests);
 		this._id = data._id;
 		this.max_exp = data && data.max_exp ? data.max_exp : 0;
-		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 0; 
-		this.setQuestMapDataSet(data, quests, isTeacher);
+		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 80;
+		this.tempquestCoord = data.quest_coordinates;
 	}
 
-	private sortQuestsByDate(quests: Quest[]): Quest[]{
+	/**
+	 * Sorts the quests according to date.
+	 * Used especially for correct quest map label/tags (e.g A, J1, Z15 on the quest points)
+	 * @param quests the quests to sort
+	 * @returns sorted quests by date
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	private sortQuestsByDate(quests: Quest[]): Quest[] {
 		quests = quests.map(quest => new Quest(quest));
-		quests.sort((a, b)=> {
+		quests.sort((a, b) => {
 			return this.getTime(a.getQuestStartTimeDate()) - this.getTime(b.getQuestStartTimeDate());
 		})
 		return quests;
@@ -36,11 +64,13 @@ export class QuestMap {
 	/**
 	 * Returns time of the received date; useful for undefined checking 
 	 * @param date date whose time is to be retrieved
+	 * 
+	 * @author Sumandang, AJ Ruth H.
 	 */
-    private getTime(date?: Date) {
-        date = new Date(date);
-        return date != null ? date.getTime() : 0;
-    }
+	private getTime(date?: Date) {
+		date = new Date(date);
+		return date != null ? date.getTime() : 0;
+	}
 
 	/**
 	 * Returns questmap datasets.
@@ -62,19 +92,43 @@ export class QuestMap {
 		return this._id;
 	}
 
-	getQuestLabel(questId: string): string{
+	/**
+	 * Gets the appropriate quest label of a quest point (e.g. A, B) based on its date creation.
+	 * If quest index exceeds alphabet Z, a numerical value will be attached to it (e.g. A1, G3).
+	 * @param questId id of the quest whose 
+	 * @returns the label/tag of the quest in the quest map.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 * (AHJ: question - if a quest in the midst of the sorted array, all of the labels will changed.
+	 * Is this a problem or not?)
+	 */
+	getQuestLabel(questId: string): string {
 		let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		let index = this.quests.findIndex(quest => quest.getQuestId() == questId);
 		let addtlIndex: string = "";
-		if(index > alphabet.length - 1){
-			addtlIndex = (index / alphabet.length) + "";
+
+		if (index > alphabet.length - 1) {
+			addtlIndex = Math.floor(index / alphabet.length) + "";
 			index = index % alphabet.length;
 		}
 
-		return index < 0? "?": alphabet.charAt(index) + addtlIndex;
+		let label: string = alphabet.charAt(index) + addtlIndex;
+
+		return index < 0 ? "?" : label;
 	}
 
-	getQuestInformationArray(){
+	/**
+	 * Gets the quests and their respective label. 
+	 * Mainly used for HTML.
+	 * @returns an array of object with properties quest and quest label.
+	 * @example object = {
+	 * 	quest: <some-Quest-value>
+	 * 	questLabel: <some-string-value>
+	 * }
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	getQuestInformationArray() {
 		let questArray: any[] = [];
 		this.quests.forEach((quest) => {
 			questArray.push({
@@ -85,16 +139,85 @@ export class QuestMap {
 		return questArray;
 	}
 
-	setFlatOnePercentage(flatOne: number){
-		this.flat_one_perc = flatOne? flatOne: 80;
+	setFlatOnePercentage(flatOne: number) {
+		this.flat_one_perc = flatOne ? flatOne : 80;
 	}
 
 	setMaxEXP(maxEXP: number) {
 		this.max_exp = maxEXP;
 	}
 
-	setQuestMapDataSet(data: any, quests: Quest[], isTeacher) {
-		let questMapDetails = this.getQuestMapDetails(data.quest_coordinates);
+	/**
+	 * Determines if the user has accomplished all quest prerequisite for a certain quest.
+	 * A quest is only considered accomplished if the submission has been graded by the teacher.
+	 * @param questId the id of the quest whose quest prerequisites are to be checked 
+	 * @returns true if all quest prerequisites had graded submissions; false if not.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	passQuestPrerequisites(questId: string, experience: Experience) {
+		let hasPass: boolean = true;
+		let questPrereq: string[] = this.quests.filter(quest => quest.getQuestId() == questId).length > 0 ?
+			this.quests.filter(quest => quest.getQuestId() == questId)[0].getQuestPrerequisite() : [];
+
+		questPrereq.forEach(quest_id => {
+			if (!experience.isQuestGraded(quest_id)) {
+				hasPass = false;
+			}
+		})
+		return hasPass;
+	}
+
+	/** */
+	// lock - grey - #c0c0c0; open - green - #008421; ongoing - blue - #0073aa; done - orange - #FF8000
+	/**
+	 * Gets the appropriate color of a quest point based on participation and graded submission.
+	 * @param quest Quest of the quest point whose color is to be determined
+	 * @param secQuests Section quest which contains the user's participation and quest's prerequisite
+	 * @param user The user whose participation is to be checked/viewed
+	 * @param experience Experience of the user to know if quest is graded or not.
+	 * @returns the appropriate color for the quest point; 
+	 * grey for locked quest point, green for available quests, blue for ongoing quests, and orange for graded submissions.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	getQuestPointColor(quest: Quest, secQuests: SectionQuest[], user: User, experience: Experience): string {
+		let tempArr: SectionQuest[] = quest ? secQuests.filter(sectionquest =>
+			sectionquest.getSectionQuestId() == quest.getQuestId()) : [];
+		if (tempArr.length == 0) {
+			return "#FFFFFF";
+		} else {
+			let sectionQuest: SectionQuest = tempArr[0];
+			// if user is not a participant (either 'locked' or 'open')
+			if (sectionQuest.getQuestParticipants().length == 0 || !sectionQuest.searchParticipant(user.getUserId())) {
+				if (this.passQuestPrerequisites(quest.getQuestId(), experience)) {
+					return "#008421";
+				} else {
+					return "#C0C0C0";
+				}
+			} else { // if user is participant (either 'ongoing' or 'done')	
+				if (experience.hasSubmittedQuest(quest.getQuestId())) {
+					return "#FF8000";
+				} else {
+					return "#0073aa";
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the quest map's datasets which is used in the HTML graph.
+	 * @param quests All quests of the section
+	 * @param sectionQuests Section quest which includes participants and quest prerequisite
+	 * @param user The current user (mostly used when requesting user is student)
+	 * @param experience The user's experience (used to know if user submitted quest; for students only)
+	 * @param isTeacher Determines whether the requesting user is a teacher or not.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	setQuestMapDataSet(quests: Quest[], sectionQuests: SectionQuest[], user: User, experience: Experience, isTeacher) {
+		this.quests = this.sortQuestsByDate(quests);
+		let questMapDetails = this.getQuestMapDetails(this.tempquestCoord);
 
 		let exclude: any[] = questMapDetails.exclude;
 		let questPositions = questMapDetails.questPositions;
@@ -108,8 +231,11 @@ export class QuestMap {
 
 		for (let questPosition of questPositions) {
 			let quest = quests.filter(quest => quest.getQuestId() == questPosition.questId);
+
 			let questLabel = quest.length == 0 ? "?" : this.getQuestLabel(quest[0].getQuestId());
-			var title = quest.length == 0 ? "<No title>" : quest[0].getQuestTitle();
+			let color: string = isTeacher ? "#000" : this.getQuestPointColor(quest[0], sectionQuests, user, experience);
+			let title = quest.length == 0 ? "<No title>" : quest[0].getQuestTitle();
+
 			if (questPosition.type === "scatter") {
 				dataset = {
 					type: "scatter",
@@ -119,9 +245,9 @@ export class QuestMap {
 						x: questPosition.x,
 						y: questPosition.y
 					}],
-					backgroundColor: "#000",
-					borderColor: "#000",
-					pointHoverRadius: 12,
+					backgroundColor: color,
+					borderColor: color,
+					pointHoverRadius: 9,
 					radius: 10,
 					showLine: false
 				};
@@ -272,6 +398,8 @@ export class QuestMap {
 	/**
 	 * Round off the number to the nearest 5.
 	 * @param num number to round off
+	 * @returns the rounded value of the param to the nearest 5
+	 * @example (7 -> 5), (8 -> 10), (56 -> 55), (59 -> 60)
 	 */
 	roundOff(num: number) {
 		num = num % 5 > 2 ? Math.ceil(num / 5) : Math.floor(num / 5);
@@ -287,13 +415,24 @@ export class QuestMap {
 		});
 	}
 
+	/**
+	 * Adds a new quest line.
+	 * Activates when a '+' point is clicked.
+	 * @param x The x-coordinate of the clicked '+' point
+	 * @param y The x-coordinate of the clicked '+' point
+	 * @param quest The quest to be added 
+	 * @returns the array of properties of the new quest coordinates
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
 	addNewQuestLine(x, y, quest): any[] {
 		let newQuestCoordinates: any[] = [];
 		let basisX = this.roundOff(x);
 		let basisY = this.roundOff(y);
 
-
+		//determines whether the clicked '+' point is towards north or not
 		let isNorth: boolean = y - basisY > 0 ? true : false;
+		//determines whether the clicked '+' point is towards east or not
 		let isEast: boolean = x - basisX > 0 ? true : false;
 
 		let x2 = basisX;
@@ -376,6 +515,27 @@ export class QuestMap {
 		return this.hasExistingPointAt(x2, y2);
 	}
 
+	/**
+	 * Gets the quest map details, particular the properties of a quest point
+	 * @param data data whose values are to be interpreted
+	 * @returns quest map details
+	 * @example questmapdetails = {
+	 * minX: <minimum-x for the whole graph particular for the mainquest line; setting mainquest-line properties>
+	 * maxX: <maximum-x for the whole graph particular for the mainquest line; setting mainquest-line properties and determining which mainquest point is the latest>
+	 * questPositions: <array of the quest point position and properties in the quest map>
+	 * exArr: <array of the quest point direction to exclude; mainly used for '+' points>
+	 * }
+	 * @example questPositions[0] = {
+	 * type: <type whether a point, line, or exclude>
+	 * x: <x-coordinate of a point>
+	 * y: <y-coordinate of a point>
+	 * x1: <line only; 2nd x-coordinate; (x, y) & (x1, y1)>
+	 * y1: <line only; 2nd y-coordinate;; (x, y) & (x1, y1)>
+	 * direction: <exclude only; direction to exclude or not put a '+' point>
+	 * }
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
 	private getQuestMapDetails(data: any[]): any {
 		var lines: any[] = data;
 		var i = 0;
@@ -438,11 +598,22 @@ export class QuestMap {
 	 * Determines whether point exists in the given coordinates.
 	 * @param x x-coordinate of the point to check
 	 * @param y y-coordinate of the point to check
+	 * @returns true if a point exists at coordinate (x, y); false if none.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
 	 */
 	private hasExistingPointAt(x, y) {
 		return this.questCoordinates.filter(coordinate => coordinate.x == x && coordinate.y == y).length > 0;
 	}
 
+	/**
+	 * Obtains the quest id found at coordinate (x,y)
+	 * @param x The x-coordinate of the quest
+	 * @param y The y-coordinate of the quest
+	 * @returns The id of the quest found at coordinate (x,y)
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
 	getQuestIdOf(x, y) {
 		var quests = this.questCoordinates.filter(coordinate => coordinate.x == x && coordinate.y == y);
 		var questId = quests.length == 0 ? "" : quests[0].questId;
