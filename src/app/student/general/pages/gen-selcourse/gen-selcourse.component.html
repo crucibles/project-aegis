@@ -49,7 +49,7 @@
 						</td>
 						<td>
 							<div *ngFor="let schedule of section.section.schedule">
-								{{this.getFormatTime(schedule.minTime)}} - {{this.getFormatTime(schedule.maxTime)}}
+								{{schedule.minTime}} - {{schedule.maxTime}}
 							</div>
 						</td>
 						<td>
@@ -85,7 +85,7 @@
 							</td>
 							<td>
 								<div *ngFor="let schedule of section.section.schedule">
-									{{this.getFormatTime(schedule.minTime)}} - {{this.getFormatTime(schedule.maxTime)}}
+									{{schedule.minTime}} - {{schedule.maxTime}}
 								</div>
 							</td>
 						</ng-container>

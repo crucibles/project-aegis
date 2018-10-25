@@ -67,12 +67,23 @@
 							<div id="app" class="comments">
 								<article *ngFor="let comment_id of post.post_comments; let j = index">
 									<ng-container *ngIf="comments[i][j]">
+
 										<img id="profile-photo" [src]="commenters[i][j].getUserPhoto()" />
-										<h4>
-											<a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
-											<h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
-											<div>{{this.comments[i][j].getPostContent()}}</div>
-										</h4>
+										<a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
+										<h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
+										<div>{{this.comments[i][j].getPostContent()}}</div>
+
+										<br class="clear" />
+										<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.comments[i][j].getPostContent())" style="font-size: 80%">
+											Links here:
+											<ul>
+												<li *ngFor="let links of this.pageService.hyperLinks">
+													<a href="{{links}}">{{links}}</a>
+												</li>
+											</ul>
+										</div>
+										<br class="clear" />
+
 									</ng-container>
 								</article>
 							</div>
@@ -144,8 +155,7 @@
 											</label>
 										</li>
 									</ul>
-									<button [disabled]="createPostForm.invalid && uploader.queue.length == 0" type="submit" class="btn btn-success green"
-									 (click)="uploader.queue.length>0?uploader.uploadAll(): createNewPost()">
+									<button [disabled]="createPostForm.invalid && uploader.queue.length == 0" type="submit" class="btn btn-success green" (click)="uploader.queue.length>0?uploader.uploadAll(): createNewPost()">
 										<i class="fa fa-share"></i> Submit</button>
 								</div>
 							</div>
