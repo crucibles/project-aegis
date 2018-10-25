@@ -38,6 +38,16 @@
 					<ng-template #questTemplate>
 						<div class="quest-display-box">Description:</div>
 						<div>{{quest.getQuestDescription()}}</div>
+						<br class="clear" />
+
+						<div class="action-box" *ngIf="this.pageService.getPossibleLinks(quest.getQuestDescription())" style="font-size: 80%">
+							Links here:
+							<ul>
+								<li *ngFor="let links of this.pageService.hyperLinks">
+									<a href="{{links}}">{{links}}</a>
+								</li>
+							</ul>
+						</div>
 						<div class="quest-display-box">Started on:</div>
 						<div>{{this.formatDateTime(quest.getQuestStartTimeDate())}}</div>
 						<div class="quest-display-box">Deadline:</div>
@@ -70,7 +80,7 @@
 									</li>
 								</ul>
 							</div>
-							
+
 							<div class="row" style="margin-top: 20px">
 								<div class="col-sm-6">
 									Rewards:
@@ -99,7 +109,8 @@
 						<div class="modal-footer">
 							<!-- shows submit & abandon buttons if user is a participant -->
 							<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest(this.questClicked.getQuestId())">Abandon
-								Quest</button>
+								Quest
+							</button>
 						</div>
 						<!-- (ngSubmit)="func()" -->
 						<div class="modal-footer">
