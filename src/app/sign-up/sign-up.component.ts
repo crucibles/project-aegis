@@ -88,7 +88,6 @@ export class SignUpComponent implements OnInit {
             left_arm: "",
             right_arm: "",
         }
-        let verified = false;
 
         this.userService.register(
             firstName,
@@ -102,14 +101,9 @@ export class SignUpComponent implements OnInit {
             password,
             securityQuestion,
             securityAnswer,
-<<<<<<< HEAD
-            userConditions,
-            verified
-=======
             type,
             verified,
             userConditions
->>>>>>> 1db73e277fb81e869c7f2611e9af3bbd999f50d7
         ).subscribe(newUser => {
             if (newUser) {
                 // Successful registration of user and redirects to login page.
