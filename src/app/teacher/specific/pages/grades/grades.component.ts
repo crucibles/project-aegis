@@ -17,7 +17,8 @@ import {
     QuestService,
     SectionService,
     UserService,
-    FileService
+    FileService,
+    BadgeService
 } from 'shared/services';
 
 import {
@@ -27,7 +28,8 @@ import {
     Quest,
     Experience,
     Course,
-    QuestMap
+    QuestMap,
+    Badge
 } from 'shared/models';
 
 import {
@@ -73,6 +75,7 @@ export class GradesComponent implements OnInit {
     lineChartOptions: any;
 
     constructor(
+        private badgeService: BadgeService,
         private experienceService: ExperienceService,
         private questService: QuestService,
         private pageService: PageService,
@@ -309,6 +312,9 @@ export class GradesComponent implements OnInit {
                     this.experienceService.setStudentQuestGrade(this.currentSection.getSectionId(), userId, questId, inputGrade)
                         .subscribe(grade => {
                             this.isGraded[gradedIndex] = !this.isGraded[gradedIndex];
+
+                            this.addDefaultRankBadge(userId);
+
                             this.submissions = this.submissions.map(quest => {
                                 if (quest.getUserId() == userId) {
                                     quest.setIsGraded(questId);
@@ -353,6 +359,41 @@ export class GradesComponent implements OnInit {
         this.pageService.isProfilePage(false);
         this.submissions = [];
         this.studentGrades = [];
+    }
+
+    addDefaultRankBadge(userId: string) {
+        let studentGrade = this.studentGrades.find(elem => elem.student.getUserId() == userId);
+        console.log(studentGrade);
+        if (studentGrade && studentGrade.total > 0) {
+            this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
+                let questMap = new QuestMap(questmap);
+                console.log(questMap);
+                let flatOneGrade = questMap.getFlatOneGrade();
+                console.log(flatOneGrade);
+                if (studentGrade.total <= flatOneGrade) {
+                    this.badgeService.getSectionBadges(this.currentSection.getSectionId()).subscribe(badges => {
+                        let sectionBadges: Badge[] = badges.map(badge => new Badge(badge));
+                        let defaultBadges = sectionBadges.filter(badge => badge.isDefaultBadge());
+                        let rank: number = Math.ceil(studentGrade.total / (flatOneGrade / defaultBadges.length));
+                        console.log(studentGrade.total);
+                        console.log(rank);
+                        defaultBadges.forEach(badge => {
+                            if ((badge.getBadgeRank() == rank) && !badge.isBadgeAttainer(userId)) {
+                                console.log("ATTAINED!");
+                                console.log("userId: " + userId);
+                                console.log("badgeattainer: " + badge.getBadgeAttainers());
+                                this.badgeService.addBadgeAttainer(badge.getBadgeId(), userId).subscribe(res => {
+                                    if(res){
+                                        console.log(res);
+                                        console.log("SUCESS!");
+                                    }
+                                })
+                            }
+                        })
+                    });
+                }
+            })
+        }
     }
 
     getQuestMaxXp(quest_id: string) {

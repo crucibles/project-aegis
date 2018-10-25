@@ -72,6 +72,16 @@
 	<!-- Quest Information -->
 	<div class="modal-body">
 		{{this.questClicked.getQuestDescription()}}
+		<br class="clear" />
+
+		<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
+			Links here:
+			<ul>
+				<li *ngFor="let links of this.pageService.hyperLinks">
+					<a href="{{links}}">{{links}}</a>
+				</li>
+			</ul>
+		</div>
 		<div class="row" style="margin-top: 20px">
 			<div class="col-sm-6">
 				Rewards:
@@ -88,7 +98,11 @@
 					<br>None
 				</ng-container>
 				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">
+<<<<<<< HEAD
+					<br>Badge: {{this.badgeName}} (if achieved at least 80% when graded)
+=======
 					<br>Badge: {{this.badgeName}} (if achieved at least 80% when graded) 
+>>>>>>> 1db73e277fb81e869c7f2611e9af3bbd999f50d7
 				</ng-container>
 				<br>
 			</div>

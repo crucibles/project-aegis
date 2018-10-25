@@ -16,7 +16,7 @@ const api = require('./server/routes/api');
 app.use(bodyParser.urlencoded({ extended: true}));
 
 // Angular DIST output folder (renamed to public for development stage)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -30,7 +30,7 @@ app.use('/api', api);
 
 // Send all other requests to the Angular app
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
 //Set Port

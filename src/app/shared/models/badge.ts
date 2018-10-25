@@ -17,7 +17,40 @@ export class Badge {
     private badge_description: string;
     private badge_conditions: Conditions;
     private is_system_badge: boolean;
+    private is_default: boolean;
     private badge_attainers: string[];
+    public default_badges: any[] = [
+        {
+            badge_name: "Rookie Badge",
+            badge_description: "Congratulations on your first badge out of the six ranked badges. Get more EXP to gain the other remaining badges!",
+            badge_photo: "rookie_badge.png"
+        },
+        {
+            badge_name: "Adept Badge",
+            badge_description: "This is the second badge out of the six ranked badges. Get more EXP to gain the other remaining badges.",
+            badge_photo: "adept_badge.png"
+        },
+        {
+            badge_name: "Novice Badge",
+            badge_description: "This is the third badge out of the six ranked badges. Get more EXP to gain the other remaining badges!",
+            badge_photo: "novice_badge.png"
+        },
+        {
+            badge_name: "Intermediate Badge",
+            badge_description: "The fourth badge! Two more to gain and you're good to go!",
+            badge_photo: "intermediate_badge.png"
+        },
+        {
+            badge_name: "Expert Badge",
+            badge_description: "The fifth badge out of six ranked badges. You're almost there!",
+            badge_photo: "expert_badge.png"
+        },
+        {
+            badge_name: "Master Badge",
+            badge_description: "Rewarded to those loyal and faithful enough to complete their given quest. Congratulations!",
+            badge_photo: "master_badge.png"
+        }
+    ];
 
     constructor(
         badge?: any
@@ -29,6 +62,7 @@ export class Badge {
             this.badge_description = badge.badge_description ? badge.badge_description : "";
             this.badge_conditions = badge.badge_conditions ? new Conditions(badge.badge_conditions) : new Conditions();
             this.is_system_badge = badge.is_system_badge ? badge.is_system_badge : false;
+            this.is_default = badge.is_default ? badge.is_default : false;
             this.badge_attainers = badge.badge_attainers ? badge.badge_attainers : [];
         } else {
             this.badge_name = "";
@@ -36,6 +70,7 @@ export class Badge {
             this.badge_description = "";
             this.badge_conditions = new Conditions();
             this.is_system_badge = false;
+            this.is_default = false;
             this.badge_attainers = [];
         }
     }
@@ -58,6 +93,7 @@ export class Badge {
         badge_description,
         badge_conditions,
         is_system_badge,
+        is_default,
         badge_attainers
     ) {
         this.badge_name = badge_name ? badge_name : "";
@@ -65,6 +101,7 @@ export class Badge {
         this.badge_description = badge_description ? badge_description : "";
         this.badge_conditions = badge_conditions ? badge_conditions : new Conditions();
         this.is_system_badge = is_system_badge ? is_system_badge : false;
+        this.is_default = is_default ? is_default : false;
         this.badge_attainers = badge_attainers ? badge_attainers : [];
     }
 
@@ -109,6 +146,44 @@ export class Badge {
 
     getBadgeAttainers(): string[] {
         return this.badge_attainers;
+    }
+
+    /**
+     * Gets the badge rank from 1 being the lowest rank.
+     * Works only if it is a default and rank badge.
+     * @returns rank of a badge; returns 0 if not a default rank badge.
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    getBadgeRank(): number {
+        if (!this.isDefaultBadge()) {
+            console.log("not default");
+            return 0;
+        }
+        console.log("orig_badge: " + this.getBadgeName());
+        this.default_badges.forEach(badge => {
+            console.log(badge.badge_name);
+            console.log(badge.badge_name == this.getBadgeName());
+            console.log(badge.badge_name == this.badge_name);
+        })
+        let rank: number = this.default_badges.findIndex(badge => badge.badge_name == this.badge_name);
+        return rank + 1;
+    }
+
+    /**
+     * Determines whether a user is an attainer of this badge
+     * @param userId id of the user to be checked whether he/she is an attainer of the badge
+     * @returns true if the user is an attainer of the badge; false if not.
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    isBadgeAttainer(userId: string): boolean {
+        let attainer = this.badge_attainers.find(attainerId => attainerId == userId);
+        return attainer ? true : false;
+    }
+
+    isDefaultBadge(): boolean {
+        return this.is_default;
     }
 
     setBadgeId(_id: string) {
@@ -250,6 +325,25 @@ export class Conditions {
 
     getRightArm() {
         return this.right_arm;
+    }
+
+    getJSONObject() {
+        let badge: any = {
+            hp: this.hp,
+            xp: this.xp,
+            ailment: this.ailment,
+            log_in_streak: this.log_in_streak,
+            log_in_total: this.log_in_total,
+            items: this.items,
+            items_used: this.items_used,
+            items_owned: this.items_owned,
+            head: this.head,
+            left_leg: this.left_leg,
+            right_leg: this.right_leg,
+            left_arm: this.left_arm,
+            right_arm: this.right_arm
+        }
+        return badge;
     }
 
     setHp(hp) {

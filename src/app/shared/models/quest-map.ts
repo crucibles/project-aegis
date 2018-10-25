@@ -88,6 +88,10 @@ export class QuestMap {
 		return this.flat_one_perc;
 	}
 
+	getFlatOneGrade(): number {
+		return (this.flat_one_perc/100) * this.max_exp;
+	}
+
 	getQuestMapId() {
 		return this._id;
 	}

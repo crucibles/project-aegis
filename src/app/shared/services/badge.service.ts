@@ -88,6 +88,29 @@ export class BadgeService {
         const url = this.badgeUrl;
     }
 
+    /**
+     * Adds badge to student
+     * @description Adds the badge, either system or section (if section_id variable is available), to the student
+     * @param badge Badge to be added to the student
+     * @param student_id Id of the student that will be receiving the section-level badge
+     */
+    addBadgeAttainer(badge_id: string, user_id: string) {
+        const url = this.badgeUrl;
+
+		let body = {
+            method: "addBadgeAttainer",
+            badge_id: badge_id,
+			user_id: user_id
+		};
+
+		return this.http.post<Badge>(this.badgeUrl, body).pipe(
+			tap((badge: Badge) =>
+				console.log("badge " + badge_id + " is added")),
+			catchError(this.handleError<Badge>('addComment'))
+		);
+
+    }
+
 
     checkIfWillEarnABadge() {
         const url = this.badgeUrl;
@@ -257,6 +280,34 @@ export class BadgeService {
                 return data;
             })
         );
+    }
+
+    /**
+     * Gets the default badges for sections.
+     * Note: this is without ID.
+     * @returns array of the default section badges (in JSON object)
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    getDefaultSectionBadges(){
+        let badges: any[] = [];
+        let defaultBadges : any[] = new Badge().default_badges;
+
+        let conditions = new Conditions();
+
+        defaultBadges.forEach(badge => {
+            badges.push({
+                badge_name: badge.badge_name,
+                badge_description: badge.badge_description,
+                badge_photo: badge.badge_photo,
+                badge_conditions: conditions.getJSONObject(),
+                is_system_badge: false,
+                is_default: true,
+                badge_attainers: []
+            });
+        }); 
+
+        return badges;
     }
 
     /**

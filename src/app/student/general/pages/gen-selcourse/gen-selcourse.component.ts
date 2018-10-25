@@ -67,6 +67,12 @@ export class GenSelcourseComponent implements OnInit {
 	isSearching: boolean = false;
 	course_found: Course[];
 
+	dailyBadgeContent: any = {
+		heading: "You earned your daily badge!",
+		body: "Log in everyday to earn your daily badge. Five daily badges in a week earn you a weekly badge.",
+		image: "/assets/images/daily-badge-2.png"
+	}
+
 	constructor(
 		private pageService: PageService,
 		private sectionService: SectionService,
@@ -174,6 +180,7 @@ export class GenSelcourseComponent implements OnInit {
 		this.sectionService.getUserSections(user_id)
 			.subscribe(sections => {
 				this.courseSections = sections;
+				console.log(this.courseSections);
 				this.sections = sections.map(section => new Section(section.section));
 				this.sections = this.sectionService.getSortedSections(
 					this.sections,
@@ -185,29 +192,6 @@ export class GenSelcourseComponent implements OnInit {
 				this.sectionService.setCurrentUserSections(sections);
 				this.getInstructors();
 			});
-	}
-
-	/**
-     * Returns a formatted time of the quest.
-     * @param date_obj Date object to be formatted.
-     * @returns the formatted time of format HH:MM AM/PM
-     * 
-     * @author Sumandang, AJ Ruth H.
-     */
-    getFormatTime(date_obj) {
-		// formats a javascript Date object into a 12h AM/PM time string
-		var hour = date_obj.getHours();
-		var minute = date_obj.getMinutes();
-		var amPM = (hour > 11) ? "pm" : "am";
-		if (hour > 12) {
-			hour -= 12;
-		} else if (hour == 0) {
-			hour = "12";
-		}
-		if (minute < 10) {
-			minute = "0" + minute;
-		}
-		return hour + ":" + minute + amPM;
 	}
 
 	/**

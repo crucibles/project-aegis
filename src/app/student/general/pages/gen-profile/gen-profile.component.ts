@@ -107,6 +107,7 @@ export class GenProfileComponent implements OnInit {
                 .subscribe((user) => {
                     this.userService.setCurrentUser(user);
                     this.courseSections = this.sectionService.getCurrentUserSections();
+                    console.log(this.courseSections);
                     this.setPerformanceGraphData();
                 });
 
