@@ -89,11 +89,17 @@ export class GradesComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.isGraded = [];
-        this.setDefault();
-        this.getCurrentSection();
-        this.getCurrentUser();
-        this.getSectionInformation();
+        this.route.paramMap.subscribe(params => {
+            let section_id = params.get('sectionId');
+			this.sectionService.searchSection(section_id).subscribe(res => {
+                this.sectionService.setCurrentSection(new Section(res[0].section));
+                this.isGraded = [];
+                this.setDefault();
+                this.getCurrentSection();
+                this.getCurrentUser();
+                this.getSectionInformation();   
+			});
+		})
     }
 
     getCurrentUser() {
@@ -210,7 +216,7 @@ export class GradesComponent implements OnInit {
             });
         });
     }
-
+    
     setSummaryGraph() {
         this.lineChartLabels = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
         this.lineChartOptions = {

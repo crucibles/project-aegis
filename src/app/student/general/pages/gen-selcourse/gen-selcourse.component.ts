@@ -195,6 +195,29 @@ export class GenSelcourseComponent implements OnInit {
 	}
 
 	/**
+     * Returns a formatted time of the quest.
+     * @param date_obj Date object to be formatted.
+     * @returns the formatted time of format HH:MM AM/PM
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    getFormatTime(date_obj) {
+		// formats a javascript Date object into a 12h AM/PM time string
+		var hour = date_obj.getHours();
+		var minute = date_obj.getMinutes();
+		var amPM = (hour > 11) ? "pm" : "am";
+		if (hour > 12) {
+			hour -= 12;
+		} else if (hour == 0) {
+			hour = "12";
+		}
+		if (minute < 10) {
+			minute = "0" + minute;
+		}
+		return hour + ":" + minute + amPM;
+	}
+
+	/**
 	 * @summary searches the string entered by the user and stores result in 'course_found' variable
 	 */
 	search() {

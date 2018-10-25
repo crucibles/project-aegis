@@ -144,7 +144,8 @@
 											</label>
 										</li>
 									</ul>
-									<button [disabled]="createPostForm.invalid && uploader.queue.length == 0" type="submit" class="btn btn-success green" (click)="uploader.queue.length>0?uploader.uploadAll(): createNewPost()">
+									<button [disabled]="createPostForm.invalid && uploader.queue.length == 0" type="submit" class="btn btn-success green"
+									 (click)="uploader.queue.length>0?uploader.uploadAll(): createNewPost()">
 										<i class="fa fa-share"></i> Submit</button>
 								</div>
 							</div>

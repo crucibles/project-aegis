@@ -530,7 +530,7 @@ router.post('/login', (req, res) => {
             })
             .then((user) => {
                 if (user) {
-                    if (user.user_verified) {
+                    if(user.user_verified) {
                         // Login in user if account is verified.
                         response.data = user;
                         res.json(user);
@@ -1718,20 +1718,21 @@ router.post('/signup', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         var newUserObj = {
-            user_school_id: req.body.schoolId,
             user_fname: req.body.firstName,
             user_mname: req.body.middleName,
             user_lname: req.body.lastName,
             user_birthdate: req.body.birthdate,
-            user_email: req.body.email,
-            user_password: req.body.password,
-            user_type: req.body.type,
+            user_school_id: req.body.schoolId,
             user_contact_no: req.body.contactNumber,
-            user_photo: null,
+            user_email: req.body.email,
+            user_home: req.body.home,
+            user_password: req.body.password,
             user_security_question: req.body.securityQuestion,
             user_security_answer: req.body.securityAnswer,
-            user_conditions: req.body.userConditions,
-            user_verified: req.body.verified
+            user_photo: null,
+            user_type: req.body.type,
+            user_verified: req.body.verified,
+            user_conditions: req.body.userConditions
         };
 
         myDB.collection('users')
@@ -1759,8 +1760,8 @@ router.post('/signup', (req, res) => {
                                     to: newUserObj.user_email,
                                     subject: 'Email Verification',
                                     text: 'Hi ' + newUserObj.user_fname + '. Please go to this link to verify your email: ' +
-                                        'http://localhost:4200/sign-up/verify-email?verify=' + result.insertedId +
-                                        '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
+                                            'http://localhost:4200/sign-up/verify-email?verify=' + result.insertedId +
+                                            '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
                                 };
 
                                 // Sends the email.
@@ -1787,7 +1788,7 @@ router.post('/signup', (req, res) => {
  * @author Donevir Hynson
  */
 router.post('/userVerification', (req, res) => {
-    if (req.body.code.length < 12) {
+    if(req.body.code.length < 12) {
         res.json(false);
     } else {
         connection((db) => {
@@ -1795,7 +1796,7 @@ router.post('/userVerification', (req, res) => {
             myDB.collection('users')
                 .findOne(ObjectID(req.body.code))
                 .then((user) => {
-                    if (user) {
+                    if(user) {
                         // User account is verified.
                         myDB.collection('users')
                             .updateOne(

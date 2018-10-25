@@ -83,7 +83,6 @@ export class Badge {
      * @param badge_conditions Conditions of badge (in Badge model)
      * @param is_system_badge Determines whether the badge is a system badge or a section badge; 
      * true if system badge
-     * @param is_system_badge Determines whether the badge is a default badge or a instructor-created badge; true if default
      * @param badge_attainers Array of users who owns this badge
      * 
      * @author Sumandang, AJ Ruth H.

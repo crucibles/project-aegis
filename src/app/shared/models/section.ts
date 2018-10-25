@@ -350,7 +350,7 @@ export class SectionQuest {
      * 
      * @author Sumandang, AJ Ruth H.
      */
-    searchParticipant(user_id: string): boolean {
+    searchParticipant(user_id: string): boolean{
         let participant = this.quest_participants.filter(id => user_id == id);
         return participant.length > 0;
     }

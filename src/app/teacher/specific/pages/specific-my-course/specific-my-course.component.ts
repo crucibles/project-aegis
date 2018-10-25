@@ -65,16 +65,15 @@ export class SpecificMyCourseComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		// this.route.paramMap.subscribe(params => {
-		// 	let section_id = params.get('sectionId');
-		// 	console.log(section_id);
-		// 	this.sectionService.searchSection(section_id).subscribe(res => {
-		// 		console.log(res);
-		// 		this.sectionService.setCurrentSection(new Section(res.section));
-		// 	});
-		// })
-		this.setDefault();
-		this.getCurrentCourseSection();
+		this.route.paramMap.subscribe(params => {
+			let section_id = params.get('sectionId');
+			this.sectionService.searchSection(section_id).subscribe(res => {
+				this.sectionService.setCurrentSection(new Section(res[0].section));
+				this.sectionService.setCurrentCourse(new Course(res[0]));
+				this.setDefault();
+				this.getCurrentCourseSection();
+			});
+		})
 	}
 
 	/**
