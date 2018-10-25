@@ -47,6 +47,15 @@
 					<!-- Post Body (post content and comments)-->
 					<div class="post-description">
 						<div>{{post.getPostContent()}}</div>
+						<br class="clear" />
+						<div class="action-box" *ngIf="this.pageService.getPossibleLinks(post.getPostContent())" style="font-size: 80%">
+							Links here:
+							<ul>
+								<li *ngFor="let links of this.pageService.hyperLinks">
+									<a href="{{links}}">{{links}}</a>
+								</li>
+							</ul>
+						</div>
 						<div *ngIf="post.getPostData()">
 							<button (click)="download(post.getPostData())" type="button" class="btn btn-success"><i class="fa fa-download"></i></button>
 							{{post.getPostData()}}
@@ -58,12 +67,23 @@
 							<div id="app" class="comments">
 								<article *ngFor="let comment_id of post.post_comments; let j = index">
 									<ng-container *ngIf="comments[i][j]">
+
 										<img id="profile-photo" [src]="commenters[i][j].getUserPhoto()" />
-										<h4>
-											<a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
-											<h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
-											<div>{{this.comments[i][j].getPostContent()}}</div>
-										</h4>
+										<a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
+										<h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
+										<div>{{this.comments[i][j].getPostContent()}}</div>
+
+										<br class="clear" />
+										<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.comments[i][j].getPostContent())" style="font-size: 80%">
+											Links here:
+											<ul>
+												<li *ngFor="let links of this.pageService.hyperLinks">
+													<a href="{{links}}">{{links}}</a>
+												</li>
+											</ul>
+										</div>
+										<br class="clear" />
+
 									</ng-container>
 								</article>
 							</div>
@@ -72,19 +92,18 @@
 
 						<!-- Commentable area (comment area if commentable; some text if not)-->
 						<div class="action-box" style="padding-top: 20px">
-								<!-- If post is not commentable... -->
-								<div *ngIf="!post.getCommentable()">
-									You cannot comment to this post.
+							<!-- If post is not commentable... -->
+							<div *ngIf="!post.getCommentable()">
+								You cannot comment to this post.
 							</div>
-							
+
 							<!-- If post is commentable -->
 							<div *ngIf="post.getCommentable()" class="widget-area no-padding blank">
 								<div class="status-upload">
 									<div>
 										<textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
-										<button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green"
-										(click)=submitComment(i)>
-										<i class="fa fa-share"></i> Submit</button>
+										<button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
+											<i class="fa fa-share"></i> Submit</button>
 									</div>
 								</div>
 							</div>
@@ -136,8 +155,7 @@
 											</label>
 										</li>
 									</ul>
-									<button [disabled]="createPostForm.invalid && uploader.queue.length == 0" type="submit" class="btn btn-success green"
-									 (click)="uploader.queue.length>0?uploader.uploadAll(): createNewPost()">
+									<button [disabled]="createPostForm.invalid && uploader.queue.length == 0" type="submit" class="btn btn-success green" (click)="uploader.queue.length>0?uploader.uploadAll(): createNewPost()">
 										<i class="fa fa-share"></i> Submit</button>
 								</div>
 							</div>

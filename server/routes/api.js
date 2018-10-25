@@ -146,15 +146,18 @@ router.post('/createCourseSection', (req, res) => {
             instructor: req.body.instructor,
             quests: req.body.quests,
             items: req.body.items,
-            badges: req.body.badges,
+            badges: [],
             schedule: req.body.schedule
         };
+
+        var badges = req.body.badges;
 
         var isSuccess = false;
         var course;
 
         async.waterfall([
             insertCourse,
+            insertBadges,
             insertSection,
             insertQuestMap
         ], function (err, results) {
@@ -179,6 +182,25 @@ router.post('/createCourseSection', (req, res) => {
                     callback(null, newSectionObj);
                 });
         };
+
+        function insertBadges(sectionObj, callback) {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges').insert(badges, function (err, result) {
+                if (err) {
+                    response.message = err;
+                    throw err;
+                }
+
+                let badgeIds = [];
+                // obtains the ids of the newly inserted badges
+                result.ops.forEach(badge => {
+                    badgeIds.push(badge._id);
+                })
+
+                sectionObj.badges = badgeIds;
+                callback(null, sectionObj);
+            });
+        }
 
         function insertSection(sectionObj, callback) {
             const myDB = db.db('up-goe-db');
@@ -430,45 +452,24 @@ router.post('/experiences', (req, res) => {
                                 }
                                 if (quests[0] && quests[0].quest_badge != "") {
                                     holder = quests[0].quest_badge;
-
-                                    connection((db) => {
-                                        const myDB = db.db('up-goe-db');
-                                        myDB.collection('sections')
-                                            .updateOne(
-                                                {
-                                                    _id: ObjectID(req.body.section_id)
-                                                },
-                                                {
-                                                    $addToSet: {
-                                                        "students.$[elem].badges": quests[0].quest_badge,
-
+                                    holder = holder.toString().trim();
+                                    if (isEarning) {
+                                        connection((db) => {
+                                            const myDB = db.db('up-goe-db');
+                                            myDB.collection('badges')
+                                                .updateOne(
+                                                    {
+                                                        _id: ObjectID(holder)
+                                                    },
+                                                    {
+                                                        $addToSet: {
+                                                            "badge_attainers": req.body.user_id,
+                                                        }
                                                     }
-                                                },
-                                                {
-                                                    arrayFilters: [{ "elem.user_id": req.body.user_id }]
-                                                }
-                                            )
-                                            .then(x => {
-                                                holder = holder.toString().trim();
-                                                if (isEarning) {
-                                                    connection((db) => {
-                                                        const myDB = db.db('up-goe-db');
-                                                        myDB.collection('badges')
-                                                            .updateOne(
-                                                                {
-                                                                    _id: ObjectID(holder)
-                                                                },
-                                                                {
-                                                                    $addToSet: {
-                                                                        "badge_attainers": req.body.user_id,
-                                                                    }
-                                                                }
-                                                            );
-                                                    });
-                                                }
-                                                res.json(true);
-                                            })
-                                    });
+                                                );
+                                        });
+                                    }
+                                    res.json(true);
                                 } else {
                                     res.json(false);
                                 }
@@ -529,7 +530,7 @@ router.post('/login', (req, res) => {
             })
             .then((user) => {
                 if (user) {
-                    if(user.user_verified) {
+                    if (user.user_verified) {
                         // Login in user if account is verified.
                         response.data = user;
                         res.json(user);
@@ -967,6 +968,8 @@ router.post('/sections', (req, res) => {
                 joinQuest(req, res);
             }
         }
+    } else if (req.body.method == "addBadgeToStudent") {
+        addBadgeToStudent(req, res);
     } else {
         enrollAndRequest(req, res);
     }
@@ -1118,6 +1121,33 @@ router.post('/sections', (req, res) => {
 
         });
 
+    }
+
+    function addBadgeToStudent(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('sections')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.section_id)
+                    },
+                    {
+                        $addToSet: {
+                            "students.$[elem].badges": req.body.badge_id,
+
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                    }
+                )
+                .then(x => {
+                    res.json(x);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
     }
 
     function enrollAndRequest(req, res) {
@@ -1730,8 +1760,8 @@ router.post('/signup', (req, res) => {
                                     to: newUserObj.user_email,
                                     subject: 'Email Verification',
                                     text: 'Hi ' + newUserObj.user_fname + '. Please go to this link to verify your email: ' +
-                                            'http://localhost:4200/sign-up/verify-email?verify=' + result.insertedId +
-                                            '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
+                                        'http://localhost:4200/sign-up/verify-email?verify=' + result.insertedId +
+                                        '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
                                 };
 
                                 // Sends the email.
@@ -1758,7 +1788,7 @@ router.post('/signup', (req, res) => {
  * @author Donevir Hynson
  */
 router.post('/userVerification', (req, res) => {
-    if(req.body.code.length < 12) {
+    if (req.body.code.length < 12) {
         res.json(false);
     } else {
         connection((db) => {
@@ -1766,7 +1796,7 @@ router.post('/userVerification', (req, res) => {
             myDB.collection('users')
                 .findOne(ObjectID(req.body.code))
                 .then((user) => {
-                    if(user) {
+                    if (user) {
                         // User account is verified.
                         myDB.collection('users')
                             .updateOne(
@@ -1938,7 +1968,9 @@ router.post('/updateUser', (req, res) => {
  * @author Donevir Hynson - modified 6 June 2018
  */
 router.post('/badges', (req, res) => {
-    if (req.body.badgeData) {
+    if (req.body.method == "addBadgeAttainer") {
+        addBadgeAttainer(req, res);
+    } else if (req.body.badgeData) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges')
@@ -1948,28 +1980,7 @@ router.post('/badges', (req, res) => {
                         response.data = req.body.badgeData.badge_name;
                         res.json(false);
                     } else {
-                        myDB.collection('badges')
-                            .insertOne((req.body.badgeData), function (err, res) {
-                                if (err) {
-                                    throw err;
-                                } else {
-                                    myDB.collection('badges')
-                                        .findOne({ badge_name: req.body.badgeData.badge_name })
-                                        .then(badge => {
-                                            if (badge) {
-                                                myDB.collection('sections')
-                                                    .updateOne({ _id: ObjectID(req.body.sectionId) }, {
-                                                        $push: {
-                                                            badges: JSON.stringify(badge._id).toString().substring(1, 25)
-                                                        }
-                                                    })
-                                            }
-                                        })
-                                        .catch(err => {
-                                            sendError(err, res);
-                                        });
-                                }
-                            });
+                        insertNewBadge(req.body.badgeData, req.body);
                     }
                 })
                 .catch((err) => {
@@ -2023,6 +2034,52 @@ router.post('/badges', (req, res) => {
                     }
                 })
                 .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+
+    function insertNewBadge(badgeData, body) {
+        myDB.collection('badges')
+            .insertOne((badgeData), function (err, res) {
+                if (err) {
+                    throw err;
+                } else {
+                    myDB.collection('badges')
+                        .findOne({ badge_name: badgeData.badge_name })
+                        .then(badge => {
+                            if (badge) {
+                                myDB.collection('sections')
+                                    .updateOne({ _id: ObjectID(body.sectionId) }, {
+                                        $push: {
+                                            badges: JSON.stringify(badge._id).toString().substring(1, 25)
+                                        }
+                                    })
+                            }
+                        })
+                        .catch(err => {
+                            sendError(err, res);
+                        });
+                }
+            });
+    }
+
+    function addBadgeAttainer(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.badge_id)
+                    },
+                    {
+                        $addToSet: {
+                            "badge_attainers": req.body.user_id,
+                        }
+                    }
+                ).then((result) => {
+                    res.json(result);
+                }).catch((err) => {
                     sendError(err, res);
                 });
         });

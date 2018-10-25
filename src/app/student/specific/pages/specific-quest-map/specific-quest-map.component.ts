@@ -55,6 +55,7 @@ import {
 import {
 	AlertService
 } from 'shared/services/alert.service';
+import { SpecificSidetabComponent } from 'student/specific/specific-sidetab/specific-sidetab.component';
 
 @Component({
 	selector: 'app-specific-quest-map',
@@ -291,10 +292,11 @@ export class SpecificQuestMapComponent implements OnInit {
 		var HTMLchart = document.getElementById("quest-map");
 		var ctx = (<HTMLCanvasElement>HTMLchart).getContext("2d");
 
-		this.chart = new Chart(ctx, {
+		let cc: any = {
 			data: QM,
 			options: options
-		});
+		};
+		this.chart = new Chart(ctx, cc);
 
 		//this.onChartClick(HTMLchart, chart, this.chartWidth, this.chartHeight, xTick, yTick);
 
@@ -389,7 +391,6 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.submitQuest(res, this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
-			this.setNewSection();
 			this.isQuestTakn = true;
 			this.pending = true;
 			this.commentBox = "";
@@ -404,6 +405,7 @@ export class SpecificQuestMapComponent implements OnInit {
 			.subscribe(EXP => {
 				if (EXP && EXP.length > 0) {
 					this.sectionEXP = new Experience(EXP[0]);
+					this.setNewSection();
 				}
 			});
 	}

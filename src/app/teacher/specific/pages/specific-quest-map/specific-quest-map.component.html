@@ -9,14 +9,11 @@
 
 <div *ngIf="quests">
 	<div>
-		Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! This is where you can create quests and form
-		your
+		Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! This is where you can create quests and form your
 		section's questmap.
 		<span *ngIf="questMap && questMap.getMaxEXP() == 0">
-			<br><br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating
-			your
-			quest and
-			questmap
+			<br><br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating your
+			quest and questmap
 			<br>
 		</span>
 		<br>Edit your section's max EXP below.
@@ -72,9 +69,10 @@
 		</tbody>
 	</table>
 
-<div *ngIf="isCreateModalReady && questMap && questMap.getFlatOnePercentage() != 0 && questMap.getMaxEXP() != 0 && quests.length == 0">
-	<br>You have no quest yet. Click
-	<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
+	<div *ngIf="isCreateModalReady && questMap && questMap.getFlatOnePercentage() != 0 && questMap.getMaxEXP() != 0 && quests.length == 0">
+		<br>You have no quest yet. Click
+		<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
+	</div>
 </div>
 
 <ng-container *ngIf="isCreateModalReady">
@@ -161,8 +159,8 @@
 						Deadline:
 					</div>
 					<div class="col-md-7">
-						<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border"
-						 required />
+						<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border" required
+						/>
 					</div>
 					<div *ngIf="questEndDate.invalid" class="col-md-2 required-text">
 						<span *ngIf="questEndDate.errors.required">
@@ -227,6 +225,16 @@
 	<!-- Quest Information -->
 	<div class="modal-body">
 		{{this.questClicked.getQuestDescription()}}
+		<br class="clear" />
+
+		<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
+			Links here:
+			<ul>
+				<li *ngFor="let links of this.pageService.hyperLinks">
+					<a href="{{links}}">{{links}}</a>
+				</li>
+			</ul>
+		</div>
 		<div class="row" style="margin-top: 20px">
 			<div class="col-sm-6">
 				Rewards:
@@ -242,8 +250,9 @@
 				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length == 0">
 					<br>None
 				</ng-container>
-				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if achieved at least
-					80% when graded) </ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">
+					Badge: {{this.badgeName}} (if achieved at least 80% when graded)
+				</ng-container>
 			</div>
 			<div class="col-sm-6">
 				Started on:

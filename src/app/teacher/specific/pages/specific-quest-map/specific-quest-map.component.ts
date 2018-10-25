@@ -410,10 +410,12 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		var HTMLchart = document.getElementById("quest-map");
 		var ctx = (<HTMLCanvasElement>HTMLchart).getContext("2d");
 
-		this.chart = new Chart(ctx, {
+		let cc:any = {
 			data: QM,
 			options: options
-		});
+		};
+		
+		this.chart = new Chart(ctx, cc);
 	}
 
 
@@ -485,7 +487,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		});
 
 		this.createQuestForm.value.questPrerequisite.forEach(prereq => {
-			if (prereq.questId != "''") {
+			if (prereq.questId.length != 0) {
 				questPrereq.push(prereq.questId);
 			}
 		});

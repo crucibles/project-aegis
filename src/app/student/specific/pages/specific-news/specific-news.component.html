@@ -1,3 +1,5 @@
+<badge-modal #badgeModal></badge-modal>
+
 <body>
   <div *ngIf="!commentPosts">
     Loading...
@@ -33,6 +35,16 @@
               </div>
               <div class="post-description">
                 <p>{{post.getPostContent()}}</p>
+                <br class="clear" />
+
+                <div class="action-box" *ngIf="this.pageService.getPossibleLinks(post.getPostContent())" style="font-size: 80%">
+                  Links here:
+                  <ul>
+                    <li *ngFor="let links of this.pageService.hyperLinks">
+                      <a href="{{links}}">{{links}}</a>
+                    </li>
+                  </ul>
+                </div>
 
                 <div *ngIf="post.getPostData()">
                   <button (click)="download(post.getPostData())" type="button" class="btn btn-success">
@@ -50,11 +62,22 @@
                     <article *ngFor="let comment_id of post.post_comments; let j = index">
                       <ng-container *ngIf="comments[i][j]">
                         <img id="profile-photo" [src]="commenters[i][j].getUserPhoto()" />
-                        <h4>
-                          <a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
-                          <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
-                          <p>{{this.comments[i][j].getPostContent()}}</p>
-                        </h4>
+
+                        <a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
+                        <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
+                        <p>{{this.comments[i][j].getPostContent()}}</p>
+                        
+                        <br class="clear" />
+                        <div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.comments[i][j].getPostContent())" style="font-size: 80%">
+                          Links here:
+                          <ul>
+                            <li *ngFor="let links of this.pageService.hyperLinks">
+                              <a href="{{links}}">{{links}}</a>
+                            </li>
+                          </ul>
+                        </div>
+                        <br class="clear" />
+
                       </ng-container>
                     </article>
                   </div>
@@ -89,7 +112,8 @@
                             </a>
                           </li> -->
                         </ul>
-                        <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)="submitComment(i)">
+                        <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green"
+                          (click)="submitComment(i)">
                           <i class="fa fa-share"></i> Submit</button>
                       </div>
                     </div>
