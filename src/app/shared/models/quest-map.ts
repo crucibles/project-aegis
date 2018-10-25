@@ -92,6 +92,10 @@ export class QuestMap {
 		return (this.flat_one_perc/100) * this.max_exp;
 	}
 
+	getQuestMapId() {
+		return this._id;
+	}
+
 	/**
 	 * Gets the appropriate quest label of a quest point (e.g. A, B) based on its date creation.
 	 * If quest index exceeds alphabet Z, a numerical value will be attached to it (e.g. A1, G3).
