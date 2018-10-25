@@ -72,6 +72,16 @@
 	<!-- Quest Information -->
 	<div class="modal-body">
 		{{this.questClicked.getQuestDescription()}}
+		<br class="clear" />
+
+		<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
+			Links here:
+			<ul>
+				<li *ngFor="let links of this.pageService.hyperLinks">
+					<a href="{{links}}">{{links}}</a>
+				</li>
+			</ul>
+		</div>
 		<div class="row" style="margin-top: 20px">
 			<div class="col-sm-6">
 				Rewards:
@@ -88,7 +98,7 @@
 					<br>None
 				</ng-container>
 				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">
-					<br>Badge: {{this.badgeName}} (if achieved at least 80% when graded) 
+					<br>Badge: {{this.badgeName}} (if achieved at least 80% when graded)
 				</ng-container>
 				<br>
 			</div>
@@ -118,8 +128,8 @@
 		<!-- <ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId()) && isPending()"> -->
 		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isSubmitted(this.questClicked.getQuestId())">
 			<!-- <button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button> -->
-			<input class="mr-auto" *ngIf="uploader?.queue?.length == 0" type="file" name="photo" multiple ng2FileSelect
-			 [uploader]="uploader" />
+			<input class="mr-auto" *ngIf="uploader?.queue?.length == 0" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader"
+			/>
 			<!-- button to trigger the file upload when submitted -->
 			<div *ngIf="uploader?.queue?.length > 0">Files chosen:</div>
 			<div class="row" *ngFor="let item of uploader.queue">
@@ -146,7 +156,8 @@
 
 		<!-- shows locked accept button if user is not yet a participant & has not pass all the quest prerequisites yet.-->
 		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId()) && !questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">
-			<button type="submit" class="btn btn-success" [disabled]="true" [tooltip]="'Cannot accept quest because not all quest prerequisite are submitted AND graded.'">Accept the Quest</button>
+			<button type="submit" class="btn btn-success" [disabled]="true" [tooltip]="'Cannot accept quest because not all quest prerequisite are submitted AND graded.'">Accept
+				the Quest</button>
 		</ng-container>
 
 		<!-- shows accept button if user is not yet a participant & had passed all the quest prerequisites. -->

@@ -141,6 +141,7 @@ export class PageService {
 	 * 
 	 * @param text The whole content of a post
 	 * @description This will detect possible URLS in a commentPost
+	 * @author Cedric Alvaro
 	 */
 	public getPossibleLinks(text: String) {
 		let sentence = new String(text);

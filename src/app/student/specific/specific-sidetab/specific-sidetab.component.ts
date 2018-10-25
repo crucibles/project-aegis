@@ -111,7 +111,6 @@ export class SpecificSidetabComponent implements OnInit {
 		private pageService: PageService,
 		private questService: QuestService,
 		private userService: UserService,
-		private route: ActivatedRoute,
 		private sectionService: SectionService,
 		private toastr: ToastsManager,
 		private badgeService: BadgeService,
