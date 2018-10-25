@@ -60,12 +60,11 @@ export class GenSelcourseComponent implements OnInit {
 	user: User;
 	allcourses: Course[];
 	instructors: User[];
-	tempSections = [];
 
 	//for search bar
 	course_search: string;
 	isSearching: boolean = false;
-	course_found: Course[];
+	course_found: any[];
 
 	dailyBadgeContent: any = {
 		heading: "You earned your daily badge!",
@@ -94,45 +93,6 @@ export class GenSelcourseComponent implements OnInit {
 	}
 
 	/**
-	 * Acquires the full name of the instructor based on the instructorId.
-	 * @param instructorId 
-	 */
-	toInstructor(instructorId) {
-		let instructor = instructorId ? this.tempSections.filter(
-			section => instructorId == section.sectionData.getInstructor()
-		) : AsyncAction;
-
-		return instructor && instructor.length > 0 ? instructor[0].instructorName: "";
-	}
-
-	getInstructors() {
-		this.tempSections = [];
-		let tempInstructors: string[] = [];
-
-		this.sections.forEach(section => {
-			if (tempInstructors == null) {
-				tempInstructors.push(section.getInstructor());
-				this.tempSections.push({
-					sectionData: new Section(section),
-					instructorName: ""
-				});
-			} else if (tempInstructors.indexOf(section.getInstructor()) == -1) {
-				tempInstructors.push(section.getInstructor());
-				this.tempSections.push({
-					sectionData: new Section(section),
-					instructorName: ""
-				});
-			}
-		});
-
-		this.tempSections.forEach(section => {
-			this.userService.getUser(section.sectionData.getInstructor()).subscribe(res => {
-				section.instructorName = (new User(res).getUserFullName());
-			});
-		});
-	}
-
-	/**
 	 * Obtains information of the current user
 	 */
 	getUser(): void {
@@ -149,6 +109,68 @@ export class GenSelcourseComponent implements OnInit {
 					});
 				}
 			});
+	}
+
+	/**
+	 * Obtains sections and its respective course of the current use
+	 * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
+	 * and 'section' array respectively
+	 * @param user_id id of the user whose array of 
+	 * @returns an Array of objects with a structure of [{section: {Section}, course_name: Section's course_name}, {...}]
+	 */
+	getUserSections(user_id): void {
+		this.sectionService.getUserSections(user_id)
+			.subscribe(sections => {
+				this.courseSections = sections;
+				this.sections = sections.map(section => new Section(section.section));
+				this.sections = this.sectionService.getSortedSections(
+					this.sections,
+					{
+						sortColumn: "courseName",
+						sortDirection: "asc"
+					}
+				);
+				this.sectionService.setCurrentUserSections(sections);
+				this.getInstructors(this.sections);
+			});
+	}
+
+	/**
+	 * Acquires the full name of the instructor based on the instructorId.
+	 * @param instructorId 
+	 */
+	toInstructor(instructorId) {
+		let user = instructorId ? this.instructors.filter(
+			instructor => instructorId == instructor.getUserId()
+		) : AsyncAction;
+		
+		return user && user.length > 0 ? user[0].getUserFullName() : "";
+	}
+
+	/**
+	 * Acquires the corresponding instructors after searching for a course in the search bar.
+	 */
+	getInstructors(sections: any[]) {
+		this.instructors = [];
+		let tempInstructors: string[] = [];
+
+		// Initializes the instructor array without any duplicates.
+		sections.forEach(section => {
+			if (tempInstructors == null) {
+				// Initialization.
+				tempInstructors.push(section.getInstructor());
+			} else if (tempInstructors.indexOf(section.getInstructor()) == -1) {
+				// Prevents duplication of instructor id.
+				tempInstructors.push(section.getInstructor());
+			}
+		});
+
+		// Converts the instructor id(s) into a new User object.
+		tempInstructors.forEach(instructor => {
+			this.userService.getUser(instructor).subscribe(user => {
+				this.instructors.push(new User(user));
+			});
+		});
 	}
 
 	/**
@@ -170,54 +192,23 @@ export class GenSelcourseComponent implements OnInit {
 	}
 
 	/**
-	 * Obtains sections and its respective course of the current use
-	 * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
-	 * and 'section' array respectively
-	 * @param user_id id of the user whose array of 
-	 * @returns an Array of objects with a structure of [{section: {Section}, course_name: Section's course_name}, {...}]
-	 */
-	getUserSections(user_id): void {
-		this.sectionService.getUserSections(user_id)
-			.subscribe(sections => {
-				this.courseSections = sections;
-				console.log(this.courseSections);
-				this.sections = sections.map(section => new Section(section.section));
-				this.sections = this.sectionService.getSortedSections(
-					this.sections,
-					{
-						sortColumn: "courseName",
-						sortDirection: "asc"
-					}
-				);
-				this.sectionService.setCurrentUserSections(sections);
-				this.getInstructors();
-			});
-	}
-
-	/**
 	 * @summary searches the string entered by the user and stores result in 'course_found' variable
 	 */
 	search() {
-		console.warn(this.sections);
 		if (this.course_search == null || this.course_search.length == 0) {
-
 			this.isSearching = false;
-
 		} else if (this.course_search.length == 24) {
 			this.isSearching = true;
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
 				this.course_found = sections;
 			})
-
 		} else if (this.course_search.length > 0) {
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
-				console.warn(sections);
 				this.isSearching = true;
 				this.course_found = sections;
+				this.getInstructors(sections.map(course => new Section(course.section)));
 			})
-
 		}
-
 	}
 
 	openSectionPage(section_id: string) {
@@ -231,7 +222,6 @@ export class GenSelcourseComponent implements OnInit {
    * 1. Student requestin to enroll in a section
    */
 	requestToEnroll(section_id: string) {
-		console.warn("requesting");
 		this.sectionService.sendRequestToSection(this.user.getUserId(), section_id).subscribe((section) => {
 			this.getUserSections(this.user.getUserId());
 			this.course_search = null;
