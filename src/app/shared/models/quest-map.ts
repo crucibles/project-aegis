@@ -41,7 +41,7 @@ export class QuestMap {
 		this.mainquestY = 25;
 		this._id = data._id;
 		this.max_exp = data && data.max_exp ? data.max_exp : 0;
-		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 80;
+		this.flat_one_perc = data && data.flat_one_perc ? data.flat_one_perc : 0;
 		this.tempquestCoord = data.quest_coordinates;
 	}
 
