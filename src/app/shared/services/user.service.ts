@@ -46,9 +46,11 @@ export class UserService {
     private userUpdateUrl = 'api/updateUser'; // URL to: server/routes/api.js for updating user details
     private loginUrl = 'api/login';   // URL to: server/routes/api.js for login
     private signupUrl = 'api/signup'; // URL to: server/routes/api.js for sign up
+    private registerUrl = 'api/register'; // URL to: server/routes/api.js for register
     private securityQuestionsUrl = 'api/securityQuestions'; // URL to: server/routes/api.js for security questions
     private userReqPassUrl = 'api/userReqPass'; // URL to: server/routes/api.js for user request password
     private editStudentProfileUrl = 'api/editStudentProfile'; // URL to: server/routes/api.js for edit student profile
+    private userVerificationUrl = 'api/userVerification'; // URL to: server/routes/api.js for user verification
     private currentUser: User;
 
     constructor(
@@ -121,6 +123,7 @@ export class UserService {
                     localStorage.setItem('currentUser', JSON.stringify(data));
                     this.cookieService.set('currentUser', this.currentUser.getUserId());
                 }
+                
                 return data;
             }),
             catchError(this.handleError<any>(`logIn user_email=${email}`))
@@ -166,7 +169,8 @@ export class UserService {
         contactNumber: string,
         securityQuestion: string,
         securityAnswer: string,
-        userConditions: any
+        userConditions: any,
+        verified: boolean
     ): Observable<User> {
         // The sign up api URL.
         const url = this.signupUrl;
@@ -183,7 +187,8 @@ export class UserService {
             contactNumber,
             securityQuestion,
             securityAnswer,
-            userConditions
+            userConditions,
+            verified
         }).pipe(
             tap(data => {
                 // Returns data from api.js to sign-up.component.ts.
@@ -220,6 +225,15 @@ export class UserService {
     changeProfileData(currentUserId: String, userContactNo: String) {
         const url = this.userUpdateUrl;
         return this.http.post(url, {currentUserId, userContactNo}).pipe(
+            tap(data => {
+                return data;
+            })
+        );
+    }
+
+    verifyEmail(code: String) {
+        const url = this.userVerificationUrl;
+        return this.http.post(url, {code}).pipe(
             tap(data => {
                 return data;
             })

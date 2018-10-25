@@ -100,6 +100,7 @@ export class SpecificNewsComponent implements OnInit {
 			this.toastr.success("Well done!", "Upload success!");
 			this.fileName = JSON.parse(response).uploadName;
 			this.createNewPost();
+			this.fileName = "";
 		};
 
 		this.setDefault();
@@ -124,8 +125,10 @@ export class SpecificNewsComponent implements OnInit {
 		this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
 	}
 
+
 	createNewPost() {
 		if (this.createPostForm.invalid) {
+			console.log("invald create post form");
 			//AHJ: unimplemented; how to toaster
 			return;
 		}
@@ -146,9 +149,36 @@ export class SpecificNewsComponent implements OnInit {
 		);
 
 		this.commentPostService.addCommentPost(newPost).subscribe(x => {
-			console.log(x);
+			this.reset();
+			this.appendNewPost(newPost, this.currentUser)
 			this.bsModalRef.hide();
 		});
+	}
+
+	/**
+	 * Appends the newly create post in the commentposts.
+	 * Places the new post in the first index by pushing the existing commentposts.
+	 * @param newPost the newly create post to be appended
+	 * @param poster the poster of the new post
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	appendNewPost(newPost, poster) {
+		this.commentPosts.unshift(newPost);
+		this.posters.unshift(poster);
+		this.commenters.unshift([])
+		this.comments.unshift([]);
+	}
+
+	/**
+	 * Resets the information regarding creating new post.
+	 * Resets the post file and content field.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	reset() {
+		this.createPostForm.reset();
+		this.uploader.clearQueue();
 	}
 
 	/**
@@ -182,7 +212,6 @@ export class SpecificNewsComponent implements OnInit {
 					this.commenters[index] = [];
 					this.comments[index] = [];
 					this.posters = [];
-					console.log(post);
 					this.userService.getUser(post.getUserId()).subscribe(user => {
 						console.warn(user);
 						let newUser = new User(user);
@@ -190,7 +219,6 @@ export class SpecificNewsComponent implements OnInit {
 						post.getPostComments().forEach(postId => {
 							let newComment = newComments.find(comment => comment.getPostCommentId() == postId);
 							if (newComment) {
-								console.log(newComment);
 								this.commentObserver.next({ parent_index: index, comment: newComment });
 							}
 						});
@@ -217,9 +245,6 @@ export class SpecificNewsComponent implements OnInit {
 				return this.getTime(a.getPostDate()) - this.getTime(b.getPostDate());
 			});
 		}
-
-		console.log(this.commentPosts);
-		console.log(this.comments);
 	}
 
 	/**
@@ -257,7 +282,8 @@ export class SpecificNewsComponent implements OnInit {
 	initializeForm() {
 		this.createPostForm = this.formBuilder.group({
 			commentable: new FormControl("Y", Validators.required),
-			postContent: new FormControl("", Validators.required)
+			postContent: new FormControl("", Validators.required),
+			postFile: new FormControl("")
 		});
 	}
 
@@ -282,7 +308,6 @@ export class SpecificNewsComponent implements OnInit {
 		//creates a CommentPost instance of the new comment
 		let newComment: CommentPost = new CommentPost();
 		newComment.setCommentPost(this.section_id, this.currentUser.getUserId(), this.commentContent[parentPostIndex], "", new Date(), true, false, "");
-		console.log(newComment);
 		//add comment to the database
 		//Note to self: must change appendComment to accomodate comment instead of comment_id for fewer querying
 		this.commentPostService.attachComment(newComment, this.commentPosts[parentPostIndex].getPostCommentId()).subscribe(() => {

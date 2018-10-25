@@ -98,13 +98,14 @@ export class QuestService {
 
 	}
 
-	addQuestMapCoordinates(section_id: String, quest_map_id: String, newQuestCoord: any[]): Observable<QuestMap> {
+	addQuestMapCoordinates(section_id: String, quest_map_id: String, newQuestCoord: any[], prereq: any[]): Observable<QuestMap> {
 		let url = this.questMapUrl;
 		return this.http.post<QuestMap>(url, {
 			method: "addQuestMapCoordinates",
 			section_id: section_id,
 			quest_map_id: quest_map_id,
-			quest_coordinates: newQuestCoord
+			quest_coordinates: newQuestCoord,
+			quest_prerequisite: prereq
 		})
 			.pipe(
 				tap(data => {
@@ -291,9 +292,7 @@ export class QuestService {
 	getUserJoinedQuests(user_id: string): Observable<any> {
 		// note: This function is used on the general sidetab except for the profile page
 		let userEnrolledSections = this.sectionService.getUserEnrolledSections();
-		console.warn(userEnrolledSections);
 		let joinedQuestIds = this.sectionService.getAllSectionJoinedQuests();
-		console.warn(joinedQuestIds);
 		// used for side tabs; aaaand di ko sure pero basin pwede makuha ang section quest by using getSectionQuests() function
 		let params = new HttpParams()
 			.set('id', user_id)
@@ -373,6 +372,30 @@ export class QuestService {
 			method: "setMaxEXP",
 			quest_map_id: questMapId,
 			max_exp: maxEXP
+		}
+
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
+	}
+
+	/**
+	 * Sets the flat-one grade percentage in the database.
+	 * @param questMapId id of the questmap whose grade percentage is to be set
+	 * @param flatOne the grade percentage to be set
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	setFlatOnePercentage(questMapId: String, flatOne: number) {
+		const url = this.questMapUrl;
+
+		let body = {
+			method: "setFlatOnePercentage",
+			quest_map_id: questMapId,
+			flat_one_perc: flatOne
 		}
 
 		return this.http.post(url, body).pipe(

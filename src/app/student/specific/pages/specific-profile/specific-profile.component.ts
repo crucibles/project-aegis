@@ -9,7 +9,8 @@ import {
     Section,
     User,
     Experience,
-    Badge
+    Badge,
+    QuestMap
 } from 'shared/models';
 
 import {
@@ -17,10 +18,9 @@ import {
     PageService,
     SectionService,
     UserService,
-    BadgeService
+    BadgeService,
+    QuestService
 } from 'shared/services';
-
-const MAXXP: number = 5000;
 
 @Component({
     selector: 'app-specific-profile',
@@ -61,11 +61,12 @@ export class SpecificProfileComponent implements OnInit {
      * @param userService uses the UserService to obtains data needed for user
      */
     constructor(
+        private badgeService: BadgeService,
         private experienceService: ExperienceService,
         private pageService: PageService,
+        private questService: QuestService,
         private sectionService: SectionService,
         private userService: UserService,
-        private badgeService: BadgeService
     ) {
     }
 
@@ -115,50 +116,53 @@ export class SpecificProfileComponent implements OnInit {
      */
     getGrades(): void {
         let dataGrade: number[] = [];
-        let max: number = MAXXP ? MAXXP : 10;
 
-        this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
-            .subscribe(submissions => {
-                if (submissions.length > 0) {
-                    this.userSubmission = submissions.map(submission => new Experience(submission))[0];
+        // Obtaining max EXP & flat-one grade percentage
+        this.questService.getSectionQuestMap(this.currentSection.getSectionId())
+            .subscribe(questmap => {
+                let questMap = new QuestMap(questmap);
+                let max: number = questMap.getMaxEXP() ? questMap.getMaxEXP() : 10;
+                let flatOnePerc: number = questMap.getFlatOnePercentage() ? questMap.getFlatOnePercentage() : 70;
 
-                    let grades = this.userSubmission.getWeeklyAccumulativeGrades();
-                    //AHJ: unimplemented; change dummy number if able to get flat one perc from database
-                    let flatOnePerc = 80;
-                    let flatOneArr: number[] = [];
-                    grades.forEach(grade => {
-                        // get the decimal percentage
-                        let percentage: number = (grade / MAXXP) * 100;
+                // Obtaining student's section grades 
+                this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
+                    .subscribe(submissions => {
+                        if (submissions.length > 0) {
+                            this.userSubmission = submissions.map(submission => new Experience(submission))[0];
 
-                        // round the decimal up to two decimal points
-                        dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+                            dataGrade = this.userSubmission.getWeeklyPercentageGrades(max);
+                            
+                            // flat one array (just filling flat one array with percentage-grade values)
+                            let flatOneArr: number[] = [];
+                            this.lineChartLabels.forEach(label => {
+                                flatOneArr.push(flatOnePerc);
+                            });
+
+                            //setting student's data for the graph
+                            let dataLine: any = {
+                                data: dataGrade,
+                                label: this.sectionService.getCurrentCourse().getCourseName() + " - " + this.currentSection.getSectionName()
+                            };
+
+                            // flat one line properties in the performance graph
+                            let flatOneLine: any = {
+                                data: flatOneArr,
+                                label: "Flat One Line",
+                                radius: 0,
+                                fill: false,
+                                borderWidth: 1
+                            }
+
+                            //IMPORTANT ORDER: dataline must be pushed first before the flat-one line; 
+                            // reason: indexing changes the line chart properties 
+                            this.lineChartData.push(dataLine);
+                            this.lineChartData.push(flatOneLine);
+                            this.isChartReady = true;
+                        }
                     });
 
-                    // flat one array
-                    this.lineChartLabels.forEach(label => {
-                        flatOneArr.push(flatOnePerc);
-                    });
-
-                    //setting student's data for the graph
-                    let dataLine: any = {
-                        data: dataGrade,
-                        label: this.sectionService.getCurrentCourse().getCourseName() + " - " + this.currentSection.getSectionName()
-                    };
-
-                    this.lineChartData.push(dataLine);
-
-                    let flatOneLine: any = {
-                        data: flatOneArr,
-                        label: "Flat One Line",
-                        radius: 0,
-                        fill: false,
-                        borderWidth: 1
-                    }
-
-                    this.lineChartData.push(flatOneLine);
-                    this.isChartReady = true;
-                }
             });
+
     }
 
     /* Below are the helper functions */

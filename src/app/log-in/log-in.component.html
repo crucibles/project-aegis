@@ -3,16 +3,9 @@
         <h2>Login</h2>
     </div>
 
-    <form class="form-horizontal" 
-        [formGroup]="loginForm" 
-        (ngSubmit)="logIn()"
-        (keyup)="keyPressed()">
+    <!--Log In Form-->
+    <form class="form-horizontal" [formGroup]="loginForm" (ngSubmit)="logIn()">
 
-        <div *ngIf="warning">
-            <small class="form-text text-danger">Email or password is invalid.</small>
-            <br>
-        </div>
-        
         <table>
             <tr>
                 <td>
@@ -21,11 +14,7 @@
                 <td>
                     <div class="form-group">
                         <div class="col-sm-10">
-                            <input type="text" 
-                                class="form-control" 
-                                formControlName="email" 
-                                id="email" 
-                                placeholder="Input your email here"
+                            <input type="text" class="form-control" formControlName="email" id="email" placeholder="Input your email here"
                                 required>
                         </div>
                     </div>
@@ -39,12 +28,8 @@
                 <td>
                     <div class="form-group">
                         <div class="col-sm-10">
-                            <input type="password" 
-                                class="form-control" 
-                                formControlName="password" 
-                                id="password" 
-                                placeholder="Password"
-                                required>
+                            <input type="password" class="form-control" formControlName="password" id="password"
+                                placeholder="Password" required>
                         </div>
                     </div>
                 </td>
@@ -52,17 +37,14 @@
 
             <tr>
                 <td colspan="2">
-                    <br>    
-                    <button type="submit" 
-                            class="btn btn-primary"
-                            [disabled]="loginForm.invalid"
-                            >
-                            <span *ngIf="!isLoggingIn">
-                                Login
-                            </span>
-                            <span *ngIf="isLoggingIn">
-                                Logging in...
-                            </span>
+                    <br>
+                    <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
+                        <span *ngIf="!isLoggingIn">
+                            Login
+                        </span>
+                        <span *ngIf="isLoggingIn">
+                            Logging in...
+                        </span>
                     </button>
                 </td>
             </tr>
@@ -71,13 +53,16 @@
                 <td colspan="2">
                     <br>
                     <div class="linkers">
-                        <p>Forgot password?</p> <p class="hyperlinks" (click)="userChangePassword()">Click here.</p>
+                        <p>Forgot password?</p>
+                        <p class="hyperlinks" (click)="userChangePassword()">Click here.</p>
                     </div>
                     <div class="linkers">
-                        <p>No account yet?</p> <p class="hyperlinks" (click)="userSignUp()">Sign up here.</p>
+                        <p>No account yet?</p>
+                        <p class="hyperlinks" (click)="userSignUp()">Sign up here.</p>
                     </div>
                 </td>
             </tr>
         </table>
     </form>
+    <!--Log In Form End-->
 </div>

@@ -99,10 +99,6 @@ export class SpecificMyCourseComponent implements OnInit {
 			this.currentSection = new Section(this.sectionService.getCurrentSection());
 			this.currentCourse = new Course(this.sectionService.getCurrentCourse());
 			this.classmates = [];
-			/*console.log(STUDENTS);
-			STUDENTS.forEach(student => {
-				this.classmates.push(new User(student));
-			});*/
 			this.sectionService.getSectionStudents(sectionId).subscribe((students) => {
 				console.warn(students);
 				students.forEach(student => {
@@ -119,13 +115,9 @@ export class SpecificMyCourseComponent implements OnInit {
 	}
 
 	getSectionBadges() {
-		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
-		// this.sectionBadges = BADGES.map(badge => new Badge(badge));
-
 		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
 			this.sectionBadges = badges.map(badge => new Badge(badge));
 		});
-
 	}
 
 	/**

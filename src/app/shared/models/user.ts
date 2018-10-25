@@ -133,7 +133,7 @@ export class User {
 
   /**
    * Returns the user's formatted birthdate
-   * @param isFormatted (eoptional) returns a formatted datestring; default value is false
+   * @param isFormatted (optional) returns a formatted datestring; default value is false
    * - True if formatted
    * - False if not formatted or in 'Date' form
    */
@@ -187,6 +187,12 @@ export class User {
     return this.user_conditions;
   }
 
+  /**
+   * Determines whether the user has logged in today or not.
+   * @returns True if the user has logged in today; false if not.
+   * 
+   * @author Sumandang, AJ Ruth H.
+   */
   isLoggedInToday(): boolean{
     let date = this.user_conditions.getLogInTotal().filter(date => new Date(date).getDate() == new Date(Date.now()).getDate());
     return date && date.length > 0;
@@ -270,7 +276,3 @@ export class User {
 	}
 
 };
-
-export const TOTXP: number[] = [1000, 2123, 3439, 4655, 6053, 6104];
-
-export const MAXXP: number = 10000;

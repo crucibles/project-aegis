@@ -13,17 +13,22 @@ import {
 	Validators
 } from '@angular/forms';
 
+//Third-party Imports
+import {
+	ToastsManager
+} from 'ng2-toastr';
+
 // Application Imports
 import {
 	User, Section, Course
 } from 'shared/models';
 
 import {
+	BadgeService,
 	PageService,
 	UserService,
 	SectionService
 } from 'shared/services';
-import { ToastsManager } from 'ng2-toastr';
 
 @Component({
 	selector: 'create-course',
@@ -52,6 +57,7 @@ export class CreateCourseComponent implements OnInit {
 	isShowSideTab: boolean = false;
 
 	constructor(
+		private badgeService: BadgeService,
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
 		private pageService: PageService,
@@ -151,20 +157,19 @@ export class CreateCourseComponent implements OnInit {
 		let sched = [];
 		sched = this.sectionForm.value.scheduleDays;
 		let schedule = sched.filter((sched) => {
-			if(sched.isChecked){
+			if (sched.isChecked) {
 				return sched;
 			}
 		}).map((sched) => {
-			sched.maxTime = new Date(sched.maxTime).toLocaleTimeString();
-			sched.minTime = new Date(sched.minTime).toLocaleTimeString();
+			sched.maxTime = this.getFormatTime(sched.maxTime);
+			sched.minTime = this.getFormatTime(sched.minTime);
 			return sched;
-		})
-		
+		});
+
 		newSection.setSection("", this.sectionForm.value.courseSection, [], this.currentUser.getUserFullName(), [], [], [], schedule);
 		console.warn("NEW SECTION", newSection);
 		let newCourse: Course = new Course();
 		newCourse.setCourse(this.sectionForm.value.courseName, this.sectionForm.value.courseDescription);
-		console.log(newCourse);
 		//AHJ: unimplemented; use section service to add section and course to the database
 		this.sectionService.createCourseSection(
 			this.sectionForm.value.courseName,
@@ -174,7 +179,7 @@ export class CreateCourseComponent implements OnInit {
 			this.currentUser.getUserId(),
 			[],
 			[],
-			[],
+			this.badgeService.getDefaultSectionBadges(),
 			schedule
 		).subscribe(marj => {
 			this.pageService.isCourseCreated(true);
@@ -192,5 +197,27 @@ export class CreateCourseComponent implements OnInit {
 			}
 		}
 		return false;
+	}
+
+	/**
+     * Returns a formatted time of the quest.
+     * @param date_obj Date object to be formatted.
+     * @returns the formatted time of format HH:MM AM/PM
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    getFormatTime(date_obj: Date) {
+		// formats a javascript Date object into a 12h AM/PM time string
+		console.log(date_obj);
+		var hour = date_obj.getHours();
+		var minute = date_obj.getMinutes();
+		var amPM = (hour > 11) ? " PM" : " AM";
+		if (hour > 12) {
+			hour -= 12;
+		} else if (hour == 0) {
+			hour = 12;
+		}
+
+		return minute < 10? hour + ":0" + minute + amPM : hour + ":" + minute + amPM;
 	}
 }

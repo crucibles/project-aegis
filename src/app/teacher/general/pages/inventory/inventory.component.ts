@@ -135,6 +135,7 @@ export class InventoryComponent implements OnInit {
 			this.badgeForm.value.badgeDescription,
 			this.setConditions(),
 			false,
+			false,
 			false
 		);
 		return badge;
@@ -158,7 +159,6 @@ export class InventoryComponent implements OnInit {
 
 	createItem() {
 		console.log("description:" + this.itemForm.value.itemName);
-
 	}
 
 	initializeForm() {

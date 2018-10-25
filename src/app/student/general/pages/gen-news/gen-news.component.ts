@@ -61,7 +61,6 @@ export class GenNewsComponent implements OnInit {
 	 */
     getAllCommentPost() {
         let es = this.sectionService.getCurrentUserEnrolledSectionIds();
-        console.log(es);
         this.commentPostService.getUserPosts(es).subscribe(commentPosts => {
 
             if (commentPosts) {

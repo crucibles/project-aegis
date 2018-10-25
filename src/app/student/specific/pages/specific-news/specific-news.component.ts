@@ -1,7 +1,9 @@
 //Core Imports
 import {
 	Component,
-	OnInit
+	OnInit,
+	ViewChild,
+	TemplateRef
 } from '@angular/core';
 
 import {
@@ -20,19 +22,24 @@ import {
 //Application Imports
 import {
 	CommentPost,
-	User
+	User,
+	Section,
+	Badge
 } from 'shared/models'
 
 import {
 	CommentPostService,
 	UserService,
 	PageService,
-	FileService
+	FileService,
+	SectionService,
+	BadgeService
 } from 'shared/services';
 
 import {
 	saveAs
 } from 'file-saver';
+import { BadgeModal } from 'shared/pages';
 
 @Component({
 	selector: 'app-specific-news',
@@ -43,6 +50,8 @@ import {
 
 
 export class SpecificNewsComponent implements OnInit {
+	@ViewChild('badgeModal') badgeModal: BadgeModal;
+
 	section_id: string;
 
 	commentPosts: CommentPost[];
@@ -63,13 +72,17 @@ export class SpecificNewsComponent implements OnInit {
 		this.commentObserver = observer
 	);
 
+	currentSection: Section;
+	sectionBadges: Badge[];
 
 	constructor(
+		private badgeService: BadgeService,
 		private commentPostService: CommentPostService,
 		private pageService: PageService,
 		private route: ActivatedRoute,
 		private userService: UserService,
-		private fileService: FileService
+		private fileService: FileService,
+		private sectionService: SectionService
 	) { }
 
 	ngOnInit() {
@@ -77,6 +90,8 @@ export class SpecificNewsComponent implements OnInit {
 		this.route.paramMap.subscribe(params => {
 			this.section_id = params.get('sectionId');
 			this.getUser();
+			this.getCurrentSection();
+			this.getSectionBadges();
 			this.getAllCommentPosts();
 			let subscription = this.commentObservable.subscribe(value => {
 				this.appendComments(value);
@@ -86,12 +101,47 @@ export class SpecificNewsComponent implements OnInit {
 
 	setDefault() {
 		this.pageService.isProfilePage(false);
-
 	}
 
 	getUser() {
 		//return this function once working okay
 		this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
+	}
+
+	getCurrentSection() {
+        this.currentSection = this.sectionService.getCurrentSection();
+	}
+	
+	getSectionBadges() {
+		this.badgeService.getSectionBadges(this.currentSection.getSectionId()).subscribe(badges => {
+			this.sectionBadges = badges.map(badge => new Badge(badge));
+			this.isNotified();
+		});
+	}
+
+	isNotified(): boolean{
+		let isNotified: boolean = true;
+		this.sectionBadges.forEach(badge => {
+			console.log("badge");
+			console.log(badge);
+			// if user is a badge attainer but is not notified yet (function 'hasBadge' == false)
+			console.log("has_badge_in_section:" + this.currentSection.hasBadge(this.currentUser.getUserId(), badge.getBadgeId()));
+			if(badge.isBadgeAttainer(this.currentUser.getUserId()) && !this.currentSection.hasBadge(this.currentUser.getUserId(), badge.getBadgeId())){
+				console.log("ISNOTNOTIFIED");
+				isNotified = false;
+				this.badgeModal.openContent({
+					heading: badge.getBadgeName(),
+					body: badge.getBadgeDescription(),
+					image: "/assets/images/rookie_badge.png"
+				});
+				this.sectionService.addBadgeToStudent(badge.getBadgeId(), this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(res => {
+					if(res){
+						console.log("SUCCESS ADDING BADGE TO STUDENT");
+					}
+				})
+			}
+		});
+		return isNotified;
 	}
 
 	/**
@@ -132,7 +182,6 @@ export class SpecificNewsComponent implements OnInit {
 						post.getPostComments().forEach(postId => {
 							let newComment = newComments.find(comment => comment.getPostCommentId() == postId);
 							if(newComment){
-								console.log(newComment);
 								this.commentObserver.next({ parent_index: index, comment: newComment});
 							}
 						});
@@ -208,7 +257,6 @@ export class SpecificNewsComponent implements OnInit {
 		//creates a CommentPost instance of the new comment
 		let newComment: CommentPost = new CommentPost();
 		newComment.setCommentPost(this.section_id, this.currentUser.getUserId(), this.commentContent[parentPostIndex], "", new Date(), true, false, "");
-		console.log(newComment);
 		//add comment to the database
 		//Note to self: must change appendComment to accomodate comment instead of comment_id for fewer querying
 		this.commentPostService.attachComment(newComment, this.commentPosts[parentPostIndex].getPostCommentId()).subscribe(() => {

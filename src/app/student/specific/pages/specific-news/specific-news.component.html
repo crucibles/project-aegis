@@ -1,3 +1,5 @@
+<badge-modal #badgeModal></badge-modal>
+
 <body>
   <div *ngIf="!commentPosts">
     Loading...
@@ -33,6 +35,16 @@
               </div>
               <div class="post-description">
                 <p>{{post.getPostContent()}}</p>
+                <br class="clear" />
+
+                <div class="action-box" *ngIf="this.pageService.getPossibleLinks(post.getPostContent())" style="font-size: 80%">
+                  Links here:
+                  <ul>
+                    <li *ngFor="let links of this.pageService.hyperLinks">
+                      <a href="{{links}}">{{links}}</a>
+                    </li>
+                  </ul>
+                </div>
 
                 <div *ngIf="post.getPostData()">
                   <button (click)="download(post.getPostData())" type="button" class="btn btn-success">

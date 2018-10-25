@@ -161,7 +161,6 @@ export class GenSidetabComponent implements OnInit {
 		if (this.isProfile) {
 			this.getUserSections(this.currentUser.getUserId());
 		} else {
-			console.warn("refreshing quests");
 			this.getQuests(this.currentUser.getUserId());
 		}
 	}
@@ -249,14 +248,12 @@ export class GenSidetabComponent implements OnInit {
 	getQuests(user_id): void {
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
-				console.warn(quests);
 				quests.forEach(quest => {
 					this.quests.push(new Quest(quest.questData));
 					this.questCourses.push(quest.course + '-' + quest.section);
 					this.questSectionIds.push(quest.section_id);
 				});
 
-				console.warn(this.quests);
 				this.timeDisplays();
 			});
 	}
@@ -288,7 +285,6 @@ export class GenSidetabComponent implements OnInit {
 	}
 
 	submitQuest(questId: String, res: any) {
-		console.log(res);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
 
@@ -308,11 +304,7 @@ export class GenSidetabComponent implements OnInit {
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.questSectionIds[this.indexClicked];
 
-		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
-			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-			// 	console.log(x);
-			// })
-		});
+		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {});
 		this.bsModalRef.hide();
 	}
 

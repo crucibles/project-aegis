@@ -67,6 +67,12 @@ export class GenSelcourseComponent implements OnInit {
 	isSearching: boolean = false;
 	course_found: Course[];
 
+	dailyBadgeContent: any = {
+		heading: "You earned your daily badge!",
+		body: "Log in everyday to earn your daily badge. Five daily badges in a week earn you a weekly badge.",
+		image: "/assets/images/daily-badge-2.png"
+	}
+
 	constructor(
 		private pageService: PageService,
 		private sectionService: SectionService,
@@ -124,10 +130,6 @@ export class GenSelcourseComponent implements OnInit {
 				section.instructorName = (new User(res).getUserFullName());
 			});
 		});
-
-		this.tempSections.forEach(section => {
-			console.log(section.instructorName);
-		});
 	}
 
 	/**
@@ -177,8 +179,8 @@ export class GenSelcourseComponent implements OnInit {
 	getUserSections(user_id): void {
 		this.sectionService.getUserSections(user_id)
 			.subscribe(sections => {
-				console.warn(sections);
 				this.courseSections = sections;
+				console.log(this.courseSections);
 				this.sections = sections.map(section => new Section(section.section));
 				this.sections = this.sectionService.getSortedSections(
 					this.sections,

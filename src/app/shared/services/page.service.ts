@@ -112,6 +112,8 @@ export class PageService {
 		}
 	];
 
+	public hyperLinks = [];
+
 	constructor(
 		private router: Router,
 		private sectionService: SectionService
@@ -133,6 +135,35 @@ export class PageService {
 			+ this.formatTime(date)
 			: "";
 		return displayDateTime;
+	}
+
+	/**
+	 * 
+	 * @param text The whole content of a post
+	 * @description This will detect possible URLS in a commentPost
+	 */
+	public getPossibleLinks(text: String) {
+		let sentence = new String(text);
+		this.hyperLinks = [];
+		let words = sentence.split(/\s+/);
+		words.forEach((word) => {
+			try {
+				new URL(word);
+				this.hyperLinks.push(word);
+			} catch (_) {
+				if (word.startsWith("www.")) {
+					this.hyperLinks.push("https://" + word);
+				} else {
+					return false;
+				}
+			}
+		});
+
+		if (this.hyperLinks.length > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
