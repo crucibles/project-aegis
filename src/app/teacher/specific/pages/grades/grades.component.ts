@@ -89,11 +89,17 @@ export class GradesComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.isGraded = [];
-        this.setDefault();
-        this.getCurrentSection();
-        this.getCurrentUser();
-        this.getSectionInformation();
+        this.route.paramMap.subscribe(params => {
+            let section_id = params.get('sectionId');
+			this.sectionService.searchSection(section_id).subscribe(res => {
+                this.sectionService.setCurrentSection(new Section(res[0].section));
+                this.isGraded = [];
+                this.setDefault();
+                this.getCurrentSection();
+                this.getCurrentUser();
+                this.getSectionInformation();   
+			});
+		})
     }
 
     getCurrentUser() {

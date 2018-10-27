@@ -125,6 +125,7 @@ export class SpecificNewsComponent implements OnInit {
 		this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
 	}
 
+
 	createNewPost() {
 		if (this.createPostForm.invalid) {
 			console.log("invald create post form");

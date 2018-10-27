@@ -68,6 +68,7 @@ import {
 	styleUrls: ['./specific-quest-map.component.css']
 })
 export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
+// export class SpecificQuestMapComponent implements OnInit {
 	// basic info
 	private currentSection: Section;
 	currentUser: User;
@@ -134,15 +135,22 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	ngOnInit() {
-		this.isCreateModalReady = false;
-		this.setDefault();
-		this.getCurrentUser();
-		this.getCurrentSection();
-		this.createBadgeArray();
+		this.route.paramMap.subscribe(params => {
+			let section_id = params.get('sectionId');
+			this.sectionService.searchSection(section_id).subscribe(res => {
+				this.sectionService.setCurrentSection(new Section(res[0].section));
+				this.isCreateModalReady = false;
+				this.setDefault();
+				this.getCurrentUser();
+				this.getCurrentSection();
+				this.createBadgeArray();
+				this.loadQuestMap();
+			});
+		})
 	}
 
 	ngAfterViewInit() {
-		this.loadQuestMap();
+		// this.loadQuestMap();
 	}
 
 	/**
@@ -402,10 +410,12 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		var HTMLchart = document.getElementById("quest-map");
 		var ctx = (<HTMLCanvasElement>HTMLchart).getContext("2d");
 
-		this.chart = new Chart(ctx, {
+		let cc:any = {
 			data: QM,
 			options: options
-		});
+		};
+		
+		this.chart = new Chart(ctx, cc);
 	}
 
 
@@ -502,6 +512,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			this.addNewQuestLine(quest, questPrereq);
 			this.bsModalRef.hide();
 			this.resetQuest();
+			// this.loadQuestMap();
 		});
 	}
 
@@ -533,6 +544,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 			// if clicked point is a quest point
 		} else {
+			console.log("THIS IS THE FIRST QUEST");
 			let basisX = this.roundOff(this.x);
 			let basisY = this.roundOff(this.y);
 

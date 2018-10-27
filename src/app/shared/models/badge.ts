@@ -320,11 +320,11 @@ export class Conditions {
         return this.armor;
     }
 
-    getLeftHand() {
+    getLeftArm() {
         return this.left_hand;
     }
 
-    getRightHand() {
+    getRightArm() {
         return this.right_hand;
     }
 
@@ -391,11 +391,11 @@ export class Conditions {
         this.armor = armor;
     }
 
-    setLeftHand(left_hand) {
+    setLeftArm(left_hand) {
         this.left_hand = left_hand;
     }
 
-    setRightHand(right_hand) {
+    setRightArm(right_hand) {
         this.right_hand = right_hand;
     }
 

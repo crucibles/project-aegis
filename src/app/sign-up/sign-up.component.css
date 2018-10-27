@@ -2,14 +2,40 @@ table {
     text-align: left;
     margin-left: auto;
     margin-right: auto;
+    width: 100%;
 }
 
 h2 {
-    text-align: center;
+    text-align: left;
+}
+
+.personalForm, .contactForm, .securityForm {
+    width: 30%;
+    display: inline-block;
+    min-width: 300px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+input.ng-dirty.ng-invalid,
+input.ng-dirty.ng-invalid[id="password"],
+.errConfirmPass {
+    border-color: red;
+    background-color: #ffcccc;
+}
+
+input.ng-valid[type="text"],
+input.ng-valid[type="email"],
+input.ng-valid[type="date"],
+input.ng-valid[id="password"],
+.selectedSecQuestion,
+.confirmPass {
+    border-color: green;
+    background-color: #66ff99;
 }
 
 .form-horizontal {
-    width: 450px;
+    width: 100%;
     text-align: center;
     margin-bottom: 30px;
     margin-top: 30px;
@@ -28,8 +54,8 @@ h2 {
 .container {
     border: 1px solid lightgray;
     border-radius: 10px;
-    width: fit-content;
-    margin-top: 5%;
+    width: 100%;
+    margin-top: 2%;
 }
 
 .container-header {
