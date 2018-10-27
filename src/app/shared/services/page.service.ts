@@ -113,11 +113,18 @@ export class PageService {
 	];
 
 	public hyperLinks = [];
+	questObserver: any;
+	chartObserver: any;
+	questObservable: Observable<{}>;
+	chartObservable: Observable<{}>;
 
 	constructor(
 		private router: Router,
 		private sectionService: SectionService
-	) { }
+	) {
+		this.questObservable = new Observable(observer => this.questObserver = observer);
+		this.chartObservable = new Observable(observer => this.chartObserver = observer);
+	 }
 
 	/**
 	   * Returns the appropriate datetimestring given a date
@@ -136,6 +143,7 @@ export class PageService {
 			: "";
 		return displayDateTime;
 	}
+
 
 	/**
 	 * 
@@ -240,5 +248,25 @@ export class PageService {
 
 	public getCurrentDate(){
 		return new Date();
+	}
+
+	updateStudentSideTab(value){
+		console.log("updating...2");
+		this.questObserver.next(value);
+	}
+
+	updateChart(){
+		console.log("updating..3");
+		this.chartObserver.next();
+	}
+
+	// observable for updating sidetab when join/abandon a quest in
+	getQuestObservable(): Observable<any>{
+		return this.questObservable;
+	}
+
+	// observable for updating charts when abandoning a quest from sidetab
+	getChartObservable(): Observable<any>{
+		return this.chartObservable;
 	}
 }
