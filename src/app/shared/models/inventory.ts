@@ -11,10 +11,11 @@ export class Inventory {
     private section_id: string;
     private items: string[];
     private head: string;
-    private left_leg: string;
-    private right_leg: string;
-    private left_arm: string;
-    private right_arm: string;
+    private footware: string;
+    private armor: string;
+    private left_hand: string;
+    private right_hand: string;
+    private accessory: string;
 
     constructor(
         inventory?: any
@@ -25,10 +26,11 @@ export class Inventory {
             this.section_id = inventory.section_id ? inventory.section_id : "";
             this.items = inventory.items ? inventory.items : "";
             this.head = inventory.head? inventory.head: "";
-            this.left_leg = inventory.left_leg? inventory.left_leg: "";
-            this.right_leg = inventory.right_leg? inventory.right_leg: "";
-            this.left_arm = inventory.left_arm? inventory.left_arm: "";
-            this.right_arm = inventory.right_arm? inventory.right_arm: "";
+            this.footware = inventory.footware? inventory.footware: "";
+            this.armor = inventory.armor? inventory.armor: "";
+            this.left_hand = inventory.left_hand? inventory.left_hand: "";
+            this.right_hand = inventory.right_hand? inventory.right_hand: "";
+            this.accessory = inventory.accessory? inventory.accessory: "";
         } else {
             this.user_id = "";
             this.section_id = "";
@@ -67,19 +69,23 @@ export class Inventory {
     }
 
     getLeftLeg() {
-        return this.left_leg;
+        return this.footware;
     }
 
     getRightLeg() {
-        return this.right_leg;
+        return this.armor;
     }
 
-    getLeftArm() {
-        return this.left_arm;
+    getLeftHand() {
+        return this.left_hand;
     }
 
-    getRightArm() {
-        return this.right_arm;
+    getRightHand() {
+        return this.right_hand;
+    }
+
+    getAccessory() {
+        return this.accessory;
     }
 
     setInventoryId(_id) {
@@ -102,19 +108,23 @@ export class Inventory {
         this.head = head;
     }
 
-    setLeftLeg(left_leg) {
-        this.left_leg = left_leg;
+    setLeftLeg(footware) {
+        this.footware = footware;
     }
 
-    setRightLeg(right_leg) {
-        this.right_leg = right_leg;
+    setRightLeg(armor) {
+        this.armor = armor;
     }
 
-    setLeftArm(left_arm) {
-        this.left_arm = left_arm;
+    setLeftHand(left_hand) {
+        this.left_hand = left_hand;
     }
 
-    setRightArm(right_arm) {
-        this.right_arm = right_arm;
+    setRightHand(right_hand) {
+        this.right_hand = right_hand;
+    }
+
+    setAccessory(accessory) {
+        this.accessory = accessory;
     }
 }

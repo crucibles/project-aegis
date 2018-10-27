@@ -199,8 +199,9 @@ export class QuestMap {
 				} else {
 					return "#C0C0C0";
 				}
-			} else { // if user is participant (either 'ongoing' or 'done')	
+			} else { // if user is participant (either 'ongoing' or 'done'); ongoing if has submitted
 				if (experience.hasSubmittedQuest(quest.getQuestId())) {
+					console.log(quest.getQuestTitle());
 					return "#FF8000";
 				} else {
 					return "#0073aa";
