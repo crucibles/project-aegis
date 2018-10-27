@@ -402,6 +402,7 @@ export class SpecificQuestMapComponent implements OnInit {
 			this.isQuestTakn = true;
 			this.pending = true;
 			this.commentBox = "";
+			this.setNewSection();
 			this.setNewExperience();
 			this.questModalRef.hide();
 			this.toaster.success('Quest done', 'Quest Submitted');

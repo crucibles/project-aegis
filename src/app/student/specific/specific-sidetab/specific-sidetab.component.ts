@@ -288,7 +288,7 @@ export class SpecificSidetabComponent implements OnInit {
 		//AHJ: unimplemented
 
 		this.questService.submitQuest(res, this.commentBox, user_id, questId, "").subscribe(res => {
-			console.warn(res);
+			this.pageService.updateChart();
 			this.bsModalRef.hide();
 		});
 	}

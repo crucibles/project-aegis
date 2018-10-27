@@ -203,6 +203,7 @@ export class GradesComponent implements OnInit {
                                                     this.setSummaryGraph();
                                                 } else {
                                                     this.chart.config.data.datasets = this.lineChartData;
+                                                    this.chart.config.options.animation.duration = 0;
                                                     this.chart.update();
                                                 }
                                             });

@@ -537,6 +537,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 						this.questMap = new QuestMap(questmap);
 						this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
 						this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
+						this.chart.config.options.animation.duration = 0;
 						this.chart.update();
 					});
 				});
@@ -557,6 +558,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 					this.questMap = new QuestMap(questmap);
 					this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
 					this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
+					this.chart.config.options.animation.duration = 0;
 					this.chart.update();
 				});
 			})
@@ -568,6 +570,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		chart.data.datasets.forEach((dataset) => {
 			dataset.data.push(data);
 		});
+		this.chart.config.options.animation.duration = 0;
 		chart.update();
 	}
 
