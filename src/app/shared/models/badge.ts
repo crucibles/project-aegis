@@ -83,6 +83,7 @@ export class Badge {
      * @param badge_conditions Conditions of badge (in Badge model)
      * @param is_system_badge Determines whether the badge is a system badge or a section badge; 
      * true if system badge
+     * @param is_system_badge Determines whether the badge is a default badge or a instructor-created badge; true if default
      * @param badge_attainers Array of users who owns this badge
      * 
      * @author Sumandang, AJ Ruth H.
@@ -218,7 +219,7 @@ export class Badge {
 /**
  * A class to represent badge conditions.
  * @property hp, xp, ailment, log_in_streak,log_in_total, 
- * items, items_used, items_owned, head, left_leg, left_arm, right_leg, right_arm
+ * items, items_used, items_owned, head, footware, left_hand, armor, right_hand
  */
 export class Conditions {
     hp: number;
@@ -230,10 +231,10 @@ export class Conditions {
     items_used: string;
     items_owned: string;
     head: string;
-    left_leg: string;
-    right_leg: string;
-    left_arm: string;
-    right_arm: string;
+    footware: string;
+    armor: string;
+    left_hand: string;
+    right_hand: string;
 
     constructor(
         conditions?: any
@@ -248,10 +249,10 @@ export class Conditions {
             this.items_used = conditions.items_used ? conditions.items_used : "";
             this.items_owned = conditions.items_owned ? conditions.items_owned : "";
             this.head = conditions.head ? conditions.head : "";
-            this.left_leg = conditions.left_leg ? conditions.left_leg : "";
-            this.right_leg = conditions.right_leg ? conditions.right_leg : "";
-            this.left_arm = conditions.left_arm ? conditions.left_arm : "";
-            this.right_arm = conditions.right_arm ? conditions.right_arm : "";
+            this.footware = conditions.footware ? conditions.footware : "";
+            this.armor = conditions.armor ? conditions.armor : "";
+            this.left_hand = conditions.left_hand ? conditions.left_hand : "";
+            this.right_hand = conditions.right_hand ? conditions.right_hand : "";
         } else {
             this.hp = 0;
             this.xp = 0;
@@ -262,10 +263,10 @@ export class Conditions {
             this.items_used = "";
             this.items_owned = "";
             this.head = "";
-            this.left_leg = "";
-            this.right_leg = "";
-            this.left_arm = "";
-            this.right_arm = "";
+            this.footware = "";
+            this.armor = "";
+            this.left_hand = "";
+            this.right_hand = "";
         }
     }
 
@@ -312,19 +313,19 @@ export class Conditions {
     }
 
     getLeftLeg() {
-        return this.left_leg;
+        return this.footware;
     }
 
     getRightLeg() {
-        return this.right_leg;
+        return this.armor;
     }
 
     getLeftArm() {
-        return this.left_arm;
+        return this.left_hand;
     }
 
     getRightArm() {
-        return this.right_arm;
+        return this.right_hand;
     }
 
     getJSONObject() {
@@ -338,10 +339,10 @@ export class Conditions {
             items_used: this.items_used,
             items_owned: this.items_owned,
             head: this.head,
-            left_leg: this.left_leg,
-            right_leg: this.right_leg,
-            left_arm: this.left_arm,
-            right_arm: this.right_arm
+            footware: this.footware,
+            armor: this.armor,
+            left_hand: this.left_hand,
+            right_hand: this.right_hand
         }
         return badge;
     }
@@ -382,20 +383,20 @@ export class Conditions {
         this.head = head;
     }
 
-    setLeftLeg(left_leg) {
-        this.left_leg = left_leg;
+    setLeftLeg(footware) {
+        this.footware = footware;
     }
 
-    setRightLeg(right_leg) {
-        this.right_leg = right_leg;
+    setRightLeg(armor) {
+        this.armor = armor;
     }
 
-    setLeftArm(left_arm) {
-        this.left_arm = left_arm;
+    setLeftArm(left_hand) {
+        this.left_hand = left_hand;
     }
 
-    setRightArm(right_arm) {
-        this.right_arm = right_arm;
+    setRightArm(right_hand) {
+        this.right_hand = right_hand;
     }
 
 

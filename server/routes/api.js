@@ -530,7 +530,7 @@ router.post('/login', (req, res) => {
             })
             .then((user) => {
                 if (user) {
-                    if(user.user_verified) {
+                    if (user.user_verified) {
                         // Login in user if account is verified.
                         response.data = user;
                         res.json(user);
@@ -1760,8 +1760,8 @@ router.post('/signup', (req, res) => {
                                     to: newUserObj.user_email,
                                     subject: 'Email Verification',
                                     text: 'Hi ' + newUserObj.user_fname + '. Please go to this link to verify your email: ' +
-                                            'http://localhost:4200/sign-up/verify-email?verify=' + result.insertedId +
-                                            '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
+                                        'http://localhost:4200/sign-up/verify-email?verify=' + result.insertedId +
+                                        '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
                                 };
 
                                 // Sends the email.
@@ -1788,7 +1788,7 @@ router.post('/signup', (req, res) => {
  * @author Donevir Hynson
  */
 router.post('/userVerification', (req, res) => {
-    if(req.body.code.length < 12) {
+    if (req.body.code.length < 12) {
         res.json(false);
     } else {
         connection((db) => {
@@ -1796,7 +1796,7 @@ router.post('/userVerification', (req, res) => {
             myDB.collection('users')
                 .findOne(ObjectID(req.body.code))
                 .then((user) => {
-                    if(user) {
+                    if (user) {
                         // User account is verified.
                         myDB.collection('users')
                             .updateOne(

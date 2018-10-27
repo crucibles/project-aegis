@@ -11,10 +11,6 @@
     max-height: 400px;
 }
 
-.character-section {
-    margin-right: 10px;
-}
-
 /*To align the elements*/
 .character .equipment-left, .character .equipment-right, .character .img-character {
     height: 100%;
@@ -35,42 +31,247 @@
     display: block;
     height: 27%;
     width: 100%;
-    background-color: #4aa0fc;
+    background-color: #1F41A6;
 
-    border: 5px solid #007bff;
+    border: 5px solid #4878D9;
     border-radius: 50px;
     -webkit-border-radius:4px;
     -moz-border-radius:4px;
+}
 
-    box-shadow:inset 0 1px 1px rgba(0, 0, 0, .05);
-    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, .05);
-    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, .05);
+.character .equipment-left img, .character .equipment-right img{
+    max-height: 100%;
+    max-width: 100%;
+
+    opacity: 0.3;
+    filter: alpha(opacity=30);
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
 }
 
 .equipment-consummable{
     padding: 0;
-    background-color: #f1f1f1;
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scrolling if the sidenav has too much content */
+    background-color: #4878D9;
     right: 0;
-    top: 50px;
-    overflow-y: scroll;
-    box-shadow: 1px 1px 13px #888888;
+    height: 100%;
+
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+
+    border: 2px solid #4878D9;  
 }
 
-.equipment-consummable .equipment, .equipment-consummable .consummable {
+.equipment-consummable .inventory-slots, .equipment-consummable .inventory-preview {
     padding: 10px;
-    height: 50%;
+}
+
+.equipment-consummable .inventory-slots, .equipment-consummable .inventory-preview, .equipment-consummable .inventory-tabs {
+    margin: 5px;
+    width: 100%;
     display: block;
     font-size: 0.9em;
+    
+    /* -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;    
+    box-sizing: border-box; 
+    border-radius: 11px 11px 11px 11px; 
+    -moz-border-radius: 11px 11px 11px 11px;
+    -webkit-border-radius: 11px 11px 11px 11px;
+    border: 5px solid #4878D9;   */
+
+    overflow: auto; /* Enable scrolling if the sidenav has too much content */
 }
 
-@media screen and (max-width: 800px) {
+.inventory-tabs{
+    padding: 3px 1px; 
+    overflow: hidden;
+}
+
+.inventory-tabs img{
+    height: 10px;
+    width: 10px;
+}
+
+/* Style the buttons inside the tab */
+.inventory-tabs button {
+    display: inline-block;
+    margin-right: 5px;
+    transition: 0.1s;
+    font-size: 17px;
+    outline: none;
+    
+    padding: 5px 10px;
+    cursor: pointer;
+    text-align: center;
+    color: #fff;
+    border: none;
+    border-radius: 15px;
+    -webkit-border-radius:15px;
+    -moz-border-radius: 15px;
+    box-shadow: -0.5px 3px midnightblue;
+    background-color: #1F41A6;
+}
+
+/* Change background color of buttons on hover */
+.inventory-tabs button:hover {
+    transform: translateY(1px);
+    box-shadow: -0.5px 2px midnightblue;
+    background-color: rgb(45, 80, 182);
+}
+
+.inventory-tabs .clicked-tab {
+    transform: translateY(1px);
+    box-shadow: -0.5px 2px midnightblue;
+    background-color: rgb(45, 80, 182);
+}
+
+.equipment-consummable .inventory-preview {
+    background-color: whitesmoke;
+}
+
+.equipment-consummable .inventory-slots {
+    background-color: #1F41A6;
+}
+
+.equipment-consummable .list {
+    padding-left: 5px;
+    list-style-type: none;
+    color: lavenderblush;
+    font-weight: bold;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
+.equipment-consummable .list li {
+    box-shadow: 1px 1px 5px midnightblue;
+    background-color: midnightblue;
+    padding: 2px 5px;
+    margin-bottom: 5px;
+}
+
+.equipment-consummable .list li:hover {
+    margin-left: 3px;
+}
+
+.equipment-consummable .inventory-slots button {
+    text-align: center;
+    color: #fff;
+    border: 2px solid midnightblue;
+    border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    box-shadow: -0.5px 3px midnightblue;
+    background-color: cornflowerblue;
+    height: 50px;
+    width: 50px;
+    float: left;
+    margin: 0 5px 5px 0;
+    padding: 2px;
+}
+
+.equipment-consummable .inventory-slots button:hover {
+    transform: translateY(1px);
+    box-shadow: -0.5px 2px midnightblue;
+    outline: none;
+}
+
+.equipment-consummable .inventory-slots .clicked-item{
+    background-color: orange;
+    transform: translateY(1px);
+    box-shadow: -0.5px 2px midnightblue;
+    outline: none;
+}
+
+.equipment-consummable .inventory-slots .list .clicked-item{
+    margin-left: 3px;
+}
+
+.equipment-consummable .inventory-slots img {
+    max-height: 100%;
+    max-width: 100%;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+}
+
+.equipment-consummable .inventory-preview .item-name{
+    /* border-radius: 6px 6px 0 0; 
+    -moz-border-radius: 6px 6px 0 0;
+    -webkit-border-radius: 6px 6px 0 0;  */
+    margin: -10px;
+    margin-bottom: 10px;
+    padding: 5px 5px 5px 10px;
+    
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-weight: bold;
+
+    background-color: #1F41A6;
+    color: whitesmoke;
+}
+
+.equipment-consummable .inventory-preview .item-image{
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 90px;
+}
+
+.equipment-consummable .inventory-preview .item-image-bg{
+    border-radius: 8px 8px 8px 8px; 
+    -moz-border-radius: 8px 8px 8px 8px;
+    -webkit-border-radius: 8px 8px 8px 8px; 
+    background-color: #0264cc;
+    text-align: center;
+    padding: 5px;
+    width: 100px;
+    height: 100px;
+    float: left;
+    margin-right: 10px;
+}
+
+.equipment-consummable .inventory-preview .item-description{
+    color: #1F41A6;
+    font-family: Georgia, serif;
+    font-weight: 300;
+}
+
+
+.shadow {
+	-webkit-box-shadow: inset 0px 0px 15px 0px rgba(0,0,0,0.36);
+    -moz-box-shadow: inset 0px 0px 15px 0px rgba(0,0,0,0.36);
+    box-shadow: inset 0px 0px 15px 0px rgba(0,0,0,0.36);
+}
+
+
+
+@media screen and (max-width: 1024px) {
     .character, .btn-equipment-consummable {
         width: 100%;
         text-align: center;
         margin: 10px auto;
         padding: 10px;
-        display: block;
+    }
+    
+    .character .equipment-left, .character .equipment-right, .character .img-character {
+        height: auto;
+        float: left;
+    }
+
+    .equipment-consummable{
+        margin: 5px;
+    }
+}
+
+@media screen and (min-width: 1025px) {
+    .character-section {
+        margin-right: 10px;
+    }
+   
+    .equipment-consummable {
+        width: 100%;
+    }
+
+    .equipment-consummable .inventory-slots, .equipment-consummable .inventory-preview, .equipment-consummable .inventory-tabs {
+        width: auto;
     }
 }
