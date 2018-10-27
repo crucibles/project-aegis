@@ -40,7 +40,8 @@
 						</td>
 						<td *ngIf="this.getStatusOfSection(this.section.section.students) != 'Enrolled'">{{section.course_name}}</td>
 						<td>{{section.section.section_name}}</td>
-						<td>{{this.toInstructor(section.section.instructor)}}</td>
+						<td>{{toInstructor(section.section.instructor)}}</td>
+						<!-- <td>{{section.section.instructor}}</td> -->
 						<td>{{getStatusOfSection(this.section.section.students)}}</td>
 						<td>
 							<div *ngFor="let schedule of section.section.schedule">
@@ -76,7 +77,7 @@
 							</td>
 							<td *ngIf="this.getStatusOfSection(this.section.section.students) != 'Enrolled'">{{section.course_name}}</td>
 							<td>{{section.section.section_name}}</td>
-							<td>{{this.toInstructor(section.section.instructor)}}</td>
+							<td>{{toInstructor(section.section.instructor)}}</td>
 							<td>{{this.getStatusOfSection(section.section.students)}}</td>
 							<td>
 								<div *ngFor="let schedule of section.section.schedule">
