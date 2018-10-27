@@ -27,7 +27,10 @@ import {
     SectionService,
     UserService
 } from 'shared/services';
-import Chart = require('chart.js');
+
+import {
+    Chart
+} from 'chart.js';
 
 /* AHJ: Remove once the services are implemented properly */
 const SECTIONS: any[] = [

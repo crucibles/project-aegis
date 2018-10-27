@@ -44,7 +44,9 @@ import {
     saveAs
 } from 'file-saver';
 
-import Chart = require('chart.js');
+import {
+	Chart
+} from 'chart.js';
 
 @Component({
     selector: 'app-grades',

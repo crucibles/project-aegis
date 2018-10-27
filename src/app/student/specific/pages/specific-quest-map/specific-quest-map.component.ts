@@ -13,7 +13,9 @@ import {
 } from '@angular/router';
 
 //Third-Party Imports
-import Chart = require('chart.js');
+import {
+	Chart
+} from 'chart.js';
 
 import 'chartjs-plugin-datalabels';
 
