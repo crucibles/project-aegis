@@ -183,7 +183,7 @@ router.post('/createCourseSection', (req, res) => {
                 });
         };
 
-        function insertBadges(sectionObj, callback){
+        function insertBadges(sectionObj, callback) {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges').insert(badges, function (err, result) {
                 if (err) {
@@ -452,45 +452,24 @@ router.post('/experiences', (req, res) => {
                                 }
                                 if (quests[0] && quests[0].quest_badge != "") {
                                     holder = quests[0].quest_badge;
-
-                                    connection((db) => {
-                                        const myDB = db.db('up-goe-db');
-                                        myDB.collection('sections')
-                                            .updateOne(
-                                                {
-                                                    _id: ObjectID(req.body.section_id)
-                                                },
-                                                {
-                                                    $addToSet: {
-                                                        "students.$[elem].badges": quests[0].quest_badge,
-
+                                    holder = holder.toString().trim();
+                                    if (isEarning) {
+                                        connection((db) => {
+                                            const myDB = db.db('up-goe-db');
+                                            myDB.collection('badges')
+                                                .updateOne(
+                                                    {
+                                                        _id: ObjectID(holder)
+                                                    },
+                                                    {
+                                                        $addToSet: {
+                                                            "badge_attainers": req.body.user_id,
+                                                        }
                                                     }
-                                                },
-                                                {
-                                                    arrayFilters: [{ "elem.user_id": req.body.user_id }]
-                                                }
-                                            )
-                                            .then(x => {
-                                                holder = holder.toString().trim();
-                                                if (isEarning) {
-                                                    connection((db) => {
-                                                        const myDB = db.db('up-goe-db');
-                                                        myDB.collection('badges')
-                                                            .updateOne(
-                                                                {
-                                                                    _id: ObjectID(holder)
-                                                                },
-                                                                {
-                                                                    $addToSet: {
-                                                                        "badge_attainers": req.body.user_id,
-                                                                    }
-                                                                }
-                                                            );
-                                                    });
-                                                }
-                                                res.json(true);
-                                            })
-                                    });
+                                                );
+                                        });
+                                    }
+                                    res.json(true);
                                 } else {
                                     res.json(false);
                                 }
@@ -989,6 +968,8 @@ router.post('/sections', (req, res) => {
                 joinQuest(req, res);
             }
         }
+    } else if (req.body.method == "addBadgeToStudent") {
+        addBadgeToStudent(req, res);
     } else {
         enrollAndRequest(req, res);
     }
@@ -1140,6 +1121,33 @@ router.post('/sections', (req, res) => {
 
         });
 
+    }
+
+    function addBadgeToStudent(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('sections')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.section_id)
+                    },
+                    {
+                        $addToSet: {
+                            "students.$[elem].badges": req.body.badge_id,
+
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                    }
+                )
+                .then(x => {
+                    res.json(x);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
     }
 
     function enrollAndRequest(req, res) {
@@ -1959,7 +1967,9 @@ router.post('/updateUser', (req, res) => {
  * @author Donevir Hynson - modified 6 June 2018
  */
 router.post('/badges', (req, res) => {
-    if (req.body.badgeData) {
+    if (req.body.method == "addBadgeAttainer") {
+        addBadgeAttainer(req, res);
+    } else if (req.body.badgeData) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges')
@@ -2051,6 +2061,27 @@ router.post('/badges', (req, res) => {
                         });
                 }
             });
+    }
+
+    function addBadgeAttainer(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.badge_id)
+                    },
+                    {
+                        $addToSet: {
+                            "badge_attainers": req.body.user_id,
+                        }
+                    }
+                ).then((result) => {
+                    res.json(result);
+                }).catch((err) => {
+                    sendError(err, res);
+                });
+        });
     }
 });
 

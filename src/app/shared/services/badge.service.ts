@@ -88,6 +88,29 @@ export class BadgeService {
         const url = this.badgeUrl;
     }
 
+    /**
+     * Adds badge to student
+     * @description Adds the badge, either system or section (if section_id variable is available), to the student
+     * @param badge Badge to be added to the student
+     * @param student_id Id of the student that will be receiving the section-level badge
+     */
+    addBadgeAttainer(badge_id: string, user_id: string) {
+        const url = this.badgeUrl;
+
+		let body = {
+            method: "addBadgeAttainer",
+            badge_id: badge_id,
+			user_id: user_id
+		};
+
+		return this.http.post<Badge>(this.badgeUrl, body).pipe(
+			tap((badge: Badge) =>
+				console.log("badge " + badge_id + " is added")),
+			catchError(this.handleError<Badge>('addComment'))
+		);
+
+    }
+
 
     checkIfWillEarnABadge() {
         const url = this.badgeUrl;
@@ -261,44 +284,14 @@ export class BadgeService {
 
     /**
      * Gets the default badges for sections.
+     * Note: this is without ID.
      * @returns array of the default section badges (in JSON object)
      * 
      * @author Sumandang, AJ Ruth H.
      */
     getDefaultSectionBadges(){
         let badges: any[] = [];
-        let defaultBadges : any[] = [
-            {
-                badge_name: "Rookie Badge",
-                badge_description: "Congratulations on your first badge out of the six ranked badges. Get more EXP to gain the other remaining badges!",
-                badge_photo: "rookie_badge.png"
-            },
-            {
-                badge_name: "Adept Badge",
-                badge_description: "This is the second badge out of the six ranked badges. Get more EXP to gain the other remaining badges.",
-                badge_photo: "adept_badge.png"
-            },
-            {
-                badge_name: "Novice Badge",
-                badge_description: "This is the third badge out of the six ranked badges. Get more EXP to gain the other remaining badges!",
-                badge_photo: "novice_badge.png"
-            },
-            {
-                badge_name: "Intermediate Badge",
-                badge_description: "The fourth badge! Two more to gain and you're good to go!",
-                badge_photo: "intermediate_badge.png"
-            },
-            {
-                badge_name: "Expert Badge",
-                badge_description: "The fifth badge out of six ranked badges. You're almost there!",
-                badge_photo: "expert_badge.png"
-            },
-            {
-                badge_name: "Master Badge",
-                badge_description: "Rewarded to those loyal and faithful enough to complete their given quest. Congratulations!",
-                badge_photo: "master_badge.png"
-            },
-        ];
+        let defaultBadges : any[] = new Badge().default_badges;
 
         let conditions = new Conditions();
 
@@ -309,6 +302,7 @@ export class BadgeService {
                 badge_photo: badge.badge_photo,
                 badge_conditions: conditions.getJSONObject(),
                 is_system_badge: false,
+                is_default: true,
                 badge_attainers: []
             });
         }); 

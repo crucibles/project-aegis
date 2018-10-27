@@ -3,7 +3,8 @@ import {
     Component,
     OnInit,
     TemplateRef,
-    ViewChild
+    ViewChild,
+    Input
 } from '@angular/core';
 
 import {
@@ -23,6 +24,12 @@ import {
 export class BadgeModal implements OnInit {
     @ViewChild('badgeModal') badgeModal: TemplateRef<any>;
 
+    @Input('content') content: any; 
+
+    private heading: string = "";
+    private body: string = "";
+    private image: string = "";
+
     private bsModalRef: BsModalRef;
 
     constructor(
@@ -30,11 +37,22 @@ export class BadgeModal implements OnInit {
     ) { }
 
     ngOnInit() {
+        console.log(this.content);
+        this.heading = this.content && this.content.heading? this.content.heading: ""; 
+        this.body = this.content && this.content.body? this.content.body: ""; 
+        this.image = this.content && this.content.image? this.content.image: ""; 
     }
-
+    
     open() {
         // and use the reference from the component itself
         this.bsModalRef = this.modalService.show(this.badgeModal);
     }
-
+    
+    openContent(content){
+        this.heading = content && content.heading? content.heading: ""; 
+        this.body = content && content.body? content.body: ""; 
+        this.image = content && content.image? content.image: ""; 
+        this.open();
+    }
+    
 }

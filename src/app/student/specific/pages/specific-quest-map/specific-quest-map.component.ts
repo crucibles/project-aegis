@@ -389,7 +389,6 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.submitQuest(res, this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
-			this.setNewSection();
 			this.isQuestTakn = true;
 			this.pending = true;
 			this.commentBox = "";
@@ -404,6 +403,7 @@ export class SpecificQuestMapComponent implements OnInit {
 			.subscribe(EXP => {
 				if (EXP && EXP.length > 0) {
 					this.sectionEXP = new Experience(EXP[0]);
+					this.setNewSection();
 				}
 			});
 	}

@@ -140,6 +140,32 @@ export class SectionService {
 	}
 
 	/**
+	 * Adds badge to a student in a section
+	 * @param badge_id ID of the badge to be added to a student
+	 * @param user_id ID of the student awarded with a new badge
+	 * @param section_id ID of the section the student belonged to
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	addBadgeToStudent(badge_id, user_id, section_id) {
+		const url = this.secUrl;
+
+		let body = {
+			method: "addBadgeToStudent",
+			user_id: user_id,
+			badge_id: badge_id,
+			section_id: section_id
+		}
+
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				return data;
+			}),
+			catchError(this.handleError<any>(`requesting failed for =${body}`))
+		);
+	}
+
+	/**
 	 * Adds students to the section's list of pending approval
 	 * @param user_id id of the user to be added to the section's list of pending approval
 	 * @param section_id id of the section where the user will be added
@@ -238,7 +264,7 @@ export class SectionService {
 	endSection(section) {
 		// murag graduation ang peg... di ko sure... feeling nko murag syag create section pro wipe out lng ang other information
 	}
-  
+
 	/**
 	* Returns the course information based by course id
 	* @param course_id id of the course whose information are to be retrieved

@@ -115,13 +115,9 @@ export class SpecificMyCourseComponent implements OnInit {
 	}
 
 	getSectionBadges() {
-		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
-		// this.sectionBadges = BADGES.map(badge => new Badge(badge));
-
 		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
 			this.sectionBadges = badges.map(badge => new Badge(badge));
 		});
-
 	}
 
 	/**

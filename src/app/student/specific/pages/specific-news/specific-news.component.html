@@ -1,3 +1,5 @@
+<badge-modal #badgeModal></badge-modal>
+
 <body>
   <div *ngIf="!commentPosts">
     Loading...
@@ -89,7 +91,8 @@
                             </a>
                           </li> -->
                         </ul>
-                        <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)="submitComment(i)">
+                        <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green"
+                          (click)="submitComment(i)">
                           <i class="fa fa-share"></i> Submit</button>
                       </div>
                     </div>

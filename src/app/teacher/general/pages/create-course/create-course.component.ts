@@ -161,8 +161,8 @@ export class CreateCourseComponent implements OnInit {
 				return sched;
 			}
 		}).map((sched) => {
-			sched.maxTime = new Date(sched.maxTime).toLocaleTimeString();
-			sched.minTime = new Date(sched.minTime).toLocaleTimeString();
+			sched.maxTime = this.getFormatTime(sched.maxTime);
+			sched.minTime = this.getFormatTime(sched.minTime);
 			return sched;
 		});
 
@@ -197,5 +197,27 @@ export class CreateCourseComponent implements OnInit {
 			}
 		}
 		return false;
+	}
+
+	/**
+     * Returns a formatted time of the quest.
+     * @param date_obj Date object to be formatted.
+     * @returns the formatted time of format HH:MM AM/PM
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    getFormatTime(date_obj: Date) {
+		// formats a javascript Date object into a 12h AM/PM time string
+		console.log(date_obj);
+		var hour = date_obj.getHours();
+		var minute = date_obj.getMinutes();
+		var amPM = (hour > 11) ? " PM" : " AM";
+		if (hour > 12) {
+			hour -= 12;
+		} else if (hour == 0) {
+			hour = 12;
+		}
+
+		return minute < 10? hour + ":0" + minute + amPM : hour + ":" + minute + amPM;
 	}
 }

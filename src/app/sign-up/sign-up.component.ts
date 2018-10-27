@@ -83,10 +83,10 @@ export class SignUpComponent implements OnInit {
             items_used: [],
             items_owned: [],
             head: "",
-            left_leg: "",
-            right_leg: "",
-            left_arm: "",
-            right_arm: "",
+            footware: "",
+            armor: "",
+            left_hand: "",
+            right_hand: "",
         }
         let verified = false;
 

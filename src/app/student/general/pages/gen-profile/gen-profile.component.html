@@ -2,17 +2,21 @@
 <section class="performance">
 
   <h3>My Performance</h3>
+  <h6>This is where all your performance in each course will be shown.</h6>
+  <br>
 
-  <ng-container *ngIf="!courseSections || courseSections.length == 0">
-    <h6>This is where all your performance in each course will be shown.
-      <br>
-      <br>
-    </h6>Currently you have no enrolled courses or graded tasks.
+  <ng-container *ngIf="courseSections && (courseSections.length == 0 || lineChartData.length == 0)">
+    Currently you have no enrolled courses or graded tasks.
   </ng-container>
-  <!--Line Graph for performance-->
+
+  <ng-container *ngIf="!courseSections">
+    Loading...<img class="loading-icon" src="/assets/images/loading.gif" />
+  </ng-container>
+
   <div class="row">
     <div style="display: block">
-      <canvas id="performance-graph" baseChart width="650" height="300" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+      <canvas id="performance-graph" baseChart width="650" height="300" (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked($event)"></canvas>
     </div>
   </div>
 

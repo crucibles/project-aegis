@@ -477,7 +477,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		});
 
 		this.createQuestForm.value.questPrerequisite.forEach(prereq => {
-			if (prereq.questId != "''") {
+			if (prereq.questId.length != 0) {
 				questPrereq.push(prereq.questId);
 			}
 		});
