@@ -54,7 +54,7 @@ import {
 import {
 	SpecificComponent
 } from 'student/specific/specific.component';
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 
 const imageDir: string = "/assets/images/";
 
@@ -104,10 +104,9 @@ export class SpecificSidetabComponent implements OnInit {
 	isShowSideTab: boolean = false;
 	windowWidth: number = window.innerWidth;
 	badgeName: any = "";
-	questObserver: Observer<any>;
-	questObservable: Observable<any> = new Observable(observer =>
-		this.questObserver = observer
-	);
+
+	questObserver: any;
+	questObservable: Observable<any>;
 
 	constructor(
 		private elementRef: ElementRef,
@@ -126,8 +125,6 @@ export class SpecificSidetabComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		
-
 		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
 		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
 		//overide the onCompleteItem property of the uploader so we are 
@@ -149,10 +146,9 @@ export class SpecificSidetabComponent implements OnInit {
 		});
 		this.checkSize();
 
-		//this updates the sidetab to reload when abandoning/joining a quest in questmap
 		this.pageService.getQuestObservable().subscribe(value => {
 			this.setQuests(value);
-		});
+		})
 	}
 
 	getBadgeName(badge_id: any) {
@@ -217,7 +213,7 @@ export class SpecificSidetabComponent implements OnInit {
 		this.quests = [];
 		let counter = 0;
 		if (this.sectionService.getCurrentSection()) {
-			console.warn(this.sectionService.getCurrentSection());
+
 
 			this.sectionService.getCurrentSection().getQuests().map((sq) => {
 				this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
@@ -274,9 +270,8 @@ export class SpecificSidetabComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
-			this.pageService.updateChart();
-			this.bsModalRef.hide();
 		});
+		this.bsModalRef.hide();
 	}
 
 	/**

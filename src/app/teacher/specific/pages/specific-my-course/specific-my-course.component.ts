@@ -54,6 +54,7 @@ export class SpecificMyCourseComponent implements OnInit {
 	private classmateClicked: User;
 	private badgesDisplay: Badge[];
 
+	private isLoading: boolean = false;
 
 	constructor(
 		private modalService: BsModalService,
@@ -109,11 +110,18 @@ export class SpecificMyCourseComponent implements OnInit {
 	}
 
 	approveStudent(userId: string) {
-		this.sectionService.approveUserToSection(userId, this.currentSection.getSectionId()).subscribe(
-			approve => {
-				this.currentSection.setStudentStatus(userId, "E");
-			}
-		)
+		console.log("?");
+		if(this.status(userId) == 'Approve'){
+			this.isLoading = true;
+			console.log("approving...");
+			this.sectionService.approveUserToSection(userId, this.currentSection.getSectionId()).subscribe(
+				approve => {
+					console.log("approve");
+					this.currentSection.setStudentStatus(userId, "E");
+					this.isLoading = false;
+				}
+			);
+		}
 	}
 
 	getSectionBadges() {
@@ -152,6 +160,14 @@ export class SpecificMyCourseComponent implements OnInit {
 		this.classmateClicked = classmate;
 		if (this.classmateClicked) {
 			this.bsModalRef = this.modalService.show(studentTemplate);
+		}
+	}
+
+	status(userId: string){
+		if(this.isLoading){
+			return "Loading...";
+		} else {
+			return this.getStudentStatus(userId);
 		}
 	}
 }
