@@ -130,6 +130,11 @@ input[type="file"] {
     padding-bottom: 5px;
 }
 
+.required-text {
+    color: red;
+    padding-left: 0px;
+}
+
 @media screen and (max-width: 768px) {
     .modal-body .image-right{
         text-align: center;

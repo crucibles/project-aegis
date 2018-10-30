@@ -359,8 +359,6 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.joinQuest(user_id, quest_id, section_id).subscribe((result) => {
-			console.log("result");
-			console.log(result);
 			this.setNewSection();
 			this.questModalRef.hide();
 			this.toaster.success('Added quest', 'Quest Joined');
@@ -370,19 +368,12 @@ export class SpecificQuestMapComponent implements OnInit {
 	setNewSection() {
 		this.sectionService.getUserSections(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(
 			sections => {
-				console.log("old section");
-				console.log(this.currentSection);
-				console.log("new section");
-				console.log(sections[0].section);
 				this.sectionService.setCurrentSection(sections[0].section);
 				this.currentSection = new Section(this.sectionService.getCurrentSection());
-				console.log("new section");
-				console.log(this.currentSection);
 				this.questMap.setQuestMapDataSet(this.quests, this.currentSection.getQuests(), this.currentUser, this.sectionEXP, false);
 				this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
 				this.chart.config.options.animation.duration = 0;
 				this.chart.update();
-				console.log("updating...");
 				this.pageService.updateStudentSideTab(this.currentUser.getUserId());
 			}
 		);
@@ -420,7 +411,6 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	abandonQuest() {
-		console.warn("hello");
 		this.toaster.warning(
 			"You have abandoned a quest.",
 			"Quest Abandoned!"
@@ -446,8 +436,6 @@ export class SpecificQuestMapComponent implements OnInit {
 	getQuestTitle(questId: string) {
 		let quests = this.quests.filter(quest => quest.getQuestId() == questId);
 		let questTitle = quests.length > 0 ? quests[0].getQuestTitle() : "<No title>";
-		console.log(quests);
-		console.log(questTitle);
 		return this.questMap.getQuestLabel(questId) + " - " + questTitle;
 	}
 

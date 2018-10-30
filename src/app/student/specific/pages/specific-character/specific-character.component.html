@@ -105,7 +105,7 @@ extra large: 1200+
 	</div>
 	<br>
 	<div style="margin-top: 10px; float: right">
-		<button *ngIf="openedItem.getItemType() == 'Equipment'" class="btn btn-success" (click)="equipItem(openedItem)">Equip</button>
+		<button *ngIf="openedItem.getItemType() == 'Equipment'" class="btn btn-success" (click)="equipItem(openedItem, false)">Equip</button>
 		<button *ngIf="openedItem.getItemType() == 'Consummable'" class="btn btn-success" (click)="useItem(openedItem)">Use</button>
 		<button class="btn btn-warning consummable mr-auto" (click)="discardItem(openedItem)">Discard</button>
 	</div>

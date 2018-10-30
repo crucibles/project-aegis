@@ -167,6 +167,7 @@ export class QuestMap {
 		questPrereq.forEach(quest_id => {
 			if (!experience.isQuestGraded(quest_id)) {
 				hasPass = false;
+				return hasPass;
 			}
 		})
 		return hasPass;

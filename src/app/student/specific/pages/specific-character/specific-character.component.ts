@@ -13,12 +13,13 @@ import {
 
 //Application Imports
 import {
-	Section, Item
+	Section, Item, Inventory
 } from 'shared/models';
 
 import {
 	PageService,
-	SectionService
+	SectionService,
+	ItemService
 } from 'shared/services';
 
 @Component({
@@ -48,6 +49,7 @@ export class SpecificCharacterComponent implements OnInit {
 	//AHJ: unimplemented; dummy 
 	equipment: Item;
 	consummable: Item;
+	inventory: Inventory;
 	inventoryItems: Item[];
 
 	//if screen size changes it'll update
@@ -57,6 +59,7 @@ export class SpecificCharacterComponent implements OnInit {
 	}
 
 	constructor(
+		private itemService: ItemService,
 		private pageService: PageService,
 		private sectionService: SectionService,
 		private route: ActivatedRoute
@@ -92,9 +95,10 @@ export class SpecificCharacterComponent implements OnInit {
 
 	setDummy() {
 		this.equipment = new Item();
-		this.equipment.createItem("Equipment", "Sword", "default_sword.jpg", "Default. Duh", "0", "0", "None");
+		this.equipment.createItem("Equipment", "Sword", "default_sword.jpg", "Default. Duh", "0", "0", "None", "+10", 100);
 		this.consummable = new Item();
-		this.consummable.createItem("Consummable", "Potion", "item_logo.png", "Default. Duh", "0", "0", "None");
+		this.consummable.createItem("Consummable", "Potion", "item_logo.png", "Default. Duh", "10", "0", "None", "", 0);
+		this.inventory = this.itemService.getCurrentInventory();
 		this.inventoryItems = [];
 		this.inventoryItems.push(this.equipment);
 		this.inventoryItems.push(this.consummable);
@@ -198,8 +202,10 @@ export class SpecificCharacterComponent implements OnInit {
 	 * Applicable for items of type "Equipment".
 	 * @param item The item to equip.
 	 */
-	equipItem(item: Item){
-
+	equipItem(item: Item, to_equip){
+		console.log(this.inventory.getUserArmor());
+		this.inventory.equipItem(item.getItemId(), item.getItemArmor(), "", to_equip);
+		console.log(this.inventory.getUserArmor());
 	}
 
 	/**
@@ -208,6 +214,6 @@ export class SpecificCharacterComponent implements OnInit {
 	 * @param item The item to use.
 	 */
 	useItem(item: Item){
-
+		this.inventory.useItem(item);
 	}
 }

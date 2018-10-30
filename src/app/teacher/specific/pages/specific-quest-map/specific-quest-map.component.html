@@ -139,6 +139,26 @@
 					</div>
 					<div class="row">
 						<div class="col-md-3">
+							Item Reward:
+						</div>
+						<div class="col-md-7">
+							<label formArrayName="questItem" style="margin-right: 5px" *ngFor="let questItem of questItem.controls; let i = index">
+								<ng-container [formGroupName]="i">
+									<select formControlName="itemId">
+										<option value="''">
+											Select quest item...
+										</option>
+										<option *ngFor="let item of sectionItems" [value]="item.getItemId()">
+											{{item.getItemName()}}
+										</option>
+									</select>
+								</ng-container>
+							</label>
+							<label class="clickable" (click)="addQuestItem()">+ Add a quest item</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-3">
 							Quest Prerequisite:
 						</div>
 						<div class="col-md-7">
@@ -253,9 +273,23 @@
 					<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length == 0">
 						<br>None
 					</ng-container>
-					<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if
-						achieved at least 80%
-						when graded) </ng-container>
+					<br>
+					<br>Item Reward(s):
+					<ng-container *ngIf="this.questClicked.getQuestItem().length > 0">
+						<ng-container *ngFor="let item of this.questClicked.getQuestItem()">
+							<br>{{this.getItemName(item)}}
+						</ng-container>
+					</ng-container>
+					<ng-container *ngIf="this.questClicked.getQuestItem().length == 0">
+						None for this quest.
+					</ng-container>
+					<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">
+						<br>
+						<br>Badges that can be earned by achieving at least 80%.
+						<ul *ngFor="let badgeName of this.badgeName">
+							<li> {{badgeName}}</li>
+						</ul>
+					</ng-container>
 
 				</div>
 				<div class="col-sm-6">

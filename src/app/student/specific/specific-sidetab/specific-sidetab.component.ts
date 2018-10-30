@@ -39,7 +39,8 @@ import {
 	User,
 	Quest,
 	Badge,
-	Section
+	Section,
+	Inventory
 } from 'shared/models';
 
 import {
@@ -48,7 +49,8 @@ import {
 	UserService,
 	SectionService,
 	BadgeService,
-	ExperienceService
+	ExperienceService,
+	ItemService
 } from 'shared/services';
 
 import {
@@ -78,6 +80,7 @@ export class SpecificSidetabComponent implements OnInit {
 	commentBox: string = "";
 	currentUser: User;
 	user;
+	inventory: Inventory;
 
 	//image dir
 	image: string = "";
@@ -112,6 +115,7 @@ export class SpecificSidetabComponent implements OnInit {
 	constructor(
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
+		private itemService: ItemService,
 		private modalService: BsModalService,
 		private pageService: PageService,
 		private questService: QuestService,
@@ -204,6 +208,11 @@ export class SpecificSidetabComponent implements OnInit {
 		this.currentUser = this.userService.getCurrentUser();
 		this.currentSection = this.sectionService.getCurrentSection();
 		this.image = this.currentUser.getUserPhoto();
+		//AHJ: unimplemented; uncomment below if naa nay function ang getusersectioninventory sa service
+		// this.itemService.getUserSectionInventory(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(inventory => {
+		// 	this.inventory = new Inventory(inventory);
+		// });
+		this.inventory = this.itemService.getCurrentInventory();
 	}
 
 	/**
