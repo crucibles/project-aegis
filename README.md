@@ -40,3 +40,13 @@ To restore the updated:
 mongorestore -d up-goe-db "path where you downloaded the db folder"
 
 Sample: mongorestore -d up-goe-db C:/db_backups/up-goe-db
+
+## Mondo Dump to backup your DB to be reflected to git
+
+To back up your current DB and push it to git. (Mongo Dump)
+
+1. open cmd: admin
+2. (cd to Program Files/MongoDb/Server/3.6/bin)
+3. mongodump -d "database_name" -p "location to save"
+
+Sample: mongodump -d up-goe-db -p C:\Users\cedric\project-aegis\db_backups\up-goe-db
