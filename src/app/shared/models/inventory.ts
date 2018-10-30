@@ -9,9 +9,9 @@ export class Inventory {
     private _id: string;
     private user_id: string;
     private section_id: string;
-    private items: string[];
+    private items: any[];
     private head: string;
-    private footware: string;
+    private footwear: string;
     private armor: string;
     private left_hand: string;
     private right_hand: string;
@@ -25,12 +25,12 @@ export class Inventory {
             this.user_id = inventory.user_id ? inventory.user_id : "";
             this.section_id = inventory.section_id ? inventory.section_id : "";
             this.items = inventory.items ? inventory.items : "";
-            this.head = inventory.head? inventory.head: "";
-            this.footware = inventory.footware? inventory.footware: "";
-            this.armor = inventory.armor? inventory.armor: "";
-            this.left_hand = inventory.left_hand? inventory.left_hand: "";
-            this.right_hand = inventory.right_hand? inventory.right_hand: "";
-            this.accessory = inventory.accessory? inventory.accessory: "";
+            this.head = inventory.head ? inventory.head : "";
+            this.footwear = inventory.footwear ? inventory.footwear : "";
+            this.armor = inventory.armor ? inventory.armor : "";
+            this.left_hand = inventory.left_hand ? inventory.left_hand : "";
+            this.right_hand = inventory.right_hand ? inventory.right_hand : "";
+            this.accessory = inventory.accessory ? inventory.accessory : "";
         } else {
             this.user_id = "";
             this.section_id = "";
@@ -68,11 +68,11 @@ export class Inventory {
         return this.head;
     }
 
-    getLeftLeg() {
-        return this.footware;
+    getArmor() {
+        return this.footwear;
     }
 
-    getRightLeg() {
+    getFootwear() {
         return this.armor;
     }
 
@@ -108,11 +108,11 @@ export class Inventory {
         this.head = head;
     }
 
-    setLeftLeg(footware) {
-        this.footware = footware;
+    setArmor(footwear) {
+        this.footwear = footwear;
     }
 
-    setRightLeg(armor) {
+    setFootwear(armor) {
         this.armor = armor;
     }
 
@@ -126,5 +126,88 @@ export class Inventory {
 
     setAccessory(accessory) {
         this.accessory = accessory;
+    }
+
+    /**
+     * Determines if the user has equipped an item.
+     * @param itemId ID of item to check if it has been equipped
+     * @returns true if item is equipped; false if not
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    isEquipped(itemId: string): boolean {
+        switch (itemId) {
+            case this.head:
+            case this.armor:
+            case this.footwear:
+            case this.left_hand:
+            case this.right_hand:
+            case this.accessory:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Equip an item on a certain part.
+     * @param itemId ID of the item to equipped
+     * @param itemPart Part where the item is to be equipped
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    equipItem(item_id: string, itemPart: string, to_equip: boolean) {
+        let itemId = "";
+        if(to_equip) {
+            this.removeItem(itemId);
+            itemId = item_id;
+        }
+        switch (itemPart) {
+            case "head":
+                this.head = itemId;
+                break;
+            case "armor":
+                this.armor = itemId;
+                break;
+            case "footwear":
+                this.footwear = itemId;
+                break;
+            case "left_hand":
+                this.left_hand = itemId;
+                break;
+            case "right_hand":
+                this.right_hand = itemId;
+                break;
+            case "accessory":
+                this.accessory = itemId;
+                break;
+        }
+    }
+
+    /**
+     * Removes an item from the list of the user's inventory items.
+     * @param itemId ID of the item to be removed.
+     * @returns true if the item is completely removed from the inventory (item qty = 0); false if item not found
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    removeItem(itemId: string): boolean{
+        //AHJ: unimplemented; if user equipped an item
+        let index = this.items.findIndex(item => item.item_id == itemId);
+        if (index < 0) {
+            return false;
+        }
+
+        if(--this.items[index].item_quantity == 0){            
+            this.items = this.items.splice(index, 1);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    getItemQuantity(itemId: string): number {
+        let item = this.items.find(item => item.item_id == itemId);
+        return item && item.item_quantity ? item.item_quantity : -1;
     }
 }

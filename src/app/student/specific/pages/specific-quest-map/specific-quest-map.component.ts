@@ -55,7 +55,6 @@ import {
 import {
 	AlertService
 } from 'shared/services/alert.service';
-import { SpecificSidetabComponent } from 'student/specific/specific-sidetab/specific-sidetab.component';
 
 @Component({
 	selector: 'app-specific-quest-map',
