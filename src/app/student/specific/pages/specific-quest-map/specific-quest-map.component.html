@@ -71,12 +71,14 @@
 
 	<!-- Quest Information -->
 	<div class="modal-body">
-		{{this.questClicked.getQuestDescription()}}
+		<a *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">{{this.questClicked.getQuestDescription()}}</a>
+		<h6 *ngIf="!questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)" style="color:blue">Info: You should pass the pre-requisite quests first to unlock this quest. </h6>
+
 		<br class="clear" />
 
 		<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
-			Links here:
-			<ul>
+			<ul *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">
+				Links here:
 				<li *ngFor="let links of this.pageService.hyperLinks">
 					<a href="{{links}}">{{links}}</a>
 				</li>
@@ -98,15 +100,15 @@
 					<br>None
 				</ng-container>
 				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">
-					<br>Badge: {{this.badgeName}} (if achieved at least 80% when graded) 
+					<br>Badge: {{this.badgeName}} (if achieved at least 80% when graded)
 				</ng-container>
 				<br>
 			</div>
-			<div class="col-sm-6">
+			<div *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)" class="col-sm-6">
 				Started on:
 				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
 				<br>
-				<br> Deadline:
+				<br > Deadline:
 				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
 				<br>
 				<br>
@@ -156,7 +158,7 @@
 
 		<!-- shows locked accept button if user is not yet a participant & has not pass all the quest prerequisites yet.-->
 		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId()) && !questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">
-			<button type="submit" class="btn btn-success" [disabled]="true" [tooltip]="'Cannot accept quest because not all quest prerequisite are submitted AND graded.'">Accept the Quest</button>
+			Locked Quest
 		</ng-container>
 
 		<!-- shows accept button if user is not yet a participant & had passed all the quest prerequisites. -->

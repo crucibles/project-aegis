@@ -246,6 +246,7 @@ export class GenSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	getQuests(user_id): void {
+		this.quests = [];
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
 				quests.forEach(quest => {
@@ -304,7 +305,9 @@ export class GenSidetabComponent implements OnInit {
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.questSectionIds[this.indexClicked];
 
-		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {});
+		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
+			this.getQuests(user_id);
+		});
 		this.bsModalRef.hide();
 	}
 

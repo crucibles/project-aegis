@@ -8,4 +8,5 @@ export * from './quest';
 export * from './quest-map';
 export * from './section';
 export * from './security-questions';
+export * from './status';
 export * from './user';

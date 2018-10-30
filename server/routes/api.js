@@ -83,7 +83,6 @@ let response = {
 };
 
 
-
 /**
  * @description portal for requests regarding courses. api/courses
  * @author Cedric Yao Alvaro
@@ -478,6 +477,66 @@ router.post('/experiences', (req, res) => {
     }
 });
 
+router.post('/items', (req, res) => {
+    if (req.body.method == "createItem") {
+        createItem();
+    } else if (req.body.method == "addItemToSection") {
+        addItemToSection(req.body.item_id, req.body.section_id);
+    }
+
+    function createItem() {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            let newItemBody = {
+                item_type: req.body.item_type,
+                item_part: req.body.item_part,
+                item_name: req.body.item_name,
+                item_photo: req.body.item_photo,
+                item_description: req.body.item_description,
+                item_hp: req.body.item_hp,
+                item_xp: req.body.item_xp,
+                item_ailment: req.body.item_ailment,
+                item_armor: req.body.item_armor,
+                is_default: req.body.is_default
+            };
+            myDB.collection('items')
+                .insertOne(newItemBody)
+                .then(result => {
+                    resultId = result.insertedId + '';
+                    addItemToSection(resultId, req.body.section_id);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+
+    function addItemToSection(item_id, section_id){
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('items')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.section_id)
+                    },
+                    {
+                        $addToSet: {
+                            "items": item_id
+                        }
+                    }
+                )
+                .then(result => {
+                    res.json(true);
+                })
+                .catch(err => {
+                    sendError(err, res);
+                })
+        })
+    }
+});
+
 router.post('/upload', (req, res) => {
 
     upload(req, res, function (err) {
@@ -655,25 +714,29 @@ router.post('/questmaps', (req, res) => {
             const myDB = db.db('up-goe-db');
             let prereq_array = [];
             prereq_array = req.body.quest_prerequisite;
-            myDB.collection('sections')
-                .update(
-                    { _id: ObjectID(req.body.section_id) },
-                    {
-                        $push: {
-                            quests: {
-                                quest_id: req.body.quest_coordinates.quest_id,
-                                quest_participants: [],
-                                quest_prerequisite: prereq_array
+            if (prereq_array.length > 0) {
+                myDB.collection('sections')
+                    .update(
+                        { _id: ObjectID(req.body.section_id) },
+                        {
+                            $push: {
+                                quests: {
+                                    quest_id: req.body.quest_coordinates.quest_id,
+                                    quest_participants: [],
+                                    quest_prerequisite: prereq_array
+                                }
                             }
                         }
-                    }
-                )
-                .then(section => {
-                    res.json(true);
-                })
-                .catch(err => {
-                    sendError(err, res);
-                });
+                    )
+                    .then(section => {
+                        res.json(true);
+                    })
+                    .catch(err => {
+                        sendError(err, res);
+                    });
+            } else {
+                res.json(true);
+            }
         })
     };
 
@@ -1717,6 +1780,34 @@ router.get('/sections', (req, res) => {
     }
 
 
+});
+
+/**
+ * @description portal for requests regarding ailments/statuses. api/statuses
+ * @author Cedric Yao Alvaro
+ */
+router.get('/statuses', (req, res) => {
+    if (req.query.method == "getDefaultStatuses") {
+        getDefaultStatuses();
+    }
+
+    function getDefaultStatuses() {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('statuses')
+                .find()
+                .toArray()
+                .then(statuses => {
+                    if (statuses) {
+                        res.json(statuses);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        })
+    }
 });
 
 router.get('/getSectionQuests', (req, res) => {

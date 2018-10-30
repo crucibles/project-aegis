@@ -25,25 +25,30 @@ export class Item {
     private item_hp: string;
     private item_xp: string;
     private item_ailment: string;
+    private item_cure: string;
     private item_armor: string;
-    private item_durability: string;
+    private item_durability: number;
+    private is_default: boolean;
 
     constructor(
         item?: any
     ) {
-        if(item){
-            this._id = item._id;
+        if (item) {
+            this._id = item._id? item._id: "";
             this.item_type = item.item_type ? item.item_type : "";
-            this.item_part = item.item_part? item.item_part: "";
+            this.item_part = item.item_part ? item.item_part : "";
             this.item_name = item.item_name ? item.item_name : "";
             this.item_photo = item.item_photo ? item.item_photo : "";
             this.item_description = item.item_description ? item.item_description : "";
             this.item_hp = item.item_hp ? item.item_hp : "";
             this.item_xp = item.item_xp ? item.item_xp : "";
             this.item_ailment = item.item_ailment ? item.item_ailment : "";
+            this.item_cure = item.item_cure ? item.item_cure : "";
             this.item_armor = item.item_armor ? item.item_armor : "";
             this.item_durability = item.item_durability ? item.item_durability : "";
+            this.is_default = item.is_default ? item.is_default : false;
         } else {
+            this._id = "";            
             this.item_type = "";
             this.item_part = "";
             this.item_name = "";
@@ -52,8 +57,10 @@ export class Item {
             this.item_hp = "";
             this.item_xp = "";
             this.item_ailment = "";
+            this.item_cure = "";
             this.item_armor = "";
-            this.item_durability = "";
+            this.item_durability = 0;
+            this.is_default = false;
         }
     }
     
@@ -68,7 +75,7 @@ export class Item {
         item_ailment,
         item_armor,
         item_durability
-        ) {
+    ) {
         this.item_type = item_type;
         this.item_part = item_part;
         this.item_name = item_name;
@@ -144,8 +151,19 @@ export class Item {
         return this.item_description;
     }
 
-    getItemHp() {
-        return this.item_hp;
+    /**
+     * Gets the item's HP increase/decrease.
+     * @param isString determines return type of item HP
+     * @returns the item's HP increase/decrease
+     * - string if isString == true
+     * - number if isString is undefined or false
+     */
+    getItemHp(isString?: boolean) {
+        if(isString){
+            return this.item_hp;
+        } else {
+            return Number.parseInt(this.item_hp);
+        }
     }
 
     getItemXp() {
@@ -156,8 +174,29 @@ export class Item {
         return this.item_ailment;
     }
 
-    getItemArmor() {
-        return this.item_armor;
+    getItemCure() {
+        return this.item_cure;
+    }
+
+    /**
+     * Retrieves the item's armor addition/reduction.
+     * Type to return depends on the received param
+     * @param isString determines the return type of the item's armor
+     * 
+     * @returns the item's armor
+     * - string type if isString is true
+     * - number type if isString is false (negative or positive)
+     */
+    getItemArmor(isString?: boolean) {
+        if (isString) {
+            return this.item_armor;
+        } else {
+            if (this.item_armor.length == 0) {
+                return 0;
+            } else {
+                return Number.parseInt(this.item_armor);
+            }
+        }
     }
 
     getItemDurability() {
@@ -165,8 +204,12 @@ export class Item {
     }
 
     getItemStatus() {
-        return this.item_durability > "0"? "Okay": "Broken";
+        return this.item_durability > 0? "Okay": "Broken";
     } 
+
+    isDefaultItem() {
+        return this.is_default;
+    }
 
     setItemId(_id) {
         this._id = _id;
@@ -204,9 +247,14 @@ export class Item {
         this.item_ailment = item_ailment;
     }
 
+    setItemCure(item_cure) {
+        this.item_cure = item_cure;
+    }
+
     setItemArmor(item_armor) {
         this.item_armor = item_armor;
     }
+    
     setItemDurability(item_durability) {
         this.item_durability = item_durability;
     }

@@ -223,7 +223,7 @@ export class BadgeService {
      */
     getBadge(badge_id): Observable<any[]> {
         const url = this.badgeUrl;
-
+        
         let params = new HttpParams()
             .set('badge_id', badge_id);
 

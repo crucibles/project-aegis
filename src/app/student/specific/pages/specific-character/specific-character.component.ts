@@ -237,10 +237,12 @@ export class SpecificCharacterComponent implements OnInit {
 	 * @param item The item to equip.
 	 */
 	equipItem(item: Item, toEquip: boolean) {
-
+		console.log(this.inventory.getUserArmor());
+		console.log(this.inventory.getUserArmor());
+		
 		this.itemService.equipItem(item.getItemId(), item.getItemPart(), this.inventory.getInventoryId(), toEquip).subscribe(res => {
 			if (res) {
-				this.inventory.equipItem(item.getItemId(), item.getItemPart(), toEquip);
+				this.inventory.equipItem(item.getItemId(), item.getItemArmor(), item.getItemPart(), toEquip);
 				this.openedItem = null;
 				this.setUserEquipment();
 			} 
@@ -252,6 +254,7 @@ export class SpecificCharacterComponent implements OnInit {
 	 * Applicable for items of type "Consummable".
 	 * @param item The item to use.
 	 */
-	useItem(item: Item) {
+	useItem(item: Item){
+		this.inventory.useItem(item);
 	}
 }

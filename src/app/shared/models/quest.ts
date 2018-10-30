@@ -24,7 +24,7 @@ export class Quest {
     private quest_title: string;
     private quest_description: string;
     private quest_retakable: boolean;
-    private quest_badge: string;
+    private quest_badge: string[];
     private quest_item: string[];
     private quest_xp: number;
     private quest_hp: number;
@@ -41,7 +41,7 @@ export class Quest {
             this.quest_title = quest.quest_title ? quest.quest_title : "";
             this.quest_description = quest.quest_description ? quest.quest_description : "";
             this.quest_retakable = quest.quest_retakable ? quest.quest_retakable : false;
-            this.quest_badge = quest.quest_badge ? quest.quest_badge : "";
+            this.quest_badge = quest.quest_badge ? quest.quest_badge : [];
             this.quest_item = quest.quest_item ? quest.quest_item : [];
             this.quest_xp = quest.quest_xp ? quest.quest_xp : 0;
             this.quest_hp = quest.quest_hp ? quest.quest_hp : 0;
@@ -53,7 +53,7 @@ export class Quest {
             this.quest_title = "";
             this.quest_description = "";
             this.quest_retakable = false;
-            this.quest_badge = "";
+            this.quest_badge = [];
             this.quest_item = [];
             this.quest_xp = 0;
             this.quest_hp = 0;

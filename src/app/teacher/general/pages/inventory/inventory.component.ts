@@ -37,17 +37,21 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { ToastsManager } from 'ng2-toastr';
 import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
+import { Status } from 'shared/models/status';
 
 const ITEMS: any[] = [
 	{
 		_id: "12",
-		item_type: "Head",
+		item_type: "w",
+		item_part: "Head",
 		item_name: "Dark Sword",
 		item_photo: "dark-sword.jpg",
 		item_description: "Pierces to the soul.",
 		item_hp: "123",
 		item_xp: "124",
-		item_ailment: "Poison"
+		item_armor: "0",
+		item_ailment: "Poison",
+		is_default: false
 	}
 ];
 
@@ -66,15 +70,28 @@ export class InventoryComponent implements OnInit {
 	private itemImgUrl: string = "/assets/images/not-found.jpg";
 	private badgeImgUrl: string = "/assets/images/not-found.jpg";
 	private badgeImgFile: File;
-	
+
 	private url = 'api/upload';
 	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 
 	currentUser: User;
+	openedItem: Item;
 	items: Item[];
+	equipmentParts: string[] = [
+		"Head",
+		"Armor",
+		"Footwear",
+		"Left Hand",
+		"Right Hand",
+		"Accessory"
+	];
 	badges: Badge[];
+	statuses: Status[];
 	instructorSections: any[];
+	sections: Section[];
 	sectionId: any;
+
+	isAddDefaultItem: boolean = true;
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -85,7 +102,7 @@ export class InventoryComponent implements OnInit {
 		private badgeService: BadgeService,
 		private route: ActivatedRoute,
 		private toastr: ToastsManager
-	) { 
+	) {
 		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 	}
 
@@ -109,11 +126,11 @@ export class InventoryComponent implements OnInit {
 	}
 
 	createBadge(res: any) {
-		this.badgeForm.value.badgeImage = res? res.uploadName: "";
+		this.badgeForm.value.badgeImage = res ? res.uploadName : "";
 		this.badgeService.createBadge(this.setBadge(), this.badgeForm.value.badgeSection).subscribe(data => {
-			if(!data) {
+			if (!data) {
 				console.log('Your badge failed to be created.');
-			} 
+			}
 		});
 
 		this.bsModalRef.hide();
@@ -142,11 +159,11 @@ export class InventoryComponent implements OnInit {
 	}
 
 
-	public badgeImageEvent($event: any) {		
+	public badgeImageEvent($event: any) {
 		if ($event.target.files && $event.target.files[0]) {
 			const fileSelected: File = $event.target.files[0];
 			var reader = new FileReader();
-			
+
 			reader.readAsDataURL($event.target.files[0]); // read file as data url
 
 			reader.onload = ($event) => { // called once readAsDataURL is completed
@@ -158,18 +175,61 @@ export class InventoryComponent implements OnInit {
 	}
 
 	createItem() {
-		console.log("description:" + this.itemForm.value.itemName);
+		if (this.itemForm.invalid) {
+			return;
+		} else {
+			console.log(this.itemForm);
+			console.log(this.itemType);
+
+			if (this.isAddDefaultItem) {
+				this.itemService.addItemToSection(this.openedItem.getItemId(), this.itemForm.value.sectionId).subscribe(success => {
+					if (success) {
+						console.log("SCUESS!");
+					} else {
+						console.log("failed!");
+					}
+				});
+			} else {
+				this.itemService.createItem(
+					this.itemForm.value.itemType,
+					this.itemForm.value.itemPart,
+					this.itemForm.value.itemName,
+					this.itemForm.value.itemPhoto,
+					this.itemForm.value.itemDescription,
+					this.itemForm.value.itemHP,
+					this.itemForm.value.itemXP,
+					this.itemForm.value.itemArmor,
+					this.itemForm.value.itemAilment,
+					this.itemForm.value.itemCure,
+					false
+				).subscribe(success => {
+					console.log(success);
+					if (success) {
+						console.log("yay!");
+					} else {
+						console.log("huhu!");
+					}
+				});
+			}
+		}
 	}
 
 	initializeForm() {
 		this.itemForm = this.formBuilder.group({
-			itemName: new FormControl("", Validators.required),
+			sectionId: new FormControl("", Validators.required),
+			itemId: new FormControl("", Validators.required),
+			itemName: new FormControl({ value: "", disabled: this.isAddDefaultItem }, Validators.required),
+			itemDescription: new FormControl({ value: "", disabled: this.isAddDefaultItem }, Validators.required),
+			itemType: new FormControl({ value: "", disabled: this.isAddDefaultItem }, Validators.required),
+			itemPart: new FormControl({ value: "", disabled: this.isAddDefaultItem }),
 			itemImage: new FormControl(""),
-			itemEffect1: new FormControl("", Validators.required),
-			itemEffect2: new FormControl("", Validators.required),
-			itemEffect3: new FormControl("", Validators.required),
-			itemDescription: new FormControl("", Validators.required)
+			itemHP: new FormControl({ value: "0", disabled: this.isAddDefaultItem }, Validators.pattern("[0-9]+")),
+			itemXP: new FormControl({ value: "0", disabled: this.isAddDefaultItem }, Validators.pattern("[0-9]+")),
+			itemArmor: new FormControl({ value: "0", disabled: this.isAddDefaultItem }, Validators.pattern("[0-9]+")),
+			itemAilment: new FormControl({ value: "", disabled: this.isAddDefaultItem }),
+			itemCure: new FormControl({ value: "", disabled: this.isAddDefaultItem })
 		});
+
 		this.badgeForm = this.formBuilder.group({
 			badgeName: new FormControl("", Validators.required),
 			badgeImage: new FormControl(""),
@@ -178,6 +238,7 @@ export class InventoryComponent implements OnInit {
 			badgeXP: new FormControl("", Validators.required),
 			badgeLoginStreak: new FormControl("", Validators.required)
 		});
+
 	}
 
 	public itemImageEvent($event: any) {
@@ -204,18 +265,27 @@ export class InventoryComponent implements OnInit {
 			.subscribe(user => {
 				this.currentUser = new User(user);
 				this.getTeacherItems();
+				this.getTeacherStatuses();
 				this.getTeacherBadges();
 			});
 	}
 
 	getTeacherItems() {
 		//AHJ: unimplemented; add items relative to the teacher; 
-		//remove dummy below if itemService.getTeacherInventoryItems() get properly implemented
+		//remove dummy below if itemService.getDefaultItems() get properly implemented
 		this.items = ITEMS.map(item => new Item(item));
 
-		/*this.itemService.getTeacherInventoryItems().subscribe(items => {
+		/*this.itemService.getDefaultItems().subscribe(items => {
 			this.items = items.map(item => new Item(item));
 		});*/
+	}
+
+	getTeacherStatuses() {
+		this.itemService.getDefaultStatuses().subscribe(statuses => {
+			if (statuses) {
+				this.statuses = statuses.map(status => new Status(status));
+			}
+		});
 	}
 
 	getTeacherBadges() {
@@ -224,7 +294,6 @@ export class InventoryComponent implements OnInit {
 		// this.badges = BADGES.map(badge => new Badge(badge));
 
 		this.badgeService.getAllbadges().subscribe(badge => {
-			console.warn(badge);
 			this.badges = badge.map(b => new Badge(b));
 		});
 
@@ -257,5 +326,73 @@ export class InventoryComponent implements OnInit {
 		).subscribe(data => {
 			this.instructorSections = data;
 		});
+	}
+
+	getStatusName(statusId) {
+		let status = this.statuses.find(stat => stat.getStatusId() == statusId);
+		return status ? status.getStatusName() : "";
+	}
+
+	getStatusDescription(statusId) {
+		let status = this.statuses.find(stat => stat.getStatusId() == statusId);
+		return status ? status.getStatusDescription() : "";
+	}
+
+	openItem(itemId: String) {
+		this.openedItem = this.items.find(item => item.getItemId() == itemId);
+	}
+
+	addDefaultItem(isAdd: boolean) {
+		this.isAddDefaultItem = isAdd;
+		if (isAdd) {
+			this.itemForm.disable();
+			this.itemForm.get('sectionId').enable();
+			this.itemForm.get('itemId').enable();
+			this.itemForm.get('itemId').setValidators(Validators.required);
+		} else {
+			// AHJ: unimplemented; reset all fields when navigating from one tab to another
+			this.itemForm.enable();
+			this.itemForm.get('itemId').clearValidators();
+		}
+	}
+
+	get itemId() {
+		return this.itemForm.get('itemId');
+	}
+
+	get itemName() {
+		return this.itemForm.get('itemName');
+	}
+
+	get itemType() {
+		return this.itemForm.get('itemType');
+	}
+
+	get itemDescription() {
+		return this.itemForm.get('itemDescription');
+	}
+	
+	get itemHP() {
+		return this.itemForm.get('itemHP');
+	}
+
+	get itemXP() {
+		return this.itemForm.get('itemXP');
+	}
+
+	get itemArmor() {
+		return this.itemForm.get('itemArmor');
+	}
+
+	get itemAilment() {
+		return this.itemForm.get('itemAilment');
+	}
+
+	get itemCure() {
+		return this.itemForm.get('itemCure');
+	}
+
+	get secId() {
+		return this.itemForm.get('sectionId');
 	}
 }

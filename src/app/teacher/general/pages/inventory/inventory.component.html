@@ -17,12 +17,12 @@
 				</div>
 				<div class="item-text col-md-9">
 					Item Name: {{item.getItemName()}}
-					<br/>
+					<br />
 				</div>
 			</div>
 			<div class="item-description row">
 				[Description] {{item.getItemDescription()}}
-				<br/>
+				<br />
 			</div>
 		</div>
 	</ng-container>
@@ -47,12 +47,12 @@
 				</div>
 				<div class="badge-text col-md-9">
 					Badge Name: {{badge.getBadgeName()}}
-					<br/>
+					<br />
 				</div>
 			</div>
 			<div class="badge-description row">
 				[Description] {{badge.getBadgeDescription()}}
-				<br/>
+				<br />
 			</div>
 		</div>
 	</ng-container>
@@ -73,55 +73,209 @@
 	<form class="form-horizontal" [formGroup]="itemForm" (ngSubmit)="createItem()">
 		<div class="modal-body">
 			<div class="row">
-				<div class="col-md-3">
-					Item Image
-					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
-					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="itemImageEvent($event)" ng2FileSelect [uploader]="uploader">
-				</div>
-				<div class="col-md-3 image-right">
-					<img class="item-img" [src]="itemImgUrl" />
-				</div>
-				<div class="col-md-6">
-					<span class="note">Note: Image displays best when of equal height and width.</span>
+				<div class="col-md-12">
+					<span class="clickable" (click)="addDefaultItem(true)">Pick from default items</span> OR
+					<span class="clickable" (click)="addDefaultItem(false)">create your own.</span>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-3">
-					Item Name
+					Section:
 				</div>
-				<div class="col-md-9">
-					<input type="text" formControlName="itemName" class="information-input remove-border" />
+				<div class="col-md-7">
+					<select formControlName="sectionId">
+						<option value="">
+							Add new item to section...
+						</option>
+						<option *ngFor="let section of instructorSections" [value]="section.section._id">
+							{{section.course_name}} - {{section.section.section_name}}
+						</option>
+					</select>
+				</div>
+				<div *ngIf="secId.errors" class="col-md-2 required-text">
+					*required
 				</div>
 			</div>
-			<div class="row">
+			<div *ngIf="isAddDefaultItem" class="row">
 				<div class="col-md-3">
-					Item Effect #1
+					Default Item:
 				</div>
-				<div class="col-md-9">
-					<input type="text" formControlName="itemEffect1" class="information-input remove-border" />
+				<div class="col-md-7">
+					<select #itemSelect formControlName="itemId" (click)="openItem(itemSelect.value)">
+						<option value="">
+							Select default item to add..
+						</option>
+						<option *ngFor="let item of items" [value]="item.getItemId()">
+							{{item.getItemName()}}
+						</option>
+					</select>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					Item Effect #2
-				</div>
-				<div class="col-md-9">
-					<input type="text" formControlName="itemEffect2" class="information-input remove-border" />
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					Item Effect #3
-				</div>
-				<div class="col-md-9">
-					<input type="text" formControlName="itemEffect3" class="information-input remove-border" />
+				<div *ngIf="itemId.errors" class="col-md-2 required-text">
+					*required
 				</div>
 			</div>
+			<!-- Shows below if user is creating his/her own item or user chose a default item-->
+			<ng-container *ngIf="!isAddDefaultItem || (isAddDefaultItem && openedItem)">
+				<div class="row">
+					<div class="col-md-3">
+						Item Image
+						<ng-container *ngIf="!isAddDefaultItem">
+							<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
+							<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="itemImageEvent($event)"
+							 ng2FileSelect [uploader]="uploader">
+						</ng-container>
+					</div>
+					<div class="col-md-3 image-right">
+						<img class="item-img" [src]="isAddDefaultItem? openedItem.getItemPhoto(): itemImgUrl" />
+					</div>
+					<div class="col-md-6">
+						<span *ngIf="!isAddDefaultItem" class="note">Note: Image displays best when of equal height and width.</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Item Name
+					</div>
+					<div class="col-md-7">
+						<input type="text" formControlName="itemName" class="information-input remove-border" [value]="isAddDefaultItem? openedItem.getItemName(): ''" />
+					</div>
+					<div *ngIf="itemName.errors" class="col-md-2 required-text">
+						*required
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Item Description
+					</div>
+					<div class="col-md-7">
+						<input type="textarea" formControlName="itemDescription" class="information-input remove-border" [value]="isAddDefaultItem? openedItem.getItemDescription(): ''" />
+					</div>
+					<div *ngIf="itemDescription.errors" class="col-md-2 required-text">
+						*required
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Item Type
+					</div>
+					<div class="col-md-7">
+						<input *ngIf="isAddDefaultItem" type="textarea" formControlName="itemType" class="information-input remove-border"
+						 [value]="openedItem.getItemType(true)" />
+						<select *ngIf="!isAddDefaultItem" formControlName="itemType">
+							<option value="">
+								Select item type...
+							</option>
+							<option value="w">
+								Wearable
+							</option>
+							<option value="c">
+								Consummable
+							</option>
+						</select>
+					</div>
+					<div *ngIf="itemType.errors" class="col-md-2 required-text">
+						*required
+					</div>
+				</div>
+				<div *ngIf="(isAddDefaultItem && openedItem && openedItem.getItemType() == 'w') || (!isAddDefaultItem && itemType.value == 'w')"
+				 class="row">
+					<div class="col-md-3">
+						Item Part
+					</div>
+					<div class="col-md-9">
+						<input *ngIf="isAddDefaultItem" type="text" formControlName="itemPart" class="information-input remove-border"
+						 [value]="openedItem.getItemPart()" />
+						<select *ngIf="!isAddDefaultItem" formControlName="itemPart">
+							<option *ngFor="let part of equipmentParts" [value]="part">{{part}}</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						HP
+					</div>
+					<div class="col-md-7">
+						<input type="text" formControlName="itemHP" class="information-input remove-border" [value]="isAddDefaultItem? openedItem.getItemHp(): ''" />
+					</div>
+					<div *ngIf="itemHP.invalid && itemHP.errors.pattern" class="col-md-2 required-text">
+						*must be number
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						XP
+					</div>
+					<div class="col-md-7">
+						<input type="text" formControlName="itemXP" class="information-input remove-border" [value]="isAddDefaultItem? openedItem.getItemXp(): ''" />
+					</div>
+					<div *ngIf="itemXP.invalid && itemXP.errors.pattern" class="col-md-2 required-text">
+						*must be number
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Armor
+					</div>
+					<div class="col-md-7">
+						<input type="text" formControlName="itemArmor" class="information-input remove-border" [value]="isAddDefaultItem? openedItem.getItemArmor(): ''" />
+					</div>
+					<div *ngIf="itemArmor.invalid && itemArmor.errors.pattern" class="col-md-2 required-text">
+						*must be number
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Ailment
+					</div>
+					<div class="col-md-9">
+						<input *ngIf="isAddDefaultItem" type="text" formControlName="itemAilment" class="information-input remove-border"
+						 [value]="openedItem.getItemAilment()" />
+						<select *ngIf="!isAddDefaultItem" formControlName="itemAilment">
+							<option value="">
+								Select item status...
+							</option>
+							<option *ngFor="let status of statuses" [value]="status.getStatusId()">
+								{{status.getStatusName()}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div *ngIf="itemAilment.value && itemAilment.value.length != 0" class="row">
+					<div class="col-md-3"></div>
+					<div class="col-md-9">
+						{{this.getStatusDescription(itemAilment.value)}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Remove/Cure
+					</div>
+					<div class="col-md-9">
+						<input *ngIf="isAddDefaultItem" type="text" formControlName="itemCure" class="information-input remove-border"
+						 [value]="openedItem.getItemCure()" />
+						<select *ngIf="!isAddDefaultItem" formControlName="itemCure">
+							<option value="">
+								Select item status...
+							</option>
+							<option *ngFor="let status of statuses" [value]="status.getStatusId()">
+								{{status.getStatusName()}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div *ngIf="itemCure.value && itemCure.value.length != 0" class="row">
+					<div class="col-md-3"></div>
+					<div class="col-md-9">
+						This item will remove/cure [{{this.getStatusName(itemCure.value)}}]
+					</div>
+				</div>
+			</ng-container>
 		</div>
 		<!-- Quest Modal Buttons -->
 		<div class="modal-footer">
 			<!-- shows submit & abandon buttons if user is a participant -->
-			<button type="submit" class="btn btn-success mr-auto">Create</button>
+			<button type="submit" [disabled]="itemForm.invalid" class="btn btn-success mr-auto">{{isAddDefaultItem? "Add":
+				"Create and Add"}}</button>
 			<button class="btn btn-danger" (click)="bsModalRef.hide()">Cancel</button>
 		</div>
 	</form>
@@ -145,7 +299,8 @@
 				<div class="col-md-3">
 					Badge Image
 					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
-					<input type="file" name="appImage" id="custom-btn-upload" formControlName="badgeImage" (change)="badgeImageEvent($event)" ng2FileSelect [uploader]="uploader">
+					<input type="file" name="appImage" id="custom-btn-upload" formControlName="badgeImage" (change)="badgeImageEvent($event)"
+					 ng2FileSelect [uploader]="uploader">
 				</div>
 				<div class="col-md-3 image-right">
 					<img class="item-img" [src]="badgeImgUrl" />
