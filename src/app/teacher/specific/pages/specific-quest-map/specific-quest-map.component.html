@@ -39,10 +39,10 @@
 	</div>
 
 	<!--Graph for quest map-->
-	<div [class.hidden]="(quests && quests.length == 0) || (questMap && (questMap.getMaxEXP() <= 0))">
+	<div [class.hidden]="!isLoadingQuestMap && (quests && quests.length == 0) || (questMap && (questMap.getMaxEXP() <= 0))">
 		<div class="row">
 			<div style="display: block">
-				<canvas id="quest-map" baseChart width="500" height="500" #chartCanvas></canvas>
+				<canvas id="quest-map" style="width: 500px; height: 500px" baseChart width="500" height="500" #chartCanvas></canvas>
 			</div>
 		</div>
 	</div>
@@ -71,276 +71,271 @@
 		</tbody>
 	</table>
 
-
 	<div *ngIf="isCreateModalReady && questMap && questMap.getFlatOnePercentage() != 0 && questMap.getMaxEXP() != 0 && quests.length == 0">
 		<br>You have no quest yet. Click
 		<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
 
 	</div>
+</div>
 
-	<ng-container *ngIf="isCreateModalReady">
-		<ng-template class="create-quest-modal" #createQuestTemplate>
-			<!--Modal Header-->
-			<div class="modal-header">
-				<h4 class="modal-title">Create Quest</h4>
-				<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-
-			<!--Modal Body-->
-			<form class="create-quest-body" [formGroup]="createQuestForm">
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-3">
-							Quest Title
-						</div>
-						<div class="col-md-7">
-							<input type="text" formControlName="questTitle" class="information-input remove-border" required />
-						</div>
-						<div *ngIf="questTitle.invalid" class="col-md-2 required-text">*required</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3">
-							Quest Description:
-						</div>
-						<div class="col-md-7">
-							<textarea type="text" formControlName="questDescription" class="information-input remove-border"></textarea>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3">
-							Quest Retakable:
-						</div>
-						<div class="col-md-7">
-							<label>
-								<input type="radio" formControlName="questRetakable" value="true"> Yes
-							</label>
-							<label>
-								<input type="radio" formControlName="questRetakable" value="false"> No
-							</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3">
-							Quest Badge:
-						</div>
-						<div class="col-md-7">
-							<label formArrayName="questBadges" style="margin-right: 5px" *ngFor="let badge of questBadgesArray.controls; let i = index">
-								<ng-container [formGroupName]="i">
-									<input type="checkbox" formControlName="isChecked">
-								</ng-container>
-								{{questBadges[i].badgeName}}
-							</label>
-							<label *ngIf="questBadges.length == 0">
-								No badges for this section yet.
-							</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3">
-							Item Reward:
-						</div>
-						<div class="col-md-7">
-							<label formArrayName="questItem" style="margin-right: 5px" *ngFor="let questItem of questItem.controls; let i = index">
-								<ng-container [formGroupName]="i">
-									<select formControlName="itemId">
-										<option value="''">
-											Select quest item...
-										</option>
-										<option *ngFor="let item of sectionItems" [value]="item.getItemId()">
-											{{item.getItemName()}}
-										</option>
-									</select>
-								</ng-container>
-							</label>
-							<label class="clickable" (click)="addQuestItem()">+ Add a quest item</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3">
-							Quest Prerequisite:
-						</div>
-						<div class="col-md-7">
-							<label formArrayName="questPrerequisite" style="margin-right: 5px" *ngFor="let prereq of questPrerequisite.controls; let i = index">
-								<ng-container [formGroupName]="i">
-									<select formControlName="questId">
-										<option value="''">
-											Select quest prerequisite...
-										</option>
-										<option *ngFor="let quest of quests" [value]="quest.getQuestId()">
-											{{quest.getQuestTitle()}}
-										</option>
-									</select>
-								</ng-container>
-							</label>
-							<label class="clickable" (click)="addQuestPrerequisite()">+ Add a quest prerequisite</label>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3">
-							Deadline:
-						</div>
-						<div class="col-md-7">
-							<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border"
-							 required />
-						</div>
-						<div *ngIf="questEndDate.invalid" class="col-md-2 required-text">
-							<span *ngIf="questEndDate.errors.required">
-								*required
-							</span>
-							<span *ngIf="questEndDate.errors.pattern">
-								*correct date
-							</span>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3">
-							EXP gained:
-						</div>
-						<div class="col-md-7">
-							<input id="questEXP" type="text" formControlName="questEXP" class="information-input remove-border" required />
-						</div>
-						<div *ngIf="questEXP.errors" class="col-md-2 required-text">
-							<span *ngIf="questEXP.errors.required">
-								*required
-							</span>
-							<span *ngIf="questEXP.errors.pattern">
-								*must be number
-							</span>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-3">
-							HP gained:
-						</div>
-						<div class="col-md-7">
-							<input type="text" formControlName="questHP" class="information-input remove-border" />
-						</div>
-						<div *ngIf="questHP.invalid && questHP.errors.pattern" class="col-md-2 required-text">
-							*must be number
-						</div>
-					</div>
-				</div>
-				<!-- Quest Modal Buttons -->
-				<div class="modal-footer">
-					<!-- shows submit & abandon buttons if user is a participant -->
-					<button class="btn btn-danger mr-auto" (click)="resetQuest()">Reset</button>
-					<button class="btn btn-success" [disabled]="createQuestForm.invalid" (click)="createQuest()">Create</button>
-				</div>
-			</form>
-		</ng-template>
-	</ng-container>
-
-	<!-- Modal Template for Quests-->
-	<ng-template #questTemplate>
-
-		<!-- Quest Modal Header/Title -->
+<ng-container *ngIf="isCreateModalReady">
+	<ng-template class="create-quest-modal" #createQuestTemplate>
+		<!--Modal Header-->
 		<div class="modal-header">
-			<h4 class="modal-title">
-				{{this.questClicked.getQuestTitle()}}
-			</h4>
+			<h4 class="modal-title">Create Quest</h4>
 			<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
 				<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
 
-		<!-- Quest Information -->
-		<div class="modal-body">
-			{{this.questClicked.getQuestDescription()}}
-			<br class="clear" />
-
-			<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
-				Links here:
-				<ul>
-					<li *ngFor="let links of this.pageService.hyperLinks">
-						<a href="{{links}}">{{links}}</a>
-					</li>
-				</ul>
-			</div>
-			<div class="row" style="margin-top: 20px">
-				<div class="col-sm-6">
-					Rewards:
-					<br> + {{this.questClicked.getQuestXp()}} XP
-					<br> + {{this.questClicked.getQuestHp()}} HP
-					<br>
-					<br>Quest Prerequisite:
-					<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length > 0">
-						<ng-container *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">
-							<br>{{this.getQuestTitle(prereq)}}
-						</ng-container>
-					</ng-container>
-					<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length == 0">
-						<br>None
-					</ng-container>
-					<br>
-					<br>Item Reward(s):
-					<ng-container *ngIf="this.questClicked.getQuestItem().length > 0">
-						<ng-container *ngFor="let item of this.questClicked.getQuestItem()">
-							<br>{{this.getItemName(item)}}
-						</ng-container>
-					</ng-container>
-					<ng-container *ngIf="this.questClicked.getQuestItem().length == 0">
-						None for this quest.
-					</ng-container>
-					<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">
-						<br>
-						<br>Badges that can be earned by achieving at least 80%.
-						<ul *ngFor="let badgeName of this.badgeName">
-							<li> {{badgeName}}</li>
-						</ul>
-					</ng-container>
-
+		<!--Modal Body-->
+		<form class="create-quest-body" [formGroup]="createQuestForm">
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-3">
+						Quest Title
+					</div>
+					<div class="col-md-7">
+						<input type="text" formControlName="questTitle" class="information-input remove-border" required />
+					</div>
+					<div *ngIf="questTitle.invalid" class="col-md-2 required-text">*required</div>
 				</div>
-				<div class="col-sm-6">
-					Started on:
-					<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
-					<br>
-					<br> Deadline:
-					<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
-					<br>
-					<br>
+				<div class="row">
+					<div class="col-md-3">
+						Quest Description:
+					</div>
+					<div class="col-md-7">
+						<textarea type="text" formControlName="questDescription" class="information-input remove-border"></textarea>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Quest Retakable:
+					</div>
+					<div class="col-md-7">
+						<label>
+							<input type="checkbox" formControlName="questRetakable">
+						</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Quest Badge:
+					</div>
+					<div class="col-md-7">
+						<label formArrayName="questBadges" style="margin-right: 5px" *ngFor="let badge of questBadgesArray.controls; let i = index">
+							<ng-container [formGroupName]="i">
+								<input type="checkbox" formControlName="isChecked">
+							</ng-container>
+							{{questBadges[i].badgeName}}
+						</label>
+						<label *ngIf="questBadges.length == 0">
+							No badges for this section yet.
+						</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Item Reward:
+					</div>
+					<div class="col-md-7">
+						<label formArrayName="questItem" style="margin-right: 5px" *ngFor="let questItem of questItem.controls; let i = index">
+							<ng-container [formGroupName]="i">
+								<select formControlName="itemId">
+									<option value="''">
+										Select quest item...
+									</option>
+									<option *ngFor="let item of sectionItems" [value]="item.getItemId()">
+										{{item.getItemName()}}
+									</option>
+								</select>
+							</ng-container>
+						</label>
+						<label class="clickable" (click)="addQuestItem()">+ Add a quest item</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Quest Prerequisite:
+					</div>
+					<div class="col-md-7">
+						<label formArrayName="questPrerequisite" style="margin-right: 5px" *ngFor="let prereq of questPrerequisite.controls; let i = index">
+							<ng-container [formGroupName]="i">
+								<select formControlName="questId">
+									<option value="''">
+										Select quest prerequisite...
+									</option>
+									<option *ngFor="let quest of quests" [value]="quest.getQuestId()">
+										{{quest.getQuestTitle()}}
+									</option>
+								</select>
+							</ng-container>
+						</label>
+						<label class="clickable" (click)="addQuestPrerequisite()">+ Add a quest prerequisite</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						Deadline:
+					</div>
+					<div class="col-md-7">
+						<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border"
+						 required />
+					</div>
+					<div *ngIf="questEndDate.invalid" class="col-md-2 required-text">
+						<span *ngIf="questEndDate.errors.required">
+							*required
+						</span>
+						<span *ngIf="questEndDate.errors.pattern">
+							*correct date
+						</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						EXP gained:
+					</div>
+					<div class="col-md-7">
+						<input id="questEXP" type="text" formControlName="questEXP" class="information-input remove-border" required />
+					</div>
+					<div *ngIf="questEXP.errors" class="col-md-2 required-text">
+						<span *ngIf="questEXP.errors.required">
+							*required
+						</span>
+						<span *ngIf="questEXP.errors.pattern">
+							*must be number
+						</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						HP gained:
+					</div>
+					<div class="col-md-7">
+						<input type="text" formControlName="questHP" class="information-input remove-border" />
+					</div>
+					<div *ngIf="questHP.invalid && questHP.errors.pattern" class="col-md-2 required-text">
+						*must be number
+					</div>
 				</div>
 			</div>
-		</div>
-	</ng-template>
-	<!-- quest modal template end -->
-
-
-	<ng-template #leaderboardTemplate>
-		<div class="modal-body">
-			<h4>Going Bananas</h4>
-			<table class="table table-hover">
-				<thead style="font-weight: bold">
-					<tr>
-						<td>Rank</td>
-						<td>Student Number</td>
-						<td>Experience</td>
-						<td>Time Submitted</td>
-						<td>Date Submitted</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>1</td>
-						<td>2014-67553</td>
-						<td>400</td>
-						<td>ss:mm:hh</td>
-						<td>dd/mm/yyyy</td>
-					</tr>
-					<tr>
-						<td>2</td>
-						<td>2014-37728</td>
-						<td>500</td>
-						<td>ss:mm:hh</td>
-						<td>dd/mm/yyyy</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		</form>
+		<!-- Quest Modal Buttons -->
 		<div class="modal-footer">
-			<button class="btn btn-danger pull-right" (click)="modalRef.hide()">Close</button>
+			<!-- shows submit & abandon buttons if user is a participant -->
+			<button class="btn btn-danger mr-auto" (click)="resetQuest()">Reset</button>
+			<button class="btn btn-success" [disabled]="createQuestForm.invalid" (click)="createQuest()">Create</button>
 		</div>
 	</ng-template>
+</ng-container>
 
-</div>
+<!-- Modal Template for Quests-->
+<ng-template #questTemplate>
+
+	<!-- Quest Modal Header/Title -->
+	<div class="modal-header">
+		<h4 class="modal-title">
+			{{this.questClicked.getQuestTitle()}}
+		</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<!-- Quest Information -->
+	<div class="modal-body">
+		{{this.questClicked.getQuestDescription()}}
+		<br class="clear" />
+
+		<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
+			Links here:
+			<ul>
+				<li *ngFor="let links of this.pageService.hyperLinks">
+					<a href="{{links}}">{{links}}</a>
+				</li>
+			</ul>
+		</div>
+		<div class="row" style="margin-top: 20px">
+			<div class="col-sm-6">
+				Rewards:
+				<br> + {{this.questClicked.getQuestXp()}} XP
+				<br> + {{this.questClicked.getQuestHp()}} HP
+				<br>
+				<br>Quest Prerequisite:
+				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length > 0">
+					<ng-container *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">
+						<br>{{this.getQuestTitle(prereq)}}
+					</ng-container>
+				</ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length == 0">
+					<br>None
+				</ng-container>
+				<br>
+				<br>Item Reward(s):
+				<ng-container *ngIf="this.questClicked.getQuestItem().length > 0">
+					<ng-container *ngFor="let item of this.questClicked.getQuestItem()">
+						<br>{{this.getItemName(item)}}
+					</ng-container>
+				</ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestItem().length == 0">
+					None for this quest.
+				</ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">
+					<br>
+					<br>Badges that can be earned by achieving at least 80%.
+					<ul *ngFor="let badgeName of this.badgeName">
+						<li> {{badgeName}}</li>
+					</ul>
+				</ng-container>
+
+			</div>
+			<div class="col-sm-6">
+				Started on:
+				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
+				<br>
+				<br> Deadline:
+				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
+				<br>
+				<br>
+			</div>
+		</div>
+	</div>
+</ng-template>
+<!-- quest modal template end -->
+
+
+<ng-template #leaderboardTemplate>
+	<div class="modal-body">
+		<h4>Going Bananas</h4>
+		<table class="table table-hover">
+			<thead style="font-weight: bold">
+				<tr>
+					<td>Rank</td>
+					<td>Student Number</td>
+					<td>Experience</td>
+					<td>Time Submitted</td>
+					<td>Date Submitted</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>2014-67553</td>
+					<td>400</td>
+					<td>ss:mm:hh</td>
+					<td>dd/mm/yyyy</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>2014-37728</td>
+					<td>500</td>
+					<td>ss:mm:hh</td>
+					<td>dd/mm/yyyy</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger pull-right" (click)="modalRef.hide()">Close</button>
+	</div>
+</ng-template>

@@ -45,6 +45,7 @@ export class Item {
             this.item_ailment = item.item_ailment ? item.item_ailment : "";
             this.item_cure = item.item_cure ? item.item_cure : "";
             this.item_armor = item.item_armor ? item.item_armor : "";
+            this.item_durability = item.item_durability ? item.item_durability : "";
             this.is_default = item.is_default ? item.is_default : false;
         } else {
             this._id = "";            
@@ -62,9 +63,10 @@ export class Item {
             this.is_default = false;
         }
     }
-
+    
     createItem(
         item_type,
+        item_part,
         item_name,
         item_photo,
         item_description,
@@ -75,6 +77,7 @@ export class Item {
         item_durability
     ) {
         this.item_type = item_type;
+        this.item_part = item_part;
         this.item_name = item_name;
         this.item_photo = item_photo;
         this.item_description = item_description;
@@ -89,24 +92,39 @@ export class Item {
         return this._id;
     }
 
-    getItemType(isFullWord?): string{
+    /**
+     * Determines if an item is of equipment or consummable type
+     * @param isFullWord (optional) Determines if returned type string is full word or not.
+     * @returns the type of the item
+     * - for equipment item type, returns "Wearable" if 'isFullWord' is true; "w" if not 
+     * - for consummable item type, returns "Consummable" if 'isFullWord' is true; "c" if not 
+     */
+    getItemType(isFullWord?: boolean) {
         if(isFullWord){
-            if(this.item_type == "w"){
-                return "Wearable";
-            } else {
-                return "Consummable";
+            let itemType = "";
+            switch(this.item_type){
+                case "w": itemType = "Wearable";
+                case "c": itemType = "Consummable";
             }
         } else {
             return this.item_type;
         }
     }
 
-    getItemName() {
-        return this.item_name;
+    /**
+     * Determines where the item (of type wearable) is to placed.
+     * @returns the part where the item can be placed; returns null if item is not of type 'wearable'.
+     */
+    getItemPart(){
+        if(this.item_type == 'w'){
+            return this.item_part;
+        } else {
+            return null;
+        }
     }
 
-    getItemPart(){
-        return this.item_part;
+    getItemName() {
+        return this.item_name;
     }
 
     /**
@@ -176,13 +194,7 @@ export class Item {
             if (this.item_armor.length == 0) {
                 return 0;
             } else {
-                switch (this.item_armor.charAt(0)) {
-                    case "+":
-                    case "-":
-                        return Number.parseInt(this.item_armor);
-                    default:
-                        return Number.parseInt(this.item_armor);
-                }
+                return Number.parseInt(this.item_armor);
             }
         }
     }
@@ -190,6 +202,10 @@ export class Item {
     getItemDurability() {
         return this.item_durability;
     }
+
+    getItemStatus() {
+        return this.item_durability > 0? "Okay": "Broken";
+    } 
 
     isDefaultItem() {
         return this.is_default;
@@ -201,6 +217,10 @@ export class Item {
 
     setItemType(item_type) {
         this.item_type = item_type;
+    }
+
+    setItemPart(item_part){
+        this.item_part = item_part;
     }
 
     setItemName(item_name) {
@@ -229,5 +249,13 @@ export class Item {
 
     setItemCure(item_cure) {
         this.item_cure = item_cure;
+    }
+
+    setItemArmor(item_armor) {
+        this.item_armor = item_armor;
+    }
+    
+    setItemDurability(item_durability) {
+        this.item_durability = item_durability;
     }
 }

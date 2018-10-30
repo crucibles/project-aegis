@@ -4,12 +4,30 @@ import {
 } from '@angular/core';
 
 import {
-	Item, Inventory
+	HttpParams,
+	HttpClient
+} from '@angular/common/http';
+
+//Third-party Imports
+import {
+	tap,
+	catchError
+} from 'rxjs/operators';
+
+import { Observable }
+	from 'rxjs';
+
+import {
+	of
+} from 'rxjs/observable/of';
+
+//Application Imports
+import {
+	Inventory,
+	Item
 } from 'shared/models';
-import { HttpParams, HttpClient } from '@angular/common/http';
-import { tap, catchError } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs/observable/of';
+
+
 
 @Injectable()
 export class ItemService {
@@ -40,7 +58,7 @@ export class ItemService {
 		private http: HttpClient
 	) { }
 
-    /**
+	/**
    * Adds item to the inventory
    * @param item_id id of the item to be added to the inventory
    * @param inventory_id id of the inventory where the added item will be placed 
@@ -66,10 +84,10 @@ export class ItemService {
 		}
 
 		return this.http.post<any>(url, body)
-		.pipe(
-			tap(x => console.log("adding item to section: " + x)),
-			catchError(this.handleError<any>('addItemToSection'))
-		);
+			.pipe(
+				tap(x => console.log("adding item to section: " + x)),
+				catchError(this.handleError<any>('addItemToSection'))
+			);
 	}
 
 	/**
@@ -111,12 +129,12 @@ export class ItemService {
 
 		console.log(body);
 		return this.http.post<Item>(url, body)
-		.pipe(
-			tap(x => {
-				console.log("creating & adding item to section: " + x);
-			}),
-			catchError(this.handleError<Item>('createItem'))
-		);
+			.pipe(
+				tap(x => {
+					console.log("creating & adding item to section: " + x);
+				}),
+				catchError(this.handleError<Item>('createItem'))
+			);
 	}
 
 	/**
@@ -138,17 +156,32 @@ export class ItemService {
 	}
 
     /**
-   * Equip the wearable item and make use of its effects
-   * @description Equip the wearable item and make use of its effects and 
-   * remove them from the inventory (using removeItem)
-   * @param item_id id of the item to be equipped
-   * @param user_id id of the user where the item will be placed on
-   * @param inventory_id id of the inventory where the item was located
-   * 
-   * @see removeItem
-   */
-	equipItem(item_id, user_id, inventory_id) {
+   	 * Equip the wearable item and make use of its effects
+     * @description Equip the wearable item and make use of its effects and
+      * remove them from the inventory (using removeInventoryItem)
+      * @param item_id ID of the item to be equipped
+   	  * @param item_part Part where the item will be equipped
+      * @param inventory_id ID of the inventory where the item was located
+      * @param to_equip Determines if an item is to be equipped or unequipped
+      *
+      * @see removeInventoryItem
+      */
+	equipItem(item_id, item_part, inventory_id, to_equip) {
 		const url = this.inventoryUrl;
+
+		let body = {
+			method: "equipItem",
+			item_id: item_id,
+			item_part: item_part,
+			inventory_id: inventory_id,
+			to_equip: to_equip
+		};
+
+		return this.http.post<any>(this.inventoryUrl, body).pipe(
+			tap(() =>
+				console.log("Item " + item_id + " is equipped.")),
+			catchError(this.handleError<any>('equipItem'))
+		);
 	}
 
 	getCurrentInventory() {
@@ -177,6 +210,8 @@ export class ItemService {
 			})
 		);
 	}
+
+
 
 	/**
 	 * Gets default items.
@@ -213,22 +248,45 @@ export class ItemService {
 	 */
 	getUserSectionInventory(user_id, section_id) {
 		const url = this.inventoryUrl;
+
+		let params = new HttpParams()
+			.set('user_id', user_id)
+			.set('section_id', section_id)
+			.set('method', 'getUserSectionInventory');
+
+		return this.http.get<any>(url, {
+			params: params
+		}).pipe(
+			tap(inventory => console.log(inventory)),
+			catchError(this.handleError(`getSectionBadges`, []))
+		);
 	}
 
-	/**
-	 * Removes item from the inventory.
-	 * @param item_id Id of the item to be removed to the inventory
-	 * @param inventory_id Id of the inventory where the item will be removed from
+    /**
+	 * @param item_id ID of the item to be removed to the inventory
+	 * @param inventory_id ID of the inventory where the item will be removed from
 	 */
 	removeInventoryItem(item_id, inventory_id) {
 		const url = this.inventoryUrl;
+
+		let body = {
+			method: "removeItem",
+			item_id: item_id,
+			inventory_id: inventory_id,
+		};
+
+		return this.http.post<any>(this.inventoryUrl, body).pipe(
+			tap(() =>
+				console.log("Item " + item_id + " is removed from inventory.")),
+			catchError(this.handleError<any>('removeItem'))
+		);
 	}
 
 	setCurrentInventory(inventory: Inventory) {
 		this.currentInventory = inventory;
 	}
 
-    /**
+	/**
    * Equip the wearable item and make use of its effects
    * @description Equip the wearable item and remove effects (if applicable) and 
    * add them back to the inventory (using addItem)
@@ -244,12 +302,12 @@ export class ItemService {
 
 	/**
 	 * Use the item and make use of its effects.
-	 * @description Use the item and make use of its effects and deletes them from the inventory (using removeItem)
+	 * @description Use the item and make use of its effects and deletes them from the inventory (using removeInventoryItem)
 	 * @param item_id Id of the item to be used
 	 * @param user_id Id of the user where the item will be used on
 	 * @param inventory_id id of the inventory where the item was located
 	 * 
-	 * @see removeItem
+	 * @see removeInventoryItem
 	 */
 	useItem(item_id, user_id, inventory_id) {
 		const url = this.inventoryItemUrl;
@@ -261,18 +319,18 @@ export class ItemService {
      * @param operation - name of the operation that failed
      * @param result - optional value to return as the observable result
      */
-    private handleError<T>(operation = 'operation', result?: T) {
-        return (error: any): Observable<T> => {
+	private handleError<T>(operation = 'operation', result?: T) {
+		return (error: any): Observable<T> => {
 
-            // TODO: send the error to remote logging infrastructure
-            console.error(error); // log to console instead
+			// TODO: send the error to remote logging infrastructure
+			console.error(error); // log to console instead
 
-            // TODO: better job of transforming error for user consumption
-            console.log(`${operation} failed: ${error.message}`);
+			// TODO: better job of transforming error for user consumption
+			console.log(`${operation} failed: ${error.message}`);
 
-            // Let the app keep running by returning an empty result.
-            return of(result as T);
-        };
-    }
+			// Let the app keep running by returning an empty result.
+			return of(result as T);
+		};
+	}
 
 }

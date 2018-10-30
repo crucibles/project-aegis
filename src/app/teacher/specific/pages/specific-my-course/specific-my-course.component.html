@@ -31,8 +31,8 @@
 						</td>
 						<td>{{classmate.getUserFormattedBirthdate()}}</td>
 						<td>{{classmate.getUserEmail()}}</td>
-						<td [class.clickable]="this.getStudentStatus(classmate.getUserId()) == 'Approve'" (click)="approveStudent(classmate.getUserId())" >
-							{{this.getStudentStatus(classmate.getUserId())}}
+						<td [class.clickable]="this.status(classmate.getUserId()) == 'Approve'" (click)="approveStudent(classmate.getUserId())" >
+							{{this.status(classmate.getUserId())}}
 						</td>
 					</tr>
 				</ng-container>

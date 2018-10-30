@@ -57,7 +57,6 @@ import {
 import {
 	AlertService
 } from 'shared/services/alert.service';
-import { SpecificSidetabComponent } from 'student/specific/specific-sidetab/specific-sidetab.component';
 
 @Component({
 	selector: 'app-specific-quest-map',
@@ -118,12 +117,18 @@ export class SpecificQuestMapComponent implements OnInit {
 		private toaster: ToastsManager,
 		private badgeService: BadgeService
 	) {
+		this.pageService.getChartObservable().subscribe(value => {
+			this.setNewSection();
+		});
 		this.currentUser = this.userService.getCurrentUser();
 		this.currentSection = new Section(this.sectionService.getCurrentSection());
 		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 	}
 
 	ngOnInit() {
+		this.pageService.getChartObservable().subscribe(value => {
+			this.setNewSection();
+		});
 		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
 		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
 		//overide the onCompleteItem property of the uploader so we are 
@@ -136,11 +141,7 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.setDefault();
 		this.getCurrentUser();
 		this.getCurrentSection();
-		this.loadQuestMap();
-
-		this.pageService.getChartObservable().subscribe(value => {
-			this.setNewSection();
-		});
+		this.loadQuestMap();		
 	}
 
 	isPending(quest_id) {

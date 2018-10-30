@@ -290,7 +290,6 @@ router.post('/createQuest', (req, res) => {
                         quest_end_date: req.body.quest_end_date,
                         quest_party: req.body.quest_party
                     }
-                    console.log("END!");
                     res.json(questObj);
                     //callback(null, result.insertedId);
                 });
@@ -298,8 +297,6 @@ router.post('/createQuest', (req, res) => {
 
         // function addQuestToSection(resultId, callback) {
         //     const myDB = db.db('up-goe-db');
-        //     console.log("req.body.quest_prerequisite");
-        //     console.log(req.body.quest_prerequisite);
         //     myDB.collection('sections')
         //     .update(
         //         { _id: req.body.section_id },
@@ -313,9 +310,6 @@ router.post('/createQuest', (req, res) => {
         //             }
         //             },
         //             function (err, section) {
-        //                 console.log("RESULT");
-        //                 console.log(req.body.quest_prerequisite);
-        //                 console.log(section.result);
         //                 response.data = section;
         //                 callback(null, resultId);
         //             }
@@ -403,8 +397,6 @@ router.post('/experiences', (req, res) => {
                     section_id: req.body.section_id
                 })
                 .then(user => {
-                    console.log('\n\nThis is your user');
-                    console.log(user);
                     if (user) res.json(user);
                     else res.json(false);
                 })
@@ -720,8 +712,6 @@ router.post('/questmaps', (req, res) => {
         connection((db) => {
             //AHJ: unimplemented; dili ko kabalo sa pagpush ug array T_T okay lng sya if string or hardcore array though....
             const myDB = db.db('up-goe-db');
-            console.log("req.body.quest_prerequisite");
-            console.log(req.body.quest_prerequisite);
             let prereq_array = [];
             prereq_array = req.body.quest_prerequisite;
             if (prereq_array.length > 0) {
@@ -751,7 +741,6 @@ router.post('/questmaps', (req, res) => {
     };
 
     function setMaxEXP(req, res) {
-        console.log("================set max exp====================");
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('questmaps')
@@ -765,7 +754,6 @@ router.post('/questmaps', (req, res) => {
                 )
                 .then(section => {
                     res.json(true);
-                    console.log("================set max exp success====================");
                 })
                 .catch(err => {
                     sendError(err, res);
@@ -774,7 +762,6 @@ router.post('/questmaps', (req, res) => {
     }
 
     function setFlatOnePercentage(req, res) {
-        console.log("================set max exp====================");
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('questmaps')
@@ -788,7 +775,6 @@ router.post('/questmaps', (req, res) => {
                 )
                 .then(section => {
                     res.json(true);
-                    console.log("================set max exp success====================");
                 })
                 .catch(err => {
                     sendError(err, res);
@@ -1010,6 +996,207 @@ router.post('/posts', (req, res) => {
                         })
                 });
         });
+    }
+});
+
+router.post('/items', (req, res) => {
+    console.log("> POST ITEMS ITEMS le here");
+    if (req.body.method == "equipItem") {
+        if(req.body.to_equip){
+            equipItem();
+        } else {
+            unequipItem();
+        }
+    } else if(req.body.method == "useItem"){
+
+    } else if (req.body.method == "removeItem") {
+        removeItem();
+    }
+
+    function equipItem() {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            let item_part = req.body.item_part;
+            myDB.collection('inventories')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.inventory_id)
+                    },
+                    {
+                        $set: {
+                            [item_part]: req.body.item_id
+                        }
+                    }
+                ).then(result => {
+                    if (result) {
+                        removeItem();
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+    }
+
+    function unequipItem() {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            let item_part = req.body.item_part;
+            myDB.collection('inventories')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.inventory_id)
+                    },
+                    {
+                        $set: {
+                            [item_part]: ""
+                        },
+                        $addToSet: {
+                            items: {
+                                item_id: req.body.item_id,
+                                item_quantity: 1
+                            }
+                        }
+                    }
+                ).then(result => {
+                    if (result) {
+                        res.json(true);
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+    }
+
+    function removeItem() {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('inventories')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.inventory_id)
+                    },
+                    {
+                        $inc: {
+                            "items.$[elem].item_quantity": -1
+                        }
+                    },{
+                        arrayFilters: [{
+                            "elem.item_id": req.body.item_id
+                        }]
+                    }).then(result => {
+                        if (result) {
+                            cleanInventory();
+                        } else {
+                            res.json(false);
+                        }
+                    }).catch((err) => {
+                        sendError(err, res);
+                    });
+        })
+    }
+
+    /**
+     * Clears out inventory from items with qty of 0.
+     * 
+     * @author Sumandang, AJ Ruth H.
+     */
+    function cleanInventory(){
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('inventories')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.inventory_id)
+                    },
+                    {
+                        $pull: {
+                            items: {
+                                "item_quantity": 0
+                            }
+                        }
+                    }
+                ).then(result => {
+                    if(result){
+                        res.json(true);
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+    }
+});
+
+/**
+ * @description portal for get requests that regards to sections "api/items"
+ * @author Sumandang, AJ Ruth H.
+ */
+router.get('/items', (req, res) => {
+    if (req.query.method == "getUserSectionInventory") {
+        console.log(req.query);
+        getSectionInventory();
+    }
+
+    /**
+     * Retrieves the user's section inventory based on the received user and section id
+     */
+    function getSectionInventory() {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('inventories')
+                .findOne({
+                    "user_id": req.query.user_id,
+                    "section_id": req.query.section_id
+                })
+                .then(inventory => {
+                    console.log(inventory);
+                    if (inventory) {
+                        let items = [];
+                        inventory.head.length > 0 ? items.push(ObjectID(inventory.head)) : "";
+                        inventory.armor.length > 0 ? items.push(ObjectID(inventory.armor)) : "";
+                        inventory.footwear.length > 0 ? items.push(ObjectID(inventory.footwear)) : "";
+                        inventory.left_hand.length > 0 ? items.push(ObjectID(inventory.left_hand)) : "";
+                        inventory.right_hand.length > 0 ? items.push(ObjectID(inventory.right_hand)) : "";
+                        inventory.accessory.length > 0 ? items.push(ObjectID(inventory.accessory)) : "";
+                        inventory.items.forEach(item => {
+                            items.push(ObjectID(item.item_id))
+                        })
+                        getItems(items, inventory);
+                    } else {
+                        res.json(null);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+
+    function getItems(items, inventory) {
+        let result = {
+            inventory: inventory,
+            items: []
+        };
+
+        if (items.length > 0) {
+            connection((db) => {
+                const myDB = db.db('up-goe-db');
+
+                myDB.collection('items')
+                    .find({
+                        _id: { $in: items }
+                    })
+                    .toArray()
+                    .then(new_items => {
+                        if (res) {
+                            result.items = new_items;
+                        }
+                        res.json(result);
+                    });
+            });
+        } else {
+            res.json(result);
+        }
     }
 });
 
@@ -1275,15 +1462,34 @@ router.post('/sections', (req, res) => {
                             quests_taken: []
                         }
 
+                        let newUserInventory = {
+                            user_id: req.body.user_id,
+                            section_id: req.body.section_id,
+                            items: [],
+                            head: "",
+                            footwear: "",
+                            armor: "",
+                            left_hand: "",
+                            right_hand: "",
+                            accessory: ""
+                        };
+
                         myDB.collection('experiences')
                             .insertOne(newUserXP, function (err, result) {
                                 if (err) {
                                     response.message = err;
                                     throw err;
                                 }
-                                response.data = newUserXP;
-                                res.json(result);
-                            })
+
+                                myDB.collection('inventories')
+                                    .insertOne(newUserInventory)
+                                    .then(reslt => {
+                                        console.log("added inventory");
+                                        response.data = newUserXP;
+                                        res.json(result);
+                                    });
+                            });
+
 
                     })
                     .catch((err) => {
@@ -1695,8 +1901,6 @@ router.get('/sections/quests', (req, res) => {
                                 section.quests.forEach(quest => {
                                     userQuests.forEach(userQuest => {
                                         if (quest.quest_id == userQuest) {
-                                            console.log(section._id);
-                                            console.log("--------------");
                                             AllUserQuests.push({
                                                 course: section.course_id,
                                                 section: section.section_name,
@@ -1764,10 +1968,6 @@ router.get('/sections/quests', (req, res) => {
                                                             }
                                                         }
                                                     )
-
-
-                                                    console.log("final quests");
-                                                    console.log(AllUserQuests);
                                                 })
                                                 let auq = AllUserQuests;
                                                 response.data = auq;
@@ -2424,3 +2624,18 @@ router.post('/questLeaderboard', (req, res) => {
 });
 
 module.exports = router;
+
+/* 
+
+db.inventories.findAndUpdateOne({_id: ObjectId("5bd471c3c6c51618f4d085af"), "items.item_id": req.body.item_id},{$inc: {"items.item_quantity: -1}})
+
+> decrease qty by 1 (does nothing if item not found)
+db.inventories.updateOne({_id: ObjectId("5bd471c3c6c51618f4d085af")},{$inc: {"items.$[elem].item_quantity": -1}}, {arrayFilters: [{"elem.item_id": "5a3b86f9bcd3631404072ea6"}]})
+
+> add item to items array
+db.inventories.updateOne({_id: ObjectId("5bd471c3c6c51618f4d085af")},{$addToSet: {items: {item_id: "5a3b86f9bcd3631404072ea6", item_quantity: 1}}})
+
+> remove items with qty 0
+db.inventories.updateOne({_id: ObjectId("5bd471c3c6c51618f4d085af")},{$pull: {"items":{"item_quantity": 0}}})
+
+ */

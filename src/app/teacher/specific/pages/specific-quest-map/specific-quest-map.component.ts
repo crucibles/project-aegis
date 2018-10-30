@@ -85,6 +85,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	 */
 	y: any;
 
+	/**
+	 * Determines if the user created a new quest from clicking 'here' or clicking a '+' point.
+	 * True if from 'here'; false if user clicked a '+' point.
+	 */
 	isFromHTML: boolean = false;
 
 
@@ -117,6 +121,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 	badgeName: Array<any> = [];
 	maxEXP: number;
+
+	isLoadingQuestMap: boolean = true;
 
 
 	constructor(
@@ -248,7 +254,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		this.createQuestForm = this.formBuilder.group({
 			questTitle: new FormControl("", Validators.required),
 			questDescription: new FormControl(""),
-			questRetakable: new FormControl("Y", Validators.required),
+			questRetakable: new FormControl(false),
 			questEXP: new FormControl("", [Validators.required, Validators.pattern("[0-9]+")]),
 			questHP: new FormControl("", Validators.pattern("[0-9]+")),
 			questBadges: this.buildBadges(),
@@ -293,6 +299,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				this.quests[i].setQuestPrerequisite(tempQuest.getQuestPrerequisite());
 			});
 
+			//obtains the section quest map
 			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
 				this.questMap = new QuestMap(questmap);
 				this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
@@ -469,6 +476,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		};
 
 		this.chart = new Chart(ctx, cc);
+		this.isLoadingQuestMap = false;
 	}
 
 
@@ -522,6 +530,13 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		this.questPrerequisite.push(this.formBuilder.group({ questId: "" }));
 	}
 
+	/**
+	 * Open a create-quest modal.
+	 * Sets the x & y if creating quest came from the HTML (meaning, user had clicked 'here' instead of some '+' point)
+	 * @param isFromHTML Variable that determines if user clicked 'Here' instead of a '+' point.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
 	openCreateQuestModal(isFromHTML?: boolean) {
 		if (isFromHTML) {
 			this.x = 5;
@@ -557,11 +572,12 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		});
 
 		let newQuest: Quest = new Quest();
+
 		this.questService.createQuest(
 			this.currentSection.getSectionId(),
 			this.questTitle.value,
 			this.questDescription.value,
-			this.questRetakable.value,
+			this.createQuestForm.value.questRetakable,
 			questBadgesArr,
 			questItem,
 			this.questEXP.value,
@@ -574,6 +590,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			quest = new Quest(quest);
 			this.quests.push(quest);
 			this.addNewQuestLine(quest, questPrereq);
+			this.questPrerequisite.reset(this.formBuilder.array([]));
 			this.bsModalRef.hide();
 			this.resetQuest();
 			// this.loadQuestMap();
@@ -595,6 +612,11 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		}
 	}
 
+	/**
+	 * Adds new quest line to the quest map.
+	 * @param quest the quest to be added
+	 * @param prereq the 
+	 */
 	addNewQuestLine(quest, prereq) {
 		//AHJ: unimplemented; add to database so questmap is refreshed
 		// if the clicked point is a '+' sign
@@ -602,7 +624,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			let newQuestCoordinates: any[] = this.questMap.addNewQuestLine(this.x, this.y, quest);
 
 			if (newQuestCoordinates.length > 0) {
-				this.questService.addQuestMapCoordinates(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), newQuestCoordinates, prereq).subscribe(questmap => {
+				this.questService.addQuestMapCoordinates(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), newQuestCoordinates, prereq).subscribe(() => {
 					this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
 						this.questMap = new QuestMap(questmap);
 						this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
@@ -615,7 +637,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 			// if clicked point is a quest point
 		} else {
-			console.log("THIS IS THE FIRST QUEST");
 			let basisX = this.roundOff(this.x);
 			let basisY = this.roundOff(this.y);
 

@@ -341,7 +341,7 @@ export class QuestService {
 			section_id: section_id,
 			quest_id: quest_id
 		}
-		console.warn(body);
+
 		return this.http.post(url, body).pipe(
 			tap(data => {
 				console.warn(data);
@@ -352,11 +352,11 @@ export class QuestService {
 
 	uploadFileForSubmitQuest(x: any) {
 		const url = 'api/trial';
-		console.warn(x);
+
 		let body = {
 			file: x
 		};
-		console.warn(body);
+
 		return this.http.post(url, body).pipe(
 			tap(data => {
 				console.warn(data);
@@ -428,7 +428,6 @@ export class QuestService {
 			time: data && data.uploadName ? Number(data.uploadName.substring(0, data.uploadName.indexOf('.'))) : Date.now()
 		}
 
-		console.warn(body.data);
 		return this.http.post(url, body).pipe(
 			tap(data => {
 				console.warn(data);

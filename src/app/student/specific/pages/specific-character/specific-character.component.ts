@@ -13,14 +13,16 @@ import {
 
 //Application Imports
 import {
-	Section, Item, Inventory
+	Section, Item, User, Inventory
 } from 'shared/models';
 
 import {
 	PageService,
 	SectionService,
-	ItemService
+	ItemService,
+	UserService
 } from 'shared/services';
+import { ToastsManager } from 'ng2-toastr';
 
 @Component({
 	selector: 'app-specific-character',
@@ -30,27 +32,25 @@ import {
 export class SpecificCharacterComponent implements OnInit {
 	@ViewChild('checkBox') checkBox: ElementRef;
 
+	//default informatoin
 	private currentSection: Section;
-
-	private ctx: any = {
-		isImage: true
-	};
+	private currentUser: User;
 
 	//for collapsible equipments/consummables
 	windowWidth: number = window.innerWidth;
 	hasEnoughSpace: boolean = this.windowWidth <= 1024 ? false : true;
 
+	//variables mainly used for HTML
 	tabButtons: any[];
 	openedTab: string = "";
 	openedItem: Item;
-
 	isList: boolean = false;
 
-	//AHJ: unimplemented; dummy 
-	equipment: Item;
-	consummable: Item;
+	//inventory variables
 	inventory: Inventory;
 	inventoryItems: Item[];
+	leftEquipment: any[];
+	rightEquipment: any[];
 
 	//if screen size changes it'll update
 	@HostListener('window:resize', ['$event'])
@@ -61,14 +61,15 @@ export class SpecificCharacterComponent implements OnInit {
 	constructor(
 		private itemService: ItemService,
 		private pageService: PageService,
+		private route: ActivatedRoute,
 		private sectionService: SectionService,
-		private route: ActivatedRoute
+		private toastr: ToastsManager,
+		private userService: UserService
 	) { }
 
 	ngOnInit() {
 		this.setDefault();
-		this.setDummy();
-		this.getCurrentSection();
+		this.getUserSectionInventory();
 	}
 
 	/**
@@ -76,42 +77,27 @@ export class SpecificCharacterComponent implements OnInit {
 	 */
 	setDefault() {
 		this.pageService.isProfilePage(false);
+		this.currentUser = this.userService.getCurrentUser();
+		this.currentSection = new Section(this.sectionService.getCurrentSection());
+
 		this.tabButtons = [
 			{
 				tabName: "All",
+				itemType: "All",
 				tabLogo: "/assets/images/all_logo.png"
 			},
 			{
 				tabName: "Equipment",
+				itemType: "w",
 				tabLogo: "/assets/images/eqmt_logo.png"
 			},
 			{
 				tabName: "Item",
+				itemType: "c",
 				tabLogo: "/assets/images/item_logo.png"
 			}
 		];
 		this.openedTab = "All";
-	}
-
-	setDummy() {
-		this.equipment = new Item();
-		this.equipment.createItem("Equipment", "Sword", "default_sword.jpg", "Default. Duh", "0", "0", "None", "+10", 100);
-		this.consummable = new Item();
-		this.consummable.createItem("Consummable", "Potion", "item_logo.png", "Default. Duh", "10", "0", "None", "", 0);
-		this.inventory = this.itemService.getCurrentInventory();
-		this.inventoryItems = [];
-		this.inventoryItems.push(this.equipment);
-		this.inventoryItems.push(this.consummable);
-	}
-
-	/**
-	 * Obtains the user's navigated section
-	 * @description Obtains the current section and stores it into 'currentSection' variable
-	 */
-	getCurrentSection() {
-		this.route.paramMap.subscribe(params => {
-			let sectionId = params.get('sectionId');
-		});
 	}
 
 	checkSize() {
@@ -123,34 +109,70 @@ export class SpecificCharacterComponent implements OnInit {
 		}
 	}
 
-	/**
-	 * Activates when one of the inventory tabs are clicked.
-	 * Sets the opened tab with the recently clicked tab; empty string if none of the listed cases are clicked.
-	 * @param tab The name of the latest clicked tab
-	 * 
-	 * @author Sumandang, AJ Ruth H.
-	 */
-	clickedNewTab(tab: string) {
-		this.openedTab = tab;
-		switch (tab) {
-			case "All":
-			case "Equipment":
-			case "Item":
-				break;
-			default:
-				this.openedTab = "";
-		}
+	getUserSectionInventory() {
+		this.itemService.getUserSectionInventory(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(temp => {
+			if (temp) {
+				let inventory: any = temp;
+				this.inventory = new Inventory(inventory.inventory);
+				this.inventoryItems = [];
+				if (inventory.items) {
+					inventory.items.forEach(item => {
+						this.inventoryItems.push(new Item(item));
+					})
+				}
+				this.setUserEquipment();
+			} else {
+				console.log("ERROR in loading inventory");
+			}
+		});
 	}
 
-	/**
-	 * Activates when one of the inventory tabs are clicked.
-	 * Sets the opened tab with the recently clicked tab; empty string if none of the listed cases are clicked.
-	 * @param item The name of the latest clicked tab
-	 * 
-	 * @author Sumandang, AJ Ruth H.
-	 */
-	clickedNewItem(item: Item) {
-		this.openedItem = item;
+	setUserEquipment() {
+		this.leftEquipment = [
+			{
+				image: this.inventory.getHead().length > 0 ?
+					this.inventoryItems.find(item => item.getItemId() == this.inventory.getHead()).getItemPhoto() : "/assets/images/helmet_bg.png",
+				hasEquipped: this.inventory.getHead().length > 0,
+				itemId: this.inventory.getHead()
+			},
+			{
+				image: this.inventory.getLeftHand().length > 0 ?
+				this.inventoryItems.find(item => item.getItemId() == this.inventory.getLeftHand()).getItemPhoto() : "/assets/images/sword_bg2.png",
+				hasEquipped: this.inventory.getLeftHand().length > 0,
+				itemId: this.inventory.getLeftHand()
+			},
+			{
+				image: this.inventory.getFootwear().length > 0 ?
+				this.inventoryItems.find(item => item.getItemId() == this.inventory.getFootwear()).getItemPhoto() : "/assets/images/boots_bg2.png",
+				hasEquipped: this.inventory.getFootwear().length > 0,
+				itemId: this.inventory.getFootwear()
+			},
+		];
+		
+		this.rightEquipment = [
+			{
+				image: this.inventory.getArmor().length > 0 ?
+				this.inventoryItems.find(item => item.getItemId() == this.inventory.getArmor()).getItemPhoto() : "/assets/images/helmet_bg.png",
+				hasEquipped: this.inventory.getArmor().length > 0,
+				itemId: this.inventory.getArmor()
+			},
+			{
+				image: this.inventory.getRightHand().length > 0 ?
+				this.inventoryItems.find(item => item.getItemId() == this.inventory.getRightHand()).getItemPhoto() : "/assets/images/sword_bg2.png",
+				hasEquipped: this.inventory.getRightHand().length > 0,
+				itemId: this.inventory.getRightHand()
+			},
+			{
+				image: this.inventory.getAccessory().length > 0 ?
+				this.inventoryItems.find(item => item.getItemId() == this.inventory.getAccessory()).getItemPhoto() : "/assets/images/boots_bg2.png",
+				hasEquipped: this.inventory.getAccessory().length > 0,
+				itemId: this.inventory.getAccessory()
+			},
+		];
+	}
+
+	getItem(itemId){
+		return this.inventoryItems.find(item => item.getItemId() == itemId);
 	}
 
 	/**
@@ -163,20 +185,13 @@ export class SpecificCharacterComponent implements OnInit {
 	 * 
 	 * @author Sumandang, AJ Ruth H.
 	 */
-	filterInventoryItems(tab: string) {
-		let items: Item[] = [];
-		switch (tab) {
-			case "All":
-				items = this.inventoryItems;
-				break;
-			case "Equipment":
-				items = this.inventoryItems.filter(item => item.getItemType() == tab);
-				break;
-			case "Item":
-				items = this.inventoryItems.filter(item => item.getItemType() == "Consummable");
-				break;
+	filterInventoryItems(type: string) {
+		let displayItems = this.inventoryItems ? this.inventoryItems.filter(item => !this.inventory.isEquipped(item.getItemId())) : [];
+		if (type == "All") {
+			return displayItems;
+		} else {
+			return displayItems.filter(item => item.getItemType() == type);
 		}
-		return items;
 	}
 
 	/**
@@ -185,16 +200,35 @@ export class SpecificCharacterComponent implements OnInit {
 	 * 
 	 * @author Sumandang, AJ Ruth H.
 	 */
-	checkIsList(){
+	checkIsList() {
 		this.isList = this.checkBox.nativeElement.checked;
 	}
 
 	/**
 	 * Discards the selected item
 	 * @param item The item to discard.
+	 * 
+	 * @author Sumandang, AJ Ruth H.
 	 */
-	discardItem(item: Item){
+	discardItem(item: Item) {
+		if (confirm("Are you sure you want to discard this item?")) {
+			this.itemService.removeInventoryItem(item.getItemId(), this.inventory.getInventoryId()).subscribe(result => {
+				if (result) {
+					let title = "Discard Item Success";
+					let message = "Item <" + item.getItemName() + "> successfully discarded!";
+					this.toastr.success(message, title);
 
+					this.openedItem = null;
+					if(this.inventory.removeItem(item.getItemId())){
+						let index = this.inventoryItems.findIndex(temp => temp.getItemId() == item.getItemId());
+						//AHJ: unimplemented; not sure if removing of element is correct here,
+						this.inventoryItems = this.inventoryItems.splice(index - 1, 1);
+					}
+				} else {
+					this.toastr.error("Item has not been discarded due to some error.", "Error in Discarding Item");
+				}
+			})
+		}
 	}
 
 	/**
@@ -202,10 +236,17 @@ export class SpecificCharacterComponent implements OnInit {
 	 * Applicable for items of type "Equipment".
 	 * @param item The item to equip.
 	 */
-	equipItem(item: Item, to_equip){
+	equipItem(item: Item, toEquip: boolean) {
 		console.log(this.inventory.getUserArmor());
-		this.inventory.equipItem(item.getItemId(), item.getItemArmor(), "", to_equip);
 		console.log(this.inventory.getUserArmor());
+		
+		this.itemService.equipItem(item.getItemId(), item.getItemPart(), this.inventory.getInventoryId(), toEquip).subscribe(res => {
+			if (res) {
+				this.inventory.equipItem(item.getItemId(), item.getItemArmor(), item.getItemPart(), toEquip);
+				this.openedItem = null;
+				this.setUserEquipment();
+			} 
+		})
 	}
 
 	/**

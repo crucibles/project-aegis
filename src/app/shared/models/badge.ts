@@ -219,7 +219,7 @@ export class Badge {
 /**
  * A class to represent badge conditions.
  * @property hp, xp, ailment, log_in_streak,log_in_total, 
- * items, items_used, items_owned, head, footware, left_hand, armor, right_hand
+ * items, items_used, items_owned, head, footwear, left_hand, armor, right_hand
  */
 export class Conditions {
     hp: number;
@@ -231,7 +231,7 @@ export class Conditions {
     items_used: string;
     items_owned: string;
     head: string;
-    footware: string;
+    footwear: string;
     armor: string;
     left_hand: string;
     right_hand: string;
@@ -249,7 +249,7 @@ export class Conditions {
             this.items_used = conditions.items_used ? conditions.items_used : "";
             this.items_owned = conditions.items_owned ? conditions.items_owned : "";
             this.head = conditions.head ? conditions.head : "";
-            this.footware = conditions.footware ? conditions.footware : "";
+            this.footwear = conditions.footwear ? conditions.footwear : "";
             this.armor = conditions.armor ? conditions.armor : "";
             this.left_hand = conditions.left_hand ? conditions.left_hand : "";
             this.right_hand = conditions.right_hand ? conditions.right_hand : "";
@@ -263,7 +263,7 @@ export class Conditions {
             this.items_used = "";
             this.items_owned = "";
             this.head = "";
-            this.footware = "";
+            this.footwear = "";
             this.armor = "";
             this.left_hand = "";
             this.right_hand = "";
@@ -313,7 +313,7 @@ export class Conditions {
     }
 
     getLeftLeg() {
-        return this.footware;
+        return this.footwear;
     }
 
     getRightLeg() {
@@ -339,7 +339,7 @@ export class Conditions {
             items_used: this.items_used,
             items_owned: this.items_owned,
             head: this.head,
-            footware: this.footware,
+            footwear: this.footwear,
             armor: this.armor,
             left_hand: this.left_hand,
             right_hand: this.right_hand
@@ -383,8 +383,8 @@ export class Conditions {
         this.head = head;
     }
 
-    setLeftLeg(footware) {
-        this.footware = footware;
+    setLeftLeg(footwear) {
+        this.footwear = footwear;
     }
 
     setRightLeg(armor) {

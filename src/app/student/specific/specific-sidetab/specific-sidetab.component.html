@@ -14,8 +14,11 @@
 		<li *ngIf="currentUser && inventory">
 			Armor: {{inventory.getUserArmor()}}
 		</li>
-		<li *ngIf="currentUser && inventory">
-			Status: {{inventory.getUserStatus()}}
+		<li *ngIf="currentUser && inventory && dstatus">
+			Status: 
+			<ng-container *ngFor="let status of inventory.getUserStatus()">
+				{{getStatusName(status)}}
+			</ng-container>
 		</li>
 
 		<!--displays quests if navigated page is not a profile page-->
