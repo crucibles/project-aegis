@@ -74,7 +74,9 @@
 	<div *ngIf="isCreateModalReady && questMap && questMap.getFlatOnePercentage() != 0 && questMap.getMaxEXP() != 0 && quests.length == 0">
 		<br>You have no quest yet. Click
 		<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
+
 	</div>
+</div>
 
 	<ng-container *ngIf="isCreateModalReady">
 		<ng-template class="create-quest-modal" #createQuestTemplate>
@@ -131,6 +133,9 @@
 								No badges for this section yet.
 							</label>
 						</div>
+					<div class="col-md-7">
+						<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border"
+							required />
 					</div>
 					<div class="row">
 						<div class="col-md-3">

@@ -291,7 +291,6 @@ router.post('/createQuest', (req, res) => {
                         quest_end_date: req.body.quest_end_date,
                         quest_party: req.body.quest_party
                     }
-                    console.log("END!");
                     res.json(questObj);
                     //callback(null, result.insertedId);
                 });
@@ -299,8 +298,6 @@ router.post('/createQuest', (req, res) => {
 
         // function addQuestToSection(resultId, callback) {
         //     const myDB = db.db('up-goe-db');
-        //     console.log("req.body.quest_prerequisite");
-        //     console.log(req.body.quest_prerequisite);
         //     myDB.collection('sections')
         //     .update(
         //         { _id: req.body.section_id },
@@ -314,9 +311,6 @@ router.post('/createQuest', (req, res) => {
         //             }
         //             },
         //             function (err, section) {
-        //                 console.log("RESULT");
-        //                 console.log(req.body.quest_prerequisite);
-        //                 console.log(section.result);
         //                 response.data = section;
         //                 callback(null, resultId);
         //             }
@@ -404,8 +398,6 @@ router.post('/experiences', (req, res) => {
                     section_id: req.body.section_id
                 })
                 .then(user => {
-                    console.log('\n\nThis is your user');
-                    console.log(user);
                     if (user) res.json(user);
                     else res.json(false);
                 })
@@ -661,8 +653,6 @@ router.post('/questmaps', (req, res) => {
         connection((db) => {
             //AHJ: unimplemented; dili ko kabalo sa pagpush ug array T_T okay lng sya if string or hardcore array though....
             const myDB = db.db('up-goe-db');
-            console.log("req.body.quest_prerequisite");
-            console.log(req.body.quest_prerequisite);
             let prereq_array = [];
             prereq_array = req.body.quest_prerequisite;
             myDB.collection('sections')
@@ -688,7 +678,6 @@ router.post('/questmaps', (req, res) => {
     };
 
     function setMaxEXP(req, res) {
-        console.log("================set max exp====================");
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('questmaps')
@@ -702,7 +691,6 @@ router.post('/questmaps', (req, res) => {
                 )
                 .then(section => {
                     res.json(true);
-                    console.log("================set max exp success====================");
                 })
                 .catch(err => {
                     sendError(err, res);
@@ -711,7 +699,6 @@ router.post('/questmaps', (req, res) => {
     }
 
     function setFlatOnePercentage(req, res) {
-        console.log("================set max exp====================");
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('questmaps')
@@ -725,7 +712,6 @@ router.post('/questmaps', (req, res) => {
                 )
                 .then(section => {
                     res.json(true);
-                    console.log("================set max exp success====================");
                 })
                 .catch(err => {
                     sendError(err, res);
@@ -1824,8 +1810,6 @@ router.get('/sections/quests', (req, res) => {
                                 section.quests.forEach(quest => {
                                     userQuests.forEach(userQuest => {
                                         if (quest.quest_id == userQuest) {
-                                            console.log(section._id);
-                                            console.log("--------------");
                                             AllUserQuests.push({
                                                 course: section.course_id,
                                                 section: section.section_name,
@@ -1893,10 +1877,6 @@ router.get('/sections/quests', (req, res) => {
                                                             }
                                                         }
                                                     )
-
-
-                                                    console.log("final quests");
-                                                    console.log(AllUserQuests);
                                                 })
                                                 let auq = AllUserQuests;
                                                 response.data = auq;

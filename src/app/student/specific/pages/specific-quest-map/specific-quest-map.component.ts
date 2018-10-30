@@ -13,7 +13,9 @@ import {
 } from '@angular/router';
 
 //Third-Party Imports
-import Chart = require('chart.js');
+import {
+	Chart
+} from 'chart.js';
 
 import 'chartjs-plugin-datalabels';
 
@@ -118,7 +120,6 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.currentUser = this.userService.getCurrentUser();
 		this.currentSection = new Section(this.sectionService.getCurrentSection());
 		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
-
 	}
 
 	ngOnInit() {
@@ -135,6 +136,10 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.getCurrentUser();
 		this.getCurrentSection();
 		this.loadQuestMap();
+
+		this.pageService.getChartObservable().subscribe(value => {
+			this.setNewSection();
+		});
 	}
 
 	isPending(quest_id) {
@@ -374,7 +379,10 @@ export class SpecificQuestMapComponent implements OnInit {
 				console.log(this.currentSection);
 				this.questMap.setQuestMapDataSet(this.quests, this.currentSection.getQuests(), this.currentUser, this.sectionEXP, false);
 				this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
+				this.chart.config.options.animation.duration = 0;
 				this.chart.update();
+				console.log("updating...");
+				this.pageService.updateStudentSideTab(this.currentUser.getUserId());
 			}
 		);
 	}
@@ -420,9 +428,7 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
-			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-			// 	console.log(x);
-			// })
+			this.setNewSection();
 		});
 		this.questModalRef.hide();
 	}
