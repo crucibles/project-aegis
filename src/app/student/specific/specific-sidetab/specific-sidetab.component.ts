@@ -54,6 +54,7 @@ import {
 import {
 	SpecificComponent
 } from 'student/specific/specific.component';
+import { Observable } from 'rxjs';
 
 const imageDir: string = "/assets/images/";
 
@@ -104,6 +105,9 @@ export class SpecificSidetabComponent implements OnInit {
 	windowWidth: number = window.innerWidth;
 	badgeName: any = "";
 
+	questObserver: any;
+	questObservable: Observable<any>;
+
 	constructor(
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
@@ -141,6 +145,10 @@ export class SpecificSidetabComponent implements OnInit {
 			}
 		});
 		this.checkSize();
+
+		this.pageService.getQuestObservable().subscribe(value => {
+			this.setQuests(value);
+		})
 	}
 
 	getBadgeName(badge_id: any) {
