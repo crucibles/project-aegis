@@ -10,12 +10,13 @@ import {
 } from '@angular/router';
 
 import {
-  SectionService
+  SectionService, ItemService
 } from 'shared/services';
 
 import {
   Section,
-  Course
+  Course,
+  Inventory
 } from 'shared/models';
 
 @Component({
@@ -29,6 +30,7 @@ export class SpecificComponent implements OnInit {
   private isDataLoaded: boolean = false;
 
   constructor(
+    private itemService: ItemService,
     private route: ActivatedRoute,
     public sectionService: SectionService
   ) {
@@ -58,6 +60,11 @@ export class SpecificComponent implements OnInit {
         this.isDataLoaded = true;
       });
 
+      //AHJ: unimplemented; uncomment below if itemservice getusersectioninventory is functional
+      // this.itemService.getUserSectionInventory(this.sectionId).subscribe(inventory => {
+      //   this.itemService.setCurrentInventory(new Inventory(inventory));
+      // })
+        this.itemService.setCurrentInventory(new Inventory());
     });
 
     

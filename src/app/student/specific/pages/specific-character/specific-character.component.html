@@ -1,99 +1,81 @@
-<!--
-extra small: 0-480
-small: 480- 768
-medium: 768-1024
-large: 1024-1200
-extra large: 1200+
-
--->
-
-
 <div class="character-section" [class.row]="hasEnoughSpace" [class.container]="!hasEnoughSpace">
 
 	<!--Character Equipment-->
 	<div class="character" [class.col-md-7]="hasEnoughSpace" [class.row]="!hasEnoughSpace">
 		<div class="equipment-left">
-			<div class="shadow"><img src="/assets/images/helmet_bg.png"></div>
-			<div class="shadow"><img src="/assets/images/sword_bg2.png"></div>
-			<div class="shadow"><img src="/assets/images/sword_bg2.png"></div>
+			<ng-container *ngFor="let equipment of leftEquipment">
+				<div class="shadow" (click)="openedItem = getItem(equipment.itemId)">
+					<img [src]="equipment.image" [class.fade]="!equipment.hasEquipped"/>
+				</div> 
+			</ng-container>
 		</div>
 		<div class="img-character">
 			<img src="/assets/images/male.png">
 		</div>
 		<div class="equipment-right">
+			<ng-container *ngFor="let equipment of rightEquipment">
+				<div class="shadow">
+					<img [src]="equipment.image" [class.fade]="!equipment.hasEquipped"/>
+				</div>
+			</ng-container>
+			<!-- <div class="shadow"><img src="/assets/images/sword_bg2.png"></div>
 			<div class="shadow"><img src="/assets/images/sword_bg2.png"></div>
-			<div class="shadow"><img src="/assets/images/sword_bg2.png"></div>
-			<div class="shadow"><img src="/assets/images/boots_bg2.png"></div>
+			<div class="shadow"><img src="/assets/images/boots_bg2.png"></div> -->
 		</div>
 	</div>
 	<!--Character Equipment (End)-->
 
-	<!-- <div class="col-md-4 equipment-consummable"> -->
+	<!--Character Inventory-->
 	<div class="equipment-consummable" [class.col-md-5]="hasEnoughSpace" [class.row]="!hasEnoughSpace">
 		<div class="inventory-tabs">
-			<button class="tablinks" [class.clicked-tab]="openedTab == button.tabName" *ngFor="let button of tabButtons" (click)="clickedNewTab(button.tabName)">
+			<!-- Inventory Tab Buttons-->
+			<button class="tablinks" [class.clicked-tab]="openedTab == button.itemType" *ngFor="let button of tabButtons"
+			 (click)="openedTab = button.itemType">
 				<img [src]="button.tabLogo" />
 				{{button.tabName}}
 			</button>
+			<!-- Inventory Tab Buttons (end)-->
 			<label for="is-list">
 				<input type="checkbox" id="is-list" (click)="checkIsList()" #checkBox />
 				List
 			</label>
 		</div>
-		<div class="shadow inventory-slots" *ngIf="openedTab.length != 0">
+		<div class="inventory-slots shadow" *ngIf="openedTab.length != 0">
 			<ng-container *ngTemplateOutlet="inventorySlotTemplate"></ng-container>
 		</div>
 		<div class="inventory-preview" *ngIf="openedTab.length != 0 && openedItem">
-			<ng-container *ngTemplateOutlet="consummableTemplate; context: ctx"></ng-container>
+			<ng-container *ngTemplateOutlet="inventoryPreviewTemplate; context: ctx"></ng-container>
 		</div>
 	</div>
+	<!--Character Inventory (end)-->
 
-	<!-- <div class="btn-equipment-consummable" *ngIf="!hasEnoughSpace else equipmentConsummableTemplate">
-		<button class="btn btn-success equipment">Equipments</button>
-		<button class="btn btn-warning consummable">Consummable</button>
-	</div> -->
 </div>
 
-<!-- <ng-template #equipmentConsummableTemplate>
-	<div class="col-md-4 equipment-consummable">
-		<div class="equipment">
-			<ng-container *ngTemplateOutlet="equipmentTemplate"></ng-container>
-		</div>
-		<div class="consummable">
-			<ng-container *ngTemplateOutlet="consummableTemplate; context: ctx"></ng-container>
-		</div>
-	</div>
-</ng-template> -->
 
 <ng-template #inventorySlotTemplate>
-	<!-- <input type="radio" value="Image View">Image
-	<input type="radio" value="List View"> List -->
 	<ng-container *ngIf="isList">
 		<ul class="list">
-			<li *ngFor="let item of filterInventoryItems(openedTab)" (click)="clickedNewItem(item)" [class.clicked-item]="openedItem == item">
+			<li *ngFor="let item of filterInventoryItems(openedTab)" (click)="openedItem = item" [class.clicked-item]="openedItem == item">
 				<i style="margin-right: 5px" class="fa fa-chevron-circle-right"></i>
 				{{item.getItemName()}}
+				<span *ngIf="item.getItemType() != 'w'" style="float: right">Qty: {{this.inventory.getItemQuantity(item.getItemId())}}</span>
 			</li>
 		</ul>
 	</ng-container>
-	<!--fa-arrow-circle-o-right-->
-	<!--fa-long-arrow-right-->
-	<!--fa-caret-square-o-right-->
-	<!--fa-chevron-circle-right-->
-	<!--fa-hand-o-right-->
 	<ng-container *ngIf="!isList">
-		<button *ngFor="let item of filterInventoryItems(openedTab)" (click)="clickedNewItem(item)" [class.clicked-item]="openedItem == item">
+		<button *ngFor="let item of filterInventoryItems(openedTab)" (click)="openedItem = item" [class.clicked-item]="openedItem == item">
 			<img [src]="item.getItemPhoto()" />
+			<span  *ngIf="item.getItemType() != 'w'" class="qty">{{this.inventory.getItemQuantity(item.getItemId())}}</span>
 		</button>
 	</ng-container>
-	<ng-container *ngIf="inventoryItems && inventoryItems.length == 0">
+	<ng-container *ngIf="inventoryItems && filterInventoryItems(openedTab).length == 0">
 		<span style="font-style: italic; color: white">
-			You have nothing in your inventory yet. Join some quest to obtain one.
+			You have nothing here yet. Join some quest to obtain one.
 		</span>
 	</ng-container>
 </ng-template>
 
-<ng-template #consummableTemplate let-isImage="isImage">
+<ng-template #inventoryPreviewTemplate>
 	<h3 class="item-name">{{openedItem.getItemName()}}</h3>
 	<div>
 		<div class="item-image-bg">
@@ -101,21 +83,15 @@ extra large: 1200+
 		</div>
 		<p class="item-description">
 			{{openedItem.getItemDescription()}}
+			<br><br>
+			Status: {{openedItem.getItemStatus()}}
 		</p>
 	</div>
 	<br>
 	<div style="margin-top: 10px; float: right">
-		<button *ngIf="openedItem.getItemType() == 'Equipment'" class="btn btn-success" (click)="equipItem(openedItem)">Equip</button>
-		<button *ngIf="openedItem.getItemType() == 'Consummable'" class="btn btn-success" (click)="useItem(openedItem)">Use</button>
+		<button *ngIf="openedItem.getItemType() == 'w'" class="btn btn-success" (click)="equipItem(openedItem, !inventory.isEquipped(openedItem.getItemId()))">{{this.inventory.isEquipped(openedItem.getItemId()) ? "Unequip": "Equip"}}</button>
+		<button *ngIf="openedItem.getItemType() == 'c'" class="btn btn-success" (click)="useItem(openedItem)">Use</button>
 		<button class="btn btn-warning consummable mr-auto" (click)="discardItem(openedItem)">Discard</button>
 	</div>
-	<!-- <ng-container *ngIf="consummables">
-		Some consummables here.
-	</ng-container>
-	<ng-container *ngIf="!consummables">
-		<span style="font-style: italic">
-			You have no consummables yet. Join a quest to obtain one.
-		</span>
-	</ng-container> -->
 
 </ng-template>

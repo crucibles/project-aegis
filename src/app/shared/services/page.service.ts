@@ -23,6 +23,8 @@ import {
 	Section, Course
 } from 'shared/models';
 
+import { Observer } from 'rxjs';
+
 @Injectable()
 export class PageService {
 
@@ -113,8 +115,8 @@ export class PageService {
 	];
 
 	public hyperLinks = [];
-	questObserver: any;
-	chartObserver: any;
+	questObserver: Observer<any>;
+	chartObserver: Observer<any>;
 	questObservable: Observable<{}>;
 	chartObservable: Observable<{}>;
 
@@ -250,23 +252,21 @@ export class PageService {
 		return new Date();
 	}
 
-	updateStudentSideTab(value){
-		console.log("updating...2");
+	public updateStudentSideTab(value){
 		this.questObserver.next(value);
 	}
 
-	updateChart(){
-		console.log("updating..3");
-		this.chartObserver.next();
+	public updateChart(){
+		this.chartObserver.next("");
 	}
 
 	// observable for updating sidetab when join/abandon a quest in
-	getQuestObservable(): Observable<any>{
+	public getQuestObservable(): Observable<any>{
 		return this.questObservable;
 	}
 
 	// observable for updating charts when abandoning a quest from sidetab
-	getChartObservable(): Observable<any>{
+	public getChartObservable(): Observable<any>{
 		return this.chartObservable;
 	}
 }

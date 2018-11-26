@@ -18,60 +18,109 @@ export class Item {
 
     private _id: string;
     private item_type: string;
+    private item_part: string;
     private item_name: string;
     private item_photo: string;
     private item_description: string;
     private item_hp: string;
     private item_xp: string;
     private item_ailment: string;
+    private item_cure: string;
+    private item_armor: string;
+    private item_durability: number;
+    private is_default: boolean;
 
     constructor(
         item?: any
     ) {
-        if(item){
-            this._id = item._id;
+        if (item) {
+            this._id = item._id? item._id: "";
             this.item_type = item.item_type ? item.item_type : "";
+            this.item_part = item.item_part ? item.item_part : "";
             this.item_name = item.item_name ? item.item_name : "";
             this.item_photo = item.item_photo ? item.item_photo : "";
             this.item_description = item.item_description ? item.item_description : "";
             this.item_hp = item.item_hp ? item.item_hp : "";
             this.item_xp = item.item_xp ? item.item_xp : "";
             this.item_ailment = item.item_ailment ? item.item_ailment : "";
+            this.item_cure = item.item_cure ? item.item_cure : "";
+            this.item_armor = item.item_armor ? item.item_armor : "";
+            this.item_durability = item.item_durability ? item.item_durability : "";
+            this.is_default = item.is_default ? item.is_default : false;
         } else {
+            this._id = "";            
             this.item_type = "";
+            this.item_part = "";
             this.item_name = "";
             this.item_photo = "";
             this.item_description = "";
             this.item_hp = "";
             this.item_xp = "";
             this.item_ailment = "";
+            this.item_cure = "";
+            this.item_armor = "";
+            this.item_durability = 0;
+            this.is_default = false;
         }
     }
-
+    
     createItem(
         item_type,
+        item_part,
         item_name,
         item_photo,
         item_description,
         item_hp,
         item_xp,
-        item_ailment
+        item_ailment,
+        item_armor,
+        item_durability
     ) {
         this.item_type = item_type;
+        this.item_part = item_part;
         this.item_name = item_name;
         this.item_photo = item_photo;
         this.item_description = item_description;
         this.item_hp = item_hp;
         this.item_xp = item_xp;
         this.item_ailment = item_ailment;
+        this.item_armor = item_armor;
+        this.item_durability = item_durability;
     }
 
     getItemId() {
         return this._id;
     }
 
-    getItemType() {
-        return this.item_type;
+    /**
+     * Determines if an item is of equipment or consummable type
+     * @param isFullWord (optional) Determines if returned type string is full word or not.
+     * @returns the type of the item
+     * - for equipment item type, returns "Wearable" if 'isFullWord' is true; "w" if not 
+     * - for consummable item type, returns "Consummable" if 'isFullWord' is true; "c" if not 
+     */
+    getItemType(isFullWord?: boolean) {
+        if(isFullWord){
+            let itemType = "";
+            switch(this.item_type){
+                case "w": itemType = "Wearable";
+                case "c": itemType = "Consummable";
+            }
+        } else {
+            return this.item_type;
+        }
+    }
+
+    /**
+     * Determines where the item (of type wearable) is to placed.
+     * @returns the part where the item can be placed; returns null if item is not of type 'wearable'.
+     */
+    getItemPart(){
+        if(this.item_type == 'w'){
+            return this.item_part;
+        } else {
+            return null;
+        }
     }
 
     getItemName() {
@@ -102,8 +151,19 @@ export class Item {
         return this.item_description;
     }
 
-    getItemHp() {
-        return this.item_hp;
+    /**
+     * Gets the item's HP increase/decrease.
+     * @param isString determines return type of item HP
+     * @returns the item's HP increase/decrease
+     * - string if isString == true
+     * - number if isString is undefined or false
+     */
+    getItemHp(isString?: boolean) {
+        if(isString){
+            return this.item_hp;
+        } else {
+            return Number.parseInt(this.item_hp);
+        }
     }
 
     getItemXp() {
@@ -114,12 +174,53 @@ export class Item {
         return this.item_ailment;
     }
 
+    getItemCure() {
+        return this.item_cure;
+    }
+
+    /**
+     * Retrieves the item's armor addition/reduction.
+     * Type to return depends on the received param
+     * @param isString determines the return type of the item's armor
+     * 
+     * @returns the item's armor
+     * - string type if isString is true
+     * - number type if isString is false (negative or positive)
+     */
+    getItemArmor(isString?: boolean) {
+        if (isString) {
+            return this.item_armor;
+        } else {
+            if (this.item_armor.length == 0) {
+                return 0;
+            } else {
+                return Number.parseInt(this.item_armor);
+            }
+        }
+    }
+
+    getItemDurability() {
+        return this.item_durability;
+    }
+
+    getItemStatus() {
+        return this.item_durability > 0? "Okay": "Broken";
+    } 
+
+    isDefaultItem() {
+        return this.is_default;
+    }
+
     setItemId(_id) {
         this._id = _id;
     }
 
     setItemType(item_type) {
         this.item_type = item_type;
+    }
+
+    setItemPart(item_part){
+        this.item_part = item_part;
     }
 
     setItemName(item_name) {
@@ -144,5 +245,17 @@ export class Item {
 
     setItemAilment(item_ailment) {
         this.item_ailment = item_ailment;
+    }
+
+    setItemCure(item_cure) {
+        this.item_cure = item_cure;
+    }
+
+    setItemArmor(item_armor) {
+        this.item_armor = item_armor;
+    }
+    
+    setItemDurability(item_durability) {
+        this.item_durability = item_durability;
     }
 }

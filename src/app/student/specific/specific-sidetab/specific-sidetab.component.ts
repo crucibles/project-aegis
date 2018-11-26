@@ -39,7 +39,9 @@ import {
 	User,
 	Quest,
 	Badge,
-	Section
+	Section,
+	Inventory,
+	Status
 } from 'shared/models';
 
 import {
@@ -48,13 +50,14 @@ import {
 	UserService,
 	SectionService,
 	BadgeService,
-	ExperienceService
+	ExperienceService,
+	ItemService
 } from 'shared/services';
 
 import {
 	SpecificComponent
 } from 'student/specific/specific.component';
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 
 const imageDir: string = "/assets/images/";
 
@@ -78,6 +81,7 @@ export class SpecificSidetabComponent implements OnInit {
 	commentBox: string = "";
 	currentUser: User;
 	user;
+	inventory: Inventory;
 
 	//image dir
 	image: string = "";
@@ -104,14 +108,15 @@ export class SpecificSidetabComponent implements OnInit {
 	isShowSideTab: boolean = false;
 	windowWidth: number = window.innerWidth;
 	badgeName: any = "";
-	questObserver: Observer<any>;
-	questObservable: Observable<any> = new Observable(observer =>
-		this.questObserver = observer
-	);
+
+	questObserver: any;
+	questObservable: Observable<any>;
+	dstatus: Status[];
 
 	constructor(
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
+		private itemService: ItemService,
 		private modalService: BsModalService,
 		private pageService: PageService,
 		private questService: QuestService,
@@ -126,8 +131,6 @@ export class SpecificSidetabComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		
-
 		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
 		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
 		//overide the onCompleteItem property of the uploader so we are 
@@ -149,10 +152,20 @@ export class SpecificSidetabComponent implements OnInit {
 		});
 		this.checkSize();
 
-		//this updates the sidetab to reload when abandoning/joining a quest in questmap
 		this.pageService.getQuestObservable().subscribe(value => {
 			this.setQuests(value);
 		});
+
+		this.itemService.getDefaultStatuses().subscribe(res => {
+			this.dstatus = res.map(x => new Status(x));
+		});
+	}
+
+
+
+	getStatusName(status_id: any) {
+		let status = this.dstatus.find(stat => stat.getStatusId() == status_id);
+		return status? status.getStatusName(): "";
 	}
 
 	getBadgeName(badge_id: any) {
@@ -204,6 +217,11 @@ export class SpecificSidetabComponent implements OnInit {
 		this.currentUser = this.userService.getCurrentUser();
 		this.currentSection = this.sectionService.getCurrentSection();
 		this.image = this.currentUser.getUserPhoto();
+		//AHJ: unimplemented; uncomment below if naa nay function ang getusersectioninventory sa service
+		// this.itemService.getUserSectionInventory(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(inventory => {
+		// 	this.inventory = new Inventory(inventory);
+		// });
+		this.inventory = this.itemService.getCurrentInventory();
 	}
 
 	/**
@@ -217,7 +235,7 @@ export class SpecificSidetabComponent implements OnInit {
 		this.quests = [];
 		let counter = 0;
 		if (this.sectionService.getCurrentSection()) {
-			console.warn(this.sectionService.getCurrentSection());
+
 
 			this.sectionService.getCurrentSection().getQuests().map((sq) => {
 				this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
@@ -274,9 +292,9 @@ export class SpecificSidetabComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
-			this.pageService.updateChart();
-			this.bsModalRef.hide();
+			this.setQuests(user_id);
 		});
+		this.bsModalRef.hide();
 	}
 
 	/**
@@ -288,7 +306,7 @@ export class SpecificSidetabComponent implements OnInit {
 		//AHJ: unimplemented
 
 		this.questService.submitQuest(res, this.commentBox, user_id, questId, "").subscribe(res => {
-			console.warn(res);
+			this.pageService.updateChart();
 			this.bsModalRef.hide();
 		});
 	}

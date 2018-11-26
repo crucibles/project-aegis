@@ -8,6 +8,18 @@
 		<li *ngIf="currentUser">
 			{{currentUser.getUserFullName()}}
 		</li>
+		<li *ngIf="currentUser && inventory">
+			HP: {{inventory.getUserHP()}} / 30
+		</li>
+		<li *ngIf="currentUser && inventory">
+			Armor: {{inventory.getUserArmor()}}
+		</li>
+		<li *ngIf="currentUser && inventory && dstatus">
+			Status: 
+			<ng-container *ngFor="let status of inventory.getUserStatus()">
+				{{getStatusName(status)}}
+			</ng-container>
+		</li>
 
 		<!--displays quests if navigated page is not a profile page-->
 		<ng-container *ngIf="!isProfile">
@@ -18,8 +30,8 @@
 			</li>
 
 
-			<ng-container *ngIf="!quests">
-				This is where your activities will be listed in this course, when you get one.
+			<ng-container *ngIf="quests && quests.length == 0">
+				<li>This is where your activities will be listed in this course, when you get one.</li>
 			</ng-container>
 
 			<!-- display all quest for all sections -->
