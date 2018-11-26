@@ -1,0 +1,55 @@
+<div *ngIf="!quests">
+	Loading...
+	<img class="loading-icon" src="/assets/images/loading.gif" />
+</div>
+
+<div *ngIf="quests">
+	<h4>Current Max EXP: <i>{{maxExp}} XP</i></h4>
+	<h4>Current Flat One (1.00) grade percentage: <i>{{flatOnePercentage}}% ({{maxExp*(flatOnePercentage/100)}} XP)</i></h4>
+
+	<br><br>
+
+	<table>
+		<!-- Input field for MAX EXP -->
+		<tr>
+			<th colspan="3">Edit your section's max EXP below.</th>
+		</tr>
+		<tr>
+			<td class="input">
+				<input
+					#maxEXP
+					class="form-control"
+					type="number"
+					[value]="questMap? questMap.getMaxEXP(): 0">
+			</td>
+			<td class="button">
+				<button
+					class="btn btn-primary"
+					type="submit"
+					(click)="setMaxEXP(maxEXP.value)">Submit
+				</button>
+			</td>
+		</tr>
+		<br>
+		<!-- Input field for FLAT ONE (1.00) PERCENTAGE -->
+		<tr>
+			<th colspan="3">Edit the percentage grade for the students in order to gain a grade of Flat One (1.00).</th>
+		</tr>
+		<tr>
+			<td class="input">
+				<input
+					#flatOnePerc
+					class="form-control"
+					type="number"
+					[value]="questMap? questMap.getFlatOnePercentage(): 0">
+			</td>
+			<td class="button">
+				<button
+					class="btn btn-primary"
+					type="submit"
+					(click)="setFlatOnePercentage(flatOnePerc.value)">Submit
+				</button>
+			</td>
+		</tr>
+	</table>
+</div>

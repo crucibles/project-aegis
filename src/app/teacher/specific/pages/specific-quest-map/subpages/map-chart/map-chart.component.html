@@ -1,0 +1,113 @@
+<div *ngIf="!quests">
+	Loading...
+	<img class="loading-icon" src="/assets/images/loading.gif" />
+</div>
+
+<div *ngIf="quests">
+	<div class="questLegend">
+		<div class="legend">
+			<div class="legendSymbol newQuest"></div>&nbsp;<small>New quest</small>&nbsp;
+		</div>
+		<div class="legend">
+			<div class="legendSymbol locked"></div>&nbsp;<small>Locked quest</small>&nbsp;
+		</div>
+		<div class="legend">
+			<div class="legendSymbol inProgress"></div>&nbsp;<small>Quest in progress</small>&nbsp;
+		</div>
+		<div class="legend">
+			<div class="legendSymbol finished"></div>&nbsp;<small>Quest finished / submitted</small>&nbsp;
+		</div>
+		<div class="legend">
+			<div class="legendSymbol deadline"></div>&nbsp;<small>Quest already beyond deadline</small>
+		</div>
+	</div>
+	<br>
+	<div>
+		Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! <br>
+		This is where you can create quests and form your section's questmap.
+
+		<span *ngIf="questMap && questMap.getMaxEXP() == 0 && questMap.getFlatOnePercentage() == 0">
+			<br><br>
+			Currently, you have not set the maximum EXP and Flat One Percentage that your students can get. <br>
+			Set it so you can start creating your quest and questmap.
+			<br><br>
+			To set the maximum EXP and the Flat One Grade percentage, go to the SETTINGS <br>
+			or you can <i><a [routerLink]="['../settings']">click this link right here!</a></i>
+		</span>
+	</div>
+
+	<!--Graph for quest map-->
+	<div [class.hidden]="(quests && quests.length == 0) || (questMap && (questMap.getMaxEXP() <= 0))">
+		<div class="row">
+			<div style="display: block">
+				<canvas id="quest-map" baseChart width="500" height="500" #chartCanvas></canvas>
+			</div>
+		</div>
+	</div>
+
+	<div *ngIf="questMap && questMap.getFlatOnePercentage() != 0 && questMap.getMaxEXP() != 0 && quests.length == 0">
+		<br>You have no quest yet. Click the button bellow to create your first quest!
+		<br><br>
+		<button class="btn btn-primary" (click)="goToCreateQuest(5,25)">Click here to create your first quest now!</button>
+	</div>
+</div>
+
+<!-- Modal Template for Quests-->
+<ng-template #questTemplate>
+
+	<!-- Quest Modal Header/Title -->
+	<div class="modal-header">
+		<h4 class="modal-title">
+			{{this.questClicked.getQuestTitle()}}
+		</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<!-- Quest Information -->
+	<div class="modal-body">
+		{{this.questClicked.getQuestDescription()}}
+		<br class="clear" />
+
+		<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
+			Links here:
+			<ul>
+				<li *ngFor="let links of this.pageService.hyperLinks">
+					<a href="{{links}}">{{links}}</a>
+				</li>
+			</ul>
+		</div>
+		<div class="row" style="margin-top: 20px">
+			<div class="col-sm-6">
+				Rewards:
+				<br> + {{this.questClicked.getQuestXp()}} XP
+				<br> + {{this.questClicked.getQuestHp()}} HP
+				<br>
+				<br>Quest Prerequisite:
+				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length > 0">
+					<ng-container *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">
+						<br>{{this.getQuestTitle(prereq)}}
+					</ng-container>
+				</ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length == 0">
+					<br>None
+				</ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if
+					achieved at least 80%
+					when graded) </ng-container>
+
+			</div>
+			<div class="col-sm-6">
+				Started on:
+				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
+				<br>
+				<br> Deadline:
+				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
+				<br>
+				<br>
+			</div>
+		</div>
+	</div>
+</ng-template>
+<!-- quest modal template end -->

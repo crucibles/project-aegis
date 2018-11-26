@@ -1,0 +1,56 @@
+.body {
+    width: 95%;
+    text-align: center;
+}
+
+.questDesc:after {
+    content: ' ';
+    margin: 10px auto 0 auto;
+    display: block;
+    width: 90%;
+    border: 2px solid #d0d0d0;
+    border-radius: 4px;
+}
+
+/* Summary table view */
+.quest-table tr td {
+    border: 1px solid #ddd;
+}
+
+.row-header{
+    font-weight: bold;
+}
+
+/* Summary card view */
+.card {
+    width: 200px;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 0 5px 10px 5px;
+}
+
+.card-header {
+    text-align: center;
+    height: 50px;
+}
+
+.card-header h2 {
+    margin-top: -10px;
+}
+
+.card-body {
+    text-align: left;
+    height: 80px;
+}
+
+.card-details {
+    margin-top: -15px;
+}
+
+.card-footer {
+    text-align: center;
+}
+
+.btn:hover {
+    cursor: pointer;
+}
