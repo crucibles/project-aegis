@@ -53,7 +53,7 @@ export class SummaryComponent implements OnInit {
 	// modal
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
 	private bsModalRef: BsModalRef;
-	private badgeName: any = "";
+	private badgeNames: any = [];
 
 	constructor(
 		private badgeService: BadgeService,
@@ -109,19 +109,21 @@ export class SummaryComponent implements OnInit {
 	 */
 	openQuest(quest: any) {
 		this.questClicked = new Quest(quest);
-		this.getBadgeName(this.questClicked.getQuestBadge());
+		this.getBadgeName();
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(this.questTemplate);
 		}
 	}
 
-	getBadgeName(badge_id: any) {
-		if (badge_id) {
-			this.badgeService.getBadge(badge_id).subscribe(res => {
-				this.badgeName = new Badge(res).getBadgeName();
+	getBadgeName() {
+		this.badgeNames = [];
+		if (this.questClicked.getQuestBadge().length != 0) {
+			this.questClicked.getQuestBadge().map(badge => {
+				this.badgeService.getBadge(badge).subscribe(res => {
+					this.badgeNames.push(new Badge(res).getBadgeName());
+				});
 			});
 		}
-		this.badgeName = "";
 	}
 
 	/**
