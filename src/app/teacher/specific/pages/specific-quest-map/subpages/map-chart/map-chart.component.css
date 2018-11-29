@@ -1,0 +1,79 @@
+.hidden {
+    display: none;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+/*Create Quest Modal*/
+.modal-header h4 {
+    margin: 0 auto;
+}
+
+.modal-body {
+    width: 100%;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+ 
+.modal-body .row {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.legendSymbol {
+    width: 8px;
+    height: 8px;
+    margin-left: 5px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.legend {
+    text-align: left;
+    float: left;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -5px;
+}
+
+.questLegend {
+    margin-top: -30px;
+    margin-bottom: 15px;
+    width: 95%;
+    height: 25px;
+}
+
+.newQuest {
+    border: 1px solid black;
+    background-color: black;
+}
+
+.locked {
+    border: 1px solid gray;
+    background-color: gray;
+}
+
+.inProgress {
+    border: 1px solid green;
+    background-color: green;
+}
+
+.finished {
+    border: 1px solid orange;
+    background-color: orange;
+}
+
+.deadline {
+    border: 1px solid red;
+    background-color: red;
+}
+
+@media screen and (max-width: 768px) {
+    .modal-body .image-right{
+        text-align: center;
+    }
+}

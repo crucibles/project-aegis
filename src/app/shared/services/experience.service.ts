@@ -98,6 +98,9 @@ export class ExperienceService {
 
     getCurrentExperience(quest_id: string, user_id: string, section_id: string) {
         let url = "api/currentExperience";
+        console.log(quest_id);
+        console.log(user_id);
+        console.log(section_id);
         return this.http.post<any>(url, {
             quest_id,
             user_id,

@@ -1,91 +1,91 @@
 //Core Imports
 import {
-  NgModule
+	NgModule
 } from '@angular/core';
 
 import {
-  RouterModule,
-  Routes
+	RouterModule,
+	Routes
 } from '@angular/router';
 
 //Application Imports
-import { 
-  AuthGuardService 
+import {
+	AuthGuardService
 } from 'shared/services/auth-guard.service';
 
 import {
-  ChangePasswordComponent
+	ChangePasswordComponent
 } from './change-password/change-password.component';
 
 import {
-  LogInComponent
+	LogInComponent
 } from 'log-in/log-in.component';
 
 import {
-  PageNotFoundComponent
+	PageNotFoundComponent
 } from 'shared/pages';
 
 import {
-  SignUpComponent
+	SignUpComponent
 } from 'sign-up/sign-up.component';
 
 import {
-  VerifyEmailComponent
+	VerifyEmailComponent
 } from 'sign-up/verify-email/verify-email.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: '/log-in',
-    canActivate: [AuthGuardService], 
-    pathMatch: 'full'
-  },
-  {
-    path: 'student/general',
-    loadChildren: 'student/general/general.module#GeneralModule',
-    canActivate: [AuthGuardService], 
-  },
-  {
-    path: 'teacher/general',
-    loadChildren: 'teacher/general/general.module#GeneralModule',
-    canActivate: [AuthGuardService], 
-  },
-  {
-    path: 'log-in',
-    component: LogInComponent,
-    canActivate: [AuthGuardService] 
-  },
-  {
-    path: 'sign-up',
-    component: SignUpComponent,
-    canActivate: [AuthGuardService] 
-  },
-  {
-    path: 'sign-up/verify-email',
-    component: VerifyEmailComponent
-  },
-  {
-    path: 'change-password',
-    component: ChangePasswordComponent
-  },
-  {
-    path: 'student/specific',
-    loadChildren: 'student/specific/specific.module#SpecificModule',
-    canActivate: [AuthGuardService] 
-  },
-  {
-    path: 'teacher/specific',
-    loadChildren: './teacher/specific/specific.module#SpecificModule',
-    canActivate: [AuthGuardService] 
-  },
-  {
-    path: '**',
-    component: PageNotFoundComponent
-  }
+	{
+		path: '',
+		redirectTo: '/log-in',
+		canActivate: [AuthGuardService],
+		pathMatch: 'full'
+	},
+	{
+		path: 'student/general',
+		loadChildren: 'student/general/general.module#GeneralModule',
+		canActivate: [AuthGuardService],
+	},
+	{
+		path: 'teacher/general',
+		loadChildren: 'teacher/general/general.module#GeneralModule',
+		canActivate: [AuthGuardService],
+	},
+	{
+		path: 'log-in',
+		component: LogInComponent,
+		canActivate: [AuthGuardService]
+	},
+	{
+		path: 'sign-up',
+		component: SignUpComponent,
+		canActivate: [AuthGuardService]
+	},
+	{
+		path: 'sign-up/verify-email',
+		component: VerifyEmailComponent
+	},
+	{
+		path: 'change-password',
+		component: ChangePasswordComponent
+	},
+	{
+		path: 'student/specific',
+		loadChildren: 'student/specific/specific.module#SpecificModule',
+		canActivate: [AuthGuardService]
+	},
+	{
+		path: 'teacher/specific',
+		loadChildren: './teacher/specific/specific.module#SpecificModule',
+		canActivate: [AuthGuardService]
+	},
+	{
+		path: '**',
+		component: PageNotFoundComponent
+	}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+	imports: [RouterModule.forRoot(routes)],
+	exports: [RouterModule]
 })
 export class AppRoutingModule { }
