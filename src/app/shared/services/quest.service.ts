@@ -218,7 +218,6 @@ export class QuestService {
 		return this.http.get<Quest>(url).pipe(
 			map(quests => quests[0]), // returns a {0|1} element array
 			tap(h => {
-				console.log(h);
 				const outcome = h ? 'fetched quest ' + quest_id : 'did not find quest ' + quest_id;
 			}),
 			catchError(this.handleError<User>(`getQuest quest_id=${quest_id}`))

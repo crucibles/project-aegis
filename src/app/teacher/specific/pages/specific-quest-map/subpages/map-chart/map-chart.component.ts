@@ -1,4 +1,4 @@
-// Core imports
+// Core Imports
 import { 
 	Component, 
 	OnInit, 
@@ -11,7 +11,7 @@ import {
 	Router
 } from '@angular/router';
 
-// Application imports
+// Application Imports
 import { 
 	Badge,
 	Experience,
@@ -30,7 +30,7 @@ import {
 	UserService
 } from 'shared/services';
 
-// Third-party imports
+// Third-Party Imports
 import {
 	BsModalRef,
 	BsModalService
@@ -75,7 +75,7 @@ export class MapChartComponent implements OnInit {
 	// modal
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
 	private bsModalRef: BsModalRef;
-	private badgeName: any = "";
+	private badgeNames: any = [];
 
   	constructor(
 		private badgeService: BadgeService,
@@ -244,19 +244,24 @@ export class MapChartComponent implements OnInit {
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
 		this.questClicked = new Quest(quest);
-		this.getBadgeName(this.questClicked.getQuestBadge());
+		this.getBadgeName();
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(this.questTemplate);
 		}
 	}
 
-	getBadgeName(badge_id: any) {
-		if (badge_id) {
-			this.badgeService.getBadge(badge_id).subscribe(res => {
-				this.badgeName = new Badge(res).getBadgeName();
+	/**
+	 * Acquires the badge names of the badge rewards of a certain quest.
+	 */
+	getBadgeName() {
+		this.badgeNames = [];
+		if (this.questClicked.getQuestBadge().length != 0) {
+			this.questClicked.getQuestBadge().map(badge => {
+				this.badgeService.getBadge(badge).subscribe(res => {
+					this.badgeNames.push(new Badge(res).getBadgeName());
+				});
 			});
 		}
-		this.badgeName = "";
 	}
 
 	/**

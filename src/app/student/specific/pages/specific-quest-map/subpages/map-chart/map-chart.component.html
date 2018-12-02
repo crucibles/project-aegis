@@ -1,0 +1,239 @@
+<div class="questLegend">
+	<div class="legend">
+		<div class="legendSymbol newQuest"></div>&nbsp;<small>New quest</small>&nbsp;
+	</div>
+	<div class="legend">
+		<div class="legendSymbol inProgress"></div>&nbsp;<small>Quest in progress</small>&nbsp;
+	</div>
+	<div class="legend">
+		<div class="legendSymbol locked"></div>&nbsp;<small>Locked quest</small>&nbsp;
+	</div>
+	<div class="legend">
+		<div class="legendSymbol finished"></div>&nbsp;<small>Quest finished / submitted</small>
+	</div>
+</div>
+<!-- <div *ngIf="!quests"> -->
+<div *ngIf="quests.length == 0">
+	Loading...
+	<img class="loading-icon" src="/assets/images/loading.gif" />
+</div>
+
+<div class="row" *ngIf="quests">
+	<div style="display: block">
+		<canvas id="quest-map" baseChart width="650" height="300"></canvas>
+	</div>
+</div>
+
+<!-- Modal Template for Quests-->
+<ng-template #questTemplate>
+
+	<!-- Quest Modal Header/Title -->
+	<!-- <div class="modal-header">
+		<h4 class="modal-title">
+			{{this.questClicked.getQuestTitle()}}
+			<h6 *ngIf="isParticipating(this.questClicked.getQuestId())" style="text-align: center">(In Progress)</h6>
+		</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="questModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div> -->
+
+	<!-- Quest Modal Header/Title -->
+	<div class="modal-header">
+		<!-- Modal Header -->
+		<div class="modal-title">
+			<h4>{{this.questClicked.getQuestTitle()}}</h4>
+			<h6 *ngIf="isParticipating(this.questClicked.getQuestId())" style="text-align: center">(In Progress)</h6>
+		</div>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="questModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<!-- Quest Information -->
+	<!-- <div class="modal-body">
+		<a *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">{{this.questClicked.getQuestDescription()}}</a>
+		<h6 *ngIf="!questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)" style="color:blue">Info: You should pass the pre-requisite quests first to unlock this quest. </h6>
+
+		<br class="clear" />
+
+		<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
+			<ul *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">
+				Links here:
+				<li *ngFor="let links of this.pageService.hyperLinks">
+					<a href="{{links}}">{{links}}</a>
+				</li>
+			</ul>
+		</div>
+		<div class="row" style="margin-top: 20px">
+			<div class="col-sm-6">
+				Rewards:
+				<br> + {{this.questClicked.getQuestXp()}} XP
+				<br> + {{this.questClicked.getQuestHp()}} HP
+				<br>
+				<br>Quest Prerequisite:
+				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length > 0">
+					<ng-container *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">
+						<br>{{this.getQuestTitle(prereq)}}
+					</ng-container>
+				</ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length == 0">
+					<br>None
+				</ng-container>
+				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">
+					<br>Badge: {{this.badgeName}} (if achieved at least 80% when graded)
+				</ng-container>
+				<br>
+			</div>
+			<div *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)" class="col-sm-6">
+				Started on:
+				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
+				<br>
+				<br > Deadline:
+				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
+				<br>
+				<br>
+			</div>
+		</div>
+		
+	</div> -->
+
+	<!-- Quest Information -->
+	<div class="modal-body">
+		<span class="questDesc">
+			<i *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">
+				"{{this.questClicked.getQuestDescription()}}"
+			</i>
+			<h6 *ngIf="!questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)" style="color:blue">
+				Info: You should pass the pre-requisite quests first to unlock this quest.
+			</h6>
+		</span>
+		<br>
+		<table class="quest-detail">
+			<tr>
+				<td style="width: 50%" class="tdata">
+					<h5>Rewards:</h5>
+					<ol class="list">
+						<li>{{this.questClicked.getQuestHp()}} HP</li>
+						<li>{{this.questClicked.getQuestXp()}} EXP</li>
+					</ol>
+				</td>
+				<td *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)" class="tdata">
+					<h5>Links:</h5>
+					<ol class="list">
+						<li *ngIf="!this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="color: red"><i>None</i></li>
+						<li *ngFor="let links of this.pageService.hyperLinks"><a href="{{links}}">{{links}}</a></li>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdata">
+					<h5>Badges:</h5>
+					<ol class="list">
+						<li *ngIf="this.questClicked.getQuestBadge().length == 0" style="color: red"><i>None</i></li>
+						<li *ngFor="let badge of badgeNames">{{badge}}</li>
+					</ol>
+				</td>
+				<td class="tdata">
+					<h5>Quest Prerequisite(s):</h5>
+					<ol class="list">
+						<li *ngIf="this.questClicked.getQuestPrerequisite().length == 0" style="color: red"><i>None</i></li>
+						<li *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">{{this.getQuestTitle(prereq)}}</li>
+					</ol>
+				</td>
+			</tr>
+			<tr *ngIf="questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">
+				<td class="tdata">
+					<h5>Start Date:</h5>
+					<ol style="list-style: none;">
+						<li>{{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}</li>
+					</ol>
+				</td>
+				<td class="tdata">
+					<h5>End Date:</h5>
+					<ol style="list-style: none;">
+						<li>{{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}</li>
+					</ol>
+				</td>
+			</tr>
+		</table>
+		<div *ngIf="isParticipating(this.questClicked.getQuestId()) && !isSubmitted(this.questClicked.getQuestId())">
+			<textarea [(ngModel)]="commentBox" style="width: 100%" placeholder="Place your comment here."></textarea>
+		</div>
+	</div>
+
+	<!-- Quest Modal Buttons -->
+	<div class="modal-footer">
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isSubmitted(this.questClicked.getQuestId())">
+			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button>
+		</ng-container>
+	</div>
+	<div class="modal-footer">
+		<!-- shows submit & abandon buttons if user is a participant -->
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isSubmitted(this.questClicked.getQuestId())">
+			<!-- <button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button> -->
+			<input class="mr-auto" *ngIf="uploader?.queue?.length == 0" type="file" name="photo" multiple ng2FileSelect
+				[uploader]="uploader" />
+			<!-- button to trigger the file upload when submitted -->
+			<div *ngIf="uploader?.queue?.length > 0">Files chosen:</div>
+			<div class="row" *ngFor="let item of uploader.queue">
+				<div class="col-sm-6">{{item.file.name}}</div>
+				<div class="col-sm-6">
+					<button type="button" class="btn btn-danger" (click)="item.remove()">X</button>
+				</div>
+			</div>
+			<button type="button" class="btn btn-success btn-s" (click)="uploader.queue.length>0?uploader.uploadAll(): submitQuest(null)"
+				[disabled]="!uploader.getNotUploadedItems().length && this.commentBox == '' ">
+				Submit Quest
+			</button>
+			<!-- <button type="submit" class="btn btn-success" (click)="submitQuest(comment)">Submit Quest</button> -->
+		</ng-container>
+
+
+		<!-- shows resubmit and show scores button if user already submitted quest-->
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId())  && isSubmitted(this.questClicked.getQuestId())">
+			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Resubmit</button>
+			<button type="submit" class="btn btn-success" (click)="openLeaderBoardModal()">Show Scores</button>
+		</ng-container>
+
+
+		<!-- shows locked accept button if user is not yet a participant & has not pass all the quest prerequisites yet.-->
+		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId()) && !questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">
+			Locked Quest
+		</ng-container>
+
+		<!-- shows accept button if user is not yet a participant & had passed all the quest prerequisites. -->
+		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId()) && questMap.passQuestPrerequisites(this.questClicked.getQuestId(), this.sectionEXP)">
+			<button type="submit" class="btn btn-success" (click)="acceptQuest()">Accept the Quest</button>
+		</ng-container>
+	</div>
+</ng-template>
+<!-- quest modal template end -->
+
+<!-- Modal for leaderboard -->
+<ng-template #leaderboardTemplate>
+	<div class="modal-body">
+		<h4>{{ questClicked.getQuestTitle() }}</h4>
+		<table class="table table-hover">
+			<thead style="font-weight: bold">
+				<tr>
+					<td>Rank</td>
+					<td>Student ID</td>
+					<td>XP</td>
+					<td>Quest Completed</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let xp of leaderboardRecords; let rank = index">
+					<td>{{ rank+1 }}</td>
+					<td>{{ xp.studentId }}</td>
+					<td>{{ xp.score }}</td>
+					<td>{{ xp.dateCompleted }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger pull-right" (click)="lbModalRef.hide()">Close</button>
+	</div>
+</ng-template>

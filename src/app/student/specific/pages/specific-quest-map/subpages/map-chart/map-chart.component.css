@@ -1,0 +1,70 @@
+/* Modal */
+.questDesc:after {
+    content: ' ';
+    margin: 10px auto 0 auto;
+    display: block;
+    width: 90%;
+    border: 2px solid #d0d0d0;
+    border-radius: 4px;
+}
+
+.modal-title {
+    margin: 0 auto 0 auto;
+    width: 100%;
+    text-align: center;
+}
+
+.quest-detail {
+    width: 100%;
+}
+
+.tdata {
+    vertical-align: top;
+}
+
+.list {
+    list-style: disc;
+}
+
+.legendSymbol {
+    width: 8px;
+    height: 8px;
+    margin-left: 5px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.legend {
+    text-align: left;
+    float: left;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -5px;
+}
+
+.questLegend {
+    margin-top: -30px;
+    margin-bottom: 15px;
+    width: 95%;
+    height: 25px;
+}
+
+.newQuest {
+    border: 1px solid green;
+    background-color: green;
+}
+
+.inProgress {
+    border: 1px solid blue;
+    background-color: blue;
+}
+
+.locked {
+    border: 1px solid gray;
+    background-color: gray;
+}
+
+.finished {
+    border: 1px solid orange;
+    background-color: orange;
+}
