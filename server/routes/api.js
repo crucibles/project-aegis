@@ -29,10 +29,6 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage }).single('file');
 // var upload = multer({ dest: DIR }).single('photo');
 
-
-/**
- * Note: queries are string, body can be object because of bodyParsers;
-
 /**
  * Note: queries are string, body can be object because of bodyParsers;  
  * @deprecated: Unhandled Promise rejection
@@ -52,9 +48,9 @@ const connection = (closure) => {
 
 };
 
-// Initialization of the nodemailer transport (the 'sender' of the email).
 /**
- * @default donevirdensinghynson@gmail.com - as the default email should add a system email to be used exclusive.
+ * Initialization of the nodemailer transport (the 'sender' of the email).
+ * @default donevirdensinghynson@gmail.com - as the default email; should add a system email to be used exclusively.
  * @description this function is used for retrieving lost password of a user.
  */
 const transporter = nodemailer.createTransport({

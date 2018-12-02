@@ -1,4 +1,4 @@
-// Core imports
+// Core Imports
 import { 
 	Component, 
 	OnInit,
@@ -10,7 +10,7 @@ import {
 	ActivatedRoute
 } from '@angular/router';
 
-// Application imports
+// Application Imports
 import {
 	Badge,
 	Experience,
@@ -28,7 +28,7 @@ import {
 	SectionService
 } from 'shared/services';
 
-// Third-party imports
+// Third-party Imports
 import {
 	BsModalRef,
 	BsModalService
@@ -102,6 +102,20 @@ export class SummaryComponent implements OnInit {
 	}
 
 	/**
+	 * Retrieve quest title of a certain quest.
+	 * Used for HTML on displaying quest title for the quest modal.
+	 * @param questId id of the quest whose title is to be retrieved
+	 * @returns the title of the quest
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	getQuestTitle(questId: string) {
+		let quests = this.quests.filter(quest => quest.getQuestId() == questId);
+		let questTitle = quests.length > 0 ? quests[0].getQuestTitle() : "<No title>";
+		return this.questMap.getQuestLabel(questId) + " - " + questTitle;
+	}
+
+	/**
 	 * Open quest modal and display clicked quest details.
 	 * @param quest quest to display
 	 * 
@@ -115,6 +129,9 @@ export class SummaryComponent implements OnInit {
 		}
 	}
 
+	/**
+	 * Acquires the badge names of the badge rewards of a certain quest.
+	 */
 	getBadgeName() {
 		this.badgeNames = [];
 		if (this.questClicked.getQuestBadge().length != 0) {

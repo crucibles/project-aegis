@@ -36,6 +36,11 @@ import {
     GenSelcourseComponent
 } from 'student/general/pages';
 
+import { 
+    MapChartComponent,
+    SummaryComponent
+} from 'student/specific/pages/specific-quest-map';
+
 const specificRoutes: Routes = [
 
     {
@@ -86,7 +91,23 @@ const specificRoutes: Routes = [
             {
                 path: 'specific-quest-map/:sectionId',
                 component: SpecificQuestMapComponent,
-                canActivate: [AuthGuardService]
+                canActivate: [AuthGuardService],
+                children: [
+                    {
+                        path: '',
+                        redirectTo: 'subpages/map-chart'
+                    },
+                    {
+                        path: 'subpages/map-chart',
+                        component: MapChartComponent,
+                        canActivate: [AuthGuardService]
+                    },
+                    {
+                        path: 'subpages/summary',
+                        component: SummaryComponent,
+                        canActivate: [AuthGuardService]
+                    }
+                ]
             },
             {
                 path: '**',

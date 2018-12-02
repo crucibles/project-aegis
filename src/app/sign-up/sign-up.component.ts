@@ -20,6 +20,7 @@ import {
     UserService
 } from 'shared/services';
 
+// Third-Party Imports
 import { 
     ToastsManager 
 } from 'ng2-toastr';
@@ -35,7 +36,7 @@ export class SignUpComponent implements OnInit {
     private questions: string[] = new Array();
 
     constructor(
-        formBuilder: FormBuilder,
+        private formBuilder: FormBuilder,
         private userService: UserService,
         private router: Router,
         private toastr: ToastsManager
@@ -130,8 +131,10 @@ export class SignUpComponent implements OnInit {
         this.signupForm.reset();
     }
 
-    // Checks if the input in the 'confirmPassword' form is not correct.
-    // Used to call the ".errConfirmClass" in the CSS file. Cannot be combined with "confirmPass()".
+    /**
+     * Checks if the input in the 'confirmPassword' form is not correct.
+     * Used to call the ".errConfirmClass" in the CSS file. Cannot be combined with "confirmPass()".
+     */
     errConfirmPass() {
         if (
             this.signupForm.get('confirmPassword').dirty && 
@@ -141,8 +144,10 @@ export class SignUpComponent implements OnInit {
         } else return false;
     }
 
-    // Checks if the input in the 'confirmPassword' form is correct.
-    // Used to call the ".confirmClass" in the CSS file. Cannot be combined with "errConfirmPass()".
+    /**
+     * Checks if the input in the 'confirmPassword' form is correct.
+     * Used to call the ".confirmClass" in the CSS file. Cannot be combined with "errConfirmPass()".
+     */
     confirmPass() {
         if (
             this.signupForm.get('confirmPassword').dirty && 

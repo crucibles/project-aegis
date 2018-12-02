@@ -1,0 +1,23 @@
+<table id="hor-zebra" *ngIf="quests && questMap" class="quest-table">
+	<thead></thead>
+	<tbody>
+		<tr>
+			<td class="row-header">Quest</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.questLabel}}
+			</td>
+		</tr>
+		<tr>
+			<td class="row-header">Max EXP</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.quest.getQuestXp()}}
+			</td>
+		</tr>
+		<tr>
+			<td class="row-header">Max HP</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.quest.getQuestHp()}}
+			</td>
+		</tr>
+	</tbody>
+</table>

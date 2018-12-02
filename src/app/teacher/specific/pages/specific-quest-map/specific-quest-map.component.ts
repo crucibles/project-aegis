@@ -1,4 +1,4 @@
-//Core Imports
+// Core imports
 import {
 	Component,
 	OnInit
@@ -8,6 +8,7 @@ import {
 	ActivatedRoute
 } from '@angular/router';
 
+// Application imports
 import { 
 	SectionService 
 } from 'shared/services/section.service';
@@ -22,8 +23,6 @@ import {
 	styleUrls: ['./specific-quest-map.component.css']
 })
 export class SpecificQuestMapComponent implements OnInit {
-	private sectionId: string;
-
 	constructor(
         private route: ActivatedRoute,
         private sectionService: SectionService
@@ -31,8 +30,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	
 	ngOnInit() {
 		this.route.paramMap.subscribe(params => {
-			this.sectionId = params.get('sectionId');
-			this.sectionService.searchSection(this.sectionId).subscribe(res => {
+			this.sectionService.searchSection(params.get('sectionId')).subscribe(res => {
                 this.sectionService.setCurrentSection(new Section(res[0].section));  
 			});
 		})

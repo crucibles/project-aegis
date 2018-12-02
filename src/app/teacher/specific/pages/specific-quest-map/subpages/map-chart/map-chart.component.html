@@ -4,24 +4,6 @@
 </div>
 
 <div *ngIf="quests">
-	<div class="questLegend">
-		<div class="legend">
-			<div class="legendSymbol newQuest"></div>&nbsp;<small>New quest</small>&nbsp;
-		</div>
-		<div class="legend">
-			<div class="legendSymbol locked"></div>&nbsp;<small>Locked quest</small>&nbsp;
-		</div>
-		<div class="legend">
-			<div class="legendSymbol inProgress"></div>&nbsp;<small>Quest in progress</small>&nbsp;
-		</div>
-		<div class="legend">
-			<div class="legendSymbol finished"></div>&nbsp;<small>Quest finished / submitted</small>&nbsp;
-		</div>
-		<div class="legend">
-			<div class="legendSymbol deadline"></div>&nbsp;<small>Quest already beyond deadline</small>
-		</div>
-	</div>
-	<br>
 	<div>
 		Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! <br>
 		This is where you can create quests and form your section's questmap.
@@ -57,9 +39,10 @@
 
 	<!-- Quest Modal Header/Title -->
 	<div class="modal-header">
-		<h4 class="modal-title">
-			{{this.questClicked.getQuestTitle()}}
-		</h4>
+		<!-- Modal Header -->
+		<div class="modal-title">
+			<h4>{{this.questClicked.getQuestTitle()}}</h4>
+		</div>
 		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
 			<span aria-hidden="true">&times;</span>
 		</button>
@@ -67,47 +50,57 @@
 
 	<!-- Quest Information -->
 	<div class="modal-body">
-		{{this.questClicked.getQuestDescription()}}
-		<br class="clear" />
-
-		<div class="action-box" *ngIf="this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="font-size: 80%">
-			Links here:
-			<ul>
-				<li *ngFor="let links of this.pageService.hyperLinks">
-					<a href="{{links}}">{{links}}</a>
-				</li>
-			</ul>
-		</div>
-		<div class="row" style="margin-top: 20px">
-			<div class="col-sm-6">
-				Rewards:
-				<br> + {{this.questClicked.getQuestXp()}} XP
-				<br> + {{this.questClicked.getQuestHp()}} HP
-				<br>
-				<br>Quest Prerequisite:
-				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length > 0">
-					<ng-container *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">
-						<br>{{this.getQuestTitle(prereq)}}
-					</ng-container>
-				</ng-container>
-				<ng-container *ngIf="this.questClicked.getQuestPrerequisite().length == 0">
-					<br>None
-				</ng-container>
-				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if
-					achieved at least 80%
-					when graded) </ng-container>
-
-			</div>
-			<div class="col-sm-6">
-				Started on:
-				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
-				<br>
-				<br> Deadline:
-				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
-				<br>
-				<br>
-			</div>
-		</div>
+		<span class="questDesc">
+			<i>"{{this.questClicked.getQuestDescription()}}"</i>
+		</span>
+		<br>
+		<table>
+			<tr>
+				<td style="width: 50%">
+					<h5>Rewards:</h5>
+					<ol>
+						<li>{{this.questClicked.getQuestHp()}} HP</li>
+						<li>{{this.questClicked.getQuestXp()}} EXP</li>
+					</ol>
+				</td>
+				<td>
+					<h5>Links:</h5>
+					<ol>
+						<li *ngIf="!this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="color: red"><i>None</i></li>
+						<li *ngFor="let links of this.pageService.hyperLinks"><a href="{{links}}">{{links}}</a></li>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h5>Badges:</h5>
+					<ol>
+						<li *ngIf="this.questClicked.getQuestBadge().length == 0" style="color: red"><i>None</i></li>
+						<li *ngFor="let badge of badgeNames">{{badge}}</li>
+					</ol>
+				</td>
+				<td>
+					<h5>Quest Prerequisite(s):</h5>
+					<ol>
+						<li *ngIf="this.questClicked.getQuestPrerequisite().length == 0" style="color: red"><i>None</i></li>
+						<li *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">{{this.getQuestTitle(prereq)}}</li>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h5>Start Date:</h5>
+					<ol style="list-style: none;">
+						<li>{{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}</li>
+					</ol>
+				</td>
+				<td>
+					<h5>End Date:</h5>
+					<ol style="list-style: none;">
+						<li>{{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}</li>
+					</ol>
+				</td>
+			</tr>
+		</table>
 	</div>
 </ng-template>
-<!-- quest modal template end -->

@@ -78,7 +78,7 @@
 				<td>
 					<h5>Links:</h5>
 					<ol>
-						<li *ngIf="this.pageService.hyperLinks.length == 0" style="color: red"><i>None</i></li>
+						<li *ngIf="!this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="color: red"><i>None</i></li>
 						<li *ngFor="let links of this.pageService.hyperLinks"><a href="{{links}}">{{links}}</a></li>
 					</ol>
 				</td>

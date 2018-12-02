@@ -1,4 +1,4 @@
-// Core imports
+// Core Imports
 import { 
     Component, 
     OnInit 
@@ -14,11 +14,12 @@ import {
     FormGroup
 } from '@angular/forms';
 
-// Application imports
+// Application Imports
 import { 
     UserService 
 } from 'shared/services';
 
+// Third-Party Imports
 import {
     ToastsManager
 } from 'ng2-toastr';
@@ -33,7 +34,7 @@ export class ChangePasswordComponent implements OnInit {
     private changePassForm: FormGroup;
 
     constructor(
-        formBuilder: FormBuilder,
+        private formBuilder: FormBuilder,
         private router: Router,
         private userService: UserService,
         private toastr: ToastsManager
@@ -67,6 +68,5 @@ export class ChangePasswordComponent implements OnInit {
         return this.changePassForm.get('inputEmail') as FormControl;
     }
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 }
