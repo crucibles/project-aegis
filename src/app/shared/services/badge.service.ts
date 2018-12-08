@@ -256,6 +256,28 @@ export class BadgeService {
         );
     }
 
+
+    /**
+     * Gets teacher badges from the database
+     * @param user_id id of the instructor for checking all badges in his/her sections
+     * 
+     * @returns array of section-level badges
+     */
+    getTeacherBadges(user_id): Observable<any[]> {
+        const url = this.badgeUrl;
+
+        let params = new HttpParams()
+            .set('user_id', user_id)
+            .set('method', 'getTeacherBadges');
+            
+        return this.http.get<any[]>(url, {
+            params: params
+        }).pipe(
+            tap(badges => console.log(badges)),
+            catchError(this.handleError(`getTeacherBadges`, []))
+        );
+    }
+
     /**
      * Gets system-wide badge from database
      * 

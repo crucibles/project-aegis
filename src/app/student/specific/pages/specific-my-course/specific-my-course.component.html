@@ -106,5 +106,24 @@
 			</div>
 		</div>
 
+		<!--Student's Quest Section-->
+		<div class="student-badge" style="margin-top: 20px">
+			<h5 class="modal-title">{{this.classmateClicked.getUserFirstName()}}'s Quest Taken</h5>
+
+			<div *ngIf="!this.badgesDisplay">
+				Loading...
+			</div>
+			<div *ngIf="this.badgesDisplay && this.badgesDisplay.length == 0">
+				No quests taken yet.
+			</div>
+			<!-- Quest Display unimplemented yet-->
+			<!-- <div *ngIf="this.badgesDisplay && this.badgesDisplay.length != 0" class="badge-display">
+				<ng-container *ngFor="let badge of badgesDisplay">
+					<img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" />
+				</ng-container>
+			</div> -->
+			Loading questt to be fetched... not yet implemented.
+		</div>
+
 	</div>
 </ng-template>

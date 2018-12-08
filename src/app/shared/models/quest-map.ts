@@ -196,15 +196,19 @@ export class QuestMap {
 			// if user is not a participant (either 'locked' or 'open')
 			if (sectionQuest.getQuestParticipants().length == 0 || !sectionQuest.searchParticipant(user.getUserId())) {
 				if (this.passQuestPrerequisites(quest.getQuestId(), experience)) {
+					//green
 					return "#008421";
 				} else {
+					//grey
 					return "#C0C0C0";
 				}
 			} else { // if user is participant (either 'ongoing' or 'done'); ongoing if has submitted
 				if (experience.hasSubmittedQuest(quest.getQuestId())) {
 					console.log(quest.getQuestTitle());
+					//orange
 					return "#FF8000";
 				} else {
+					//blue
 					return "#0073aa";
 				}
 			}

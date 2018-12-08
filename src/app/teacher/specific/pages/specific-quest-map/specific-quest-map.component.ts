@@ -51,7 +51,8 @@ import {
 	QuestMap,
 	Badge,
 	Experience,
-	Item
+	Item,
+	CommentPost
 } from 'shared/models';
 
 import {
@@ -61,7 +62,8 @@ import {
 	SectionService,
 	UserService,
 	BadgeService,
-	ItemService
+	ItemService,
+	CommentPostService
 } from 'shared/services';
 
 @Component({
@@ -137,7 +139,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		private route: ActivatedRoute,
 		private sectionService: SectionService,
 		private toastr: ToastsManager,
-		private userService: UserService
+		private userService: UserService,
+		private commentpostService: CommentPostService
 
 	) {
 		this.currentUser = this.userService.getCurrentUser();
@@ -338,7 +341,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		return this.questMap.getQuestLabel(questId) + " - " + questTitle;
 	}
 
-	getItemName(itemId: string){
+	getItemName(itemId: string) {
 		//AHJ: unimplemented; itemservice getsection items
 		return itemId;
 	}
@@ -571,8 +574,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			}
 		});
 
-		let newQuest: Quest = new Quest();
-
 		this.questService.createQuest(
 			this.currentSection.getSectionId(),
 			this.questTitle.value,
@@ -593,8 +594,30 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			this.questPrerequisite.reset(this.formBuilder.array([]));
 			this.bsModalRef.hide();
 			this.resetQuest();
-			// this.loadQuestMap();
+			this.loadQuestMap();
+
+			
 		});
+
+		/**
+			 * This will then automatically post that the teacher created a new quest that will be posted in the section news feed.
+			 */
+			let comment = new CommentPost();
+
+			comment.setCommentPost(
+				this.currentSection.getSectionId(),
+				this.currentUser.getUserId(),
+				"I have created a new quest. Entitled : " + this.questTitle.value + ". Check out your quest maps!",
+				[],
+				new Date(Date.now()),
+				false,
+				true,
+				""
+			);
+
+			this.commentpostService.addCommentPost(comment).subscribe(post => {
+				console.log("hello");
+			});
 	}
 
 	getBadgeName(badge_id: any) {

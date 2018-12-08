@@ -127,6 +127,7 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	ngOnInit() {
 		this.pageService.getChartObservable().subscribe(value => {
+			this.setNewExperience();
 			this.setNewSection();
 		});
 		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
@@ -141,7 +142,9 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.setDefault();
 		this.getCurrentUser();
 		this.getCurrentSection();
-		this.loadQuestMap();		
+		this.loadQuestMap();
+
+
 	}
 
 	isPending(quest_id) {
@@ -165,11 +168,9 @@ export class SpecificQuestMapComponent implements OnInit {
 		var currentSection = this.currentSection.getSectionId();
 		var currentQuest = this.questClicked.getQuestId();
 		this.leaderboardService.getQuestScores(currentSection, currentQuest)
-			.subscribe((user) => {
-				if (user) {
-					this.leaderboardRecords = user;
-				} else {
-					console.log('Failed to acquire quest scores.');
+			.subscribe((scores) => {
+				if (scores) {
+					this.leaderboardRecords = scores;
 				}
 			}, error => {
 				this.alertService.error(error);
@@ -193,11 +194,10 @@ export class SpecificQuestMapComponent implements OnInit {
 						this.sectionEXP = new Experience(EXP[0]);
 					}
 					this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-						console.log("QUESTMAP LOADEd");
-						console.log(questmap);
 						this.questMap = new QuestMap(questmap);
 						this.questMap.setQuestMapDataSet(this.quests, this.currentSection.getQuests(), this.currentUser, this.sectionEXP, false);
 						this.setQuestMap();
+
 					});
 				});
 		});
@@ -304,6 +304,7 @@ export class SpecificQuestMapComponent implements OnInit {
 		};
 		this.chart = new Chart(ctx, cc);
 
+
 		//this.onChartClick(HTMLchart, chart, this.chartWidth, this.chartHeight, xTick, yTick);
 
 	}
@@ -354,7 +355,6 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	acceptQuest() {
-		console.warn("hello");
 		let user_id = this.userService.getCurrentUser().getUserId();
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.currentSection.getSectionId();

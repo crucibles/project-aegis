@@ -22,9 +22,7 @@ import {
 import {
 	Course,
 	Section,
-	Student,
 	User,
-	Conditions,
 	Badge
 } from 'shared/models';
 
@@ -32,7 +30,8 @@ import {
 	PageService,
 	SectionService,
 	UserService,
-	BadgeService
+	BadgeService,
+	QuestService
 } from 'shared/services';
 
 @Component({
@@ -62,7 +61,8 @@ export class SpecificMyCourseComponent implements OnInit {
 		private sectionService: SectionService,
 		private route: ActivatedRoute,
 		private userService: UserService,
-		private badgeService: BadgeService
+		private badgeService: BadgeService,
+		private questService: QuestService
 	) {
 	}
 
@@ -160,5 +160,19 @@ export class SpecificMyCourseComponent implements OnInit {
 				});
 			});
 		});
+	}
+
+	getClassmateQuests(classmate: User) {
+		// this.badgesDisplay = [];
+		// this.questService.getClassmateQuests(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
+		// 	badges.map(badge => {
+		// 		let x = new Badge(badge);
+		// 		x.getBadgeAttainers().filter(user => {
+		// 			if(classmate.getUserId() == user){
+		// 				this.badgesDisplay.push(x);
+		// 			}
+		// 		});
+		// 	});
+		// });
 	}
 }

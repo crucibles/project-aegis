@@ -1,7 +1,8 @@
 //Core Imports
 import {
     Component,
-    OnInit
+    OnInit,
+    Input
 } from '@angular/core';
 
 import {
@@ -45,7 +46,7 @@ import {
 } from 'file-saver';
 
 import {
-	Chart
+    Chart
 } from 'chart.js';
 
 @Component({
@@ -54,6 +55,7 @@ import {
     styleUrls: ['./grades.component.css']
 })
 export class GradesComponent implements OnInit {
+    @Input('hello') content: any;
     // basic page info
     private currentUser: any;
     private currentSection: Section;
@@ -75,6 +77,7 @@ export class GradesComponent implements OnInit {
     lineChartData: Array<any> = [];
     lineChartLabels: Array<any> = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
     lineChartOptions: any;
+    value: any;
 
     constructor(
         private badgeService: BadgeService,
@@ -93,15 +96,15 @@ export class GradesComponent implements OnInit {
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
             let section_id = params.get('sectionId');
-			this.sectionService.searchSection(section_id).subscribe(res => {
+            this.sectionService.searchSection(section_id).subscribe(res => {
                 this.sectionService.setCurrentSection(new Section(res[0].section));
                 this.isGraded = [];
                 this.setDefault();
                 this.getCurrentSection();
                 this.getCurrentUser();
-                this.getSectionInformation();   
-			});
-		})
+                this.getSectionInformation();
+            });
+        })
     }
 
     getCurrentUser() {
@@ -299,49 +302,62 @@ export class GradesComponent implements OnInit {
      * @param gradedIndex the index of the student in the array (for knowing which input field to disable after grading) 
      */
     setStudentGrade(userId, questId, inputGrade, gradedIndex) {
-        //AHJ: unimplemented/improvements; possible to change the grade index for flexibility
+        this.value = "";
         if (inputGrade == "") {
             this.toaster.error(
                 "You must input a grade to be submitted!",
                 "Grade Submission Error!"
             );
         } else {
-            this.questService.getQuest(questId).subscribe(res => {
-                if (Number(inputGrade) <= (new Quest(res).getQuestXp()) && Number(inputGrade) >= 0) {
-                    this.toaster.success(
-                        "Successfully submitted the grade of " + this.toStudentName(userId),
-                        "Grade Submission Success!"
-                    );
-                    this.experienceService.setStudentQuestGrade(this.currentSection.getSectionId(), userId, questId, inputGrade)
-                        .subscribe(grade => {
-                            this.isGraded[gradedIndex] = !this.isGraded[gradedIndex];
 
-                            this.addDefaultRankBadge(userId);
 
-                            this.submissions = this.submissions.map(quest => {
-                                if (quest.getUserId() == userId) {
-                                    quest.setIsGraded(questId);
+                if (confirm("Are you sure for this grade? This can not be edited again.")) {
+                    this.questService.getQuest(questId).subscribe(res => {
+                        if (Number(inputGrade) <= (new Quest(res).getQuestXp()) && Number(inputGrade) >= 0) {
+                            this.toaster.success(
+                                "Successfully submitted the grade of " + this.toStudentName(userId),
+                                "Grade Submission Success!"
+                            );
+                            this.experienceService.setStudentQuestGrade(this.currentSection.getSectionId(), userId, questId, inputGrade)
+                                .subscribe(grade => {
+                                    this.isGraded[gradedIndex] = !this.isGraded[gradedIndex];
+
+                                    this.addDefaultRankBadge(userId);
+
+                                    this.submissions = this.submissions.map(quest => {
+                                        if (quest.getUserId() == userId) {
+                                            quest.setIsGraded(questId);
+                                        }
+                                        return quest;
+                                    });
+
+                                    this.experienceService.getUserExpRecord(userId, this.currentSection.getSectionId()).subscribe(res => {
+                                        if (res) {
+                                            this.studentGrades.find(student => {
+                                                return student.student.getUserId() == userId;
+                                            }).total = new Experience(res).getTotalExperience();
+                                        }
+                                    });
                                 }
-                                return quest;
-                            });
+                                )
 
-                            this.experienceService.getUserExpRecord(userId, this.currentSection.getSectionId()).subscribe(res => {
-                                if (res) {
-                                    this.studentGrades.find(student => {
-                                        return student.student.getUserId() == userId;
-                                    }).total = new Experience(res).getTotalExperience();
-                                }
-                            });
+
+
+                        } else {
+                            this.toaster.error(
+                                "Your submitted grade must be within 0 and " + (new Quest(res).getQuestXp()),
+                                "Grade Submission Error!"
+                            );
+
                         }
-                        )
-                } else {
-                    this.toaster.error(
-                        "Your submitted grade must be within 0 and " + (new Quest(res).getQuestXp()),
-                        "Grade Submission Error!"
-                    );
+                    });
                 }
-            });
+
+
         }
+
+
+
     }
 
 
@@ -386,7 +402,7 @@ export class GradesComponent implements OnInit {
                                 console.log("userId: " + userId);
                                 console.log("badgeattainer: " + badge.getBadgeAttainers());
                                 this.badgeService.addBadgeAttainer(badge.getBadgeId(), userId).subscribe(res => {
-                                    if(res){
+                                    if (res) {
                                         console.log(res);
                                         console.log("SUCESS!");
                                     }
