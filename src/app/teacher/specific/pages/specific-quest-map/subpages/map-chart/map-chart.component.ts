@@ -265,6 +265,20 @@ export class MapChartComponent implements OnInit {
 	}
 
 	/**
+	 * Retrieve quest title of a certain quest.
+	 * Used for HTML on displaying quest title for the quest modal.
+	 * @param questId id of the quest whose title is to be retrieved
+	 * @returns the title of the quest
+	 * 
+	 * @author Sumandang, AJ Ruth H.
+	 */
+	getQuestTitle(questId: string) {
+		let quests = this.quests.filter(quest => quest.getQuestId() == questId);
+		let questTitle = quests.length > 0 ? quests[0].getQuestTitle() : "<No title>";
+		return this.questMap.getQuestLabel(questId) + " - " + questTitle;
+	}
+
+	/**
 	 * Redirects to the create-quest page with the chart coordinates x and y.
 	 * @param x 
 	 * @param y 

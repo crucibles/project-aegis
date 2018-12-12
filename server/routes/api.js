@@ -251,7 +251,8 @@ router.post('/createQuest', (req, res) => {
             quest_item: req.body.quest_item,
             quest_start_date: req.body.quest_start_date,
             quest_end_date: req.body.quest_end_date,
-            quest_party: req.body.quest_party
+            quest_party: req.body.quest_party,
+            quest_prerequisite: req.body.quest_prerequisite
         };
 
         insertQuest();
@@ -284,7 +285,8 @@ router.post('/createQuest', (req, res) => {
                         quest_item: req.body.quest_item,
                         quest_start_date: req.body.quest_start_date,
                         quest_end_date: req.body.quest_end_date,
-                        quest_party: req.body.quest_party
+                        quest_party: req.body.quest_party,
+                        quest_prerequisite: req.body.quest_prerequisite
                     }
                     res.json(questObj);
                     //callback(null, result.insertedId);
@@ -538,7 +540,7 @@ router.post('/upload', (req, res) => {
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
-            return res.status(422).send("an Error occured")
+            return res.status(422).send("an Error occured: " + err);
         }
         // No error occured.
         // return res.send(path.substring(8, path.length));
@@ -706,11 +708,11 @@ router.post('/questmaps', (req, res) => {
 
     function addQuestToSection(req, res) {
         connection((db) => {
-            //AHJ: unimplemented; dili ko kabalo sa pagpush ug array T_T okay lng sya if string or hardcore array though....
             const myDB = db.db('up-goe-db');
             let prereq_array = [];
             prereq_array = req.body.quest_prerequisite;
-            if (prereq_array.length > 0) {
+
+            if (prereq_array && prereq_array.length > 0) {
                 myDB.collection('sections')
                     .update(
                         { _id: ObjectID(req.body.section_id) },
@@ -731,7 +733,25 @@ router.post('/questmaps', (req, res) => {
                         sendError(err, res);
                     });
             } else {
-                res.json(true);
+                myDB.collection('sections')
+                    .update(
+                        { _id: ObjectID(req.body.section_id) },
+                        {
+                            $push: {
+                                quests: {
+                                    quest_id: req.body.quest_coordinates.quest_id,
+                                    quest_participants: [],
+                                    quest_prerequisite: []
+                                }
+                            }
+                        }
+                    )
+                    .then(section => {
+                        res.json(true);
+                    })
+                    .catch(err => {
+                        sendError(err, res);
+                    });
             }
         })
     };
@@ -996,7 +1016,6 @@ router.post('/posts', (req, res) => {
 });
 
 router.post('/items', (req, res) => {
-    console.log("> POST ITEMS ITEMS le here");
     if (req.body.method == "equipItem") {
         if(req.body.to_equip){
             equipItem();
@@ -1515,13 +1534,11 @@ router.get('/sections', (req, res) => {
     } else if (req.query.id) {
         getSectionsOfStudent(req, res);
     } else if (req.query.class) {
-
         if (req.query.class.length == 24) {
             searchSection(req, res);
         } else {
             searchSectionByName(req, res);
         }
-
     } else if (req.query.students) {
         getEnrolledStudents(req, res);
     }
@@ -2052,11 +2069,11 @@ router.post('/signup', (req, res) => {
                                 };
 
                                 // Sends the email.
-                                transporter.sendMail(mailOptions, function (err, res) {
-                                    if (err) {
-                                        throw (err);
-                                    }
-                                });
+                                // transporter.sendMail(mailOptions, function (err, res) {
+                                //     if (err) {
+                                //         throw (err);
+                                //     }
+                                // });
                             }
 
                             response.data = newUserObj;
