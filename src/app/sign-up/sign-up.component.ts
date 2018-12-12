@@ -72,7 +72,7 @@ export class SignUpComponent implements OnInit {
         let securityQuestion = this.signupForm.value.securityQuestion;
         let securityAnswer = this.signupForm.value.securityAnswer;
         let type = this.signupForm.value.type;
-        let verified = false;
+        let verified = true;
         let userConditions = {
             hp: "",
             xp: 0,

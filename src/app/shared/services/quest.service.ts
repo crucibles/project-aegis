@@ -112,7 +112,7 @@ export class QuestService {
 					// Returns data from api.js to spec-quest-map.ts
 					return data;
 				}),
-				catchError(this.handleError<QuestMap>(`createQuest =${quest_map_id}`))
+				catchError(this.handleError<QuestMap>(`addQuestMapCoordinates =${quest_map_id}`))
 			);
 	}
 
@@ -194,7 +194,7 @@ export class QuestService {
 					// Returns data from api.js to spec-quest-map.ts
 					return data;
 				}),
-				catchError(this.handleError<QuestMap>(`createQuest =${quest_map_id}`))
+				catchError(this.handleError<QuestMap>(`editQuestMapCoordinateAt =${quest_map_id}`))
 			);
 	}
 
@@ -234,7 +234,7 @@ export class QuestService {
 			params: params
 		}).pipe(
 			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
-			catchError(this.handleError(`getUserJoinedSectionQuests`, []))
+			catchError(this.handleError(`getSectionQuestMap`, []))
 		);
 	}
 
@@ -251,7 +251,7 @@ export class QuestService {
 			params: params
 		}).pipe(
 			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
-			catchError(this.handleError(`getUserJoinedSectionQuests`, []))
+			catchError(this.handleError(`getSectionQuests`, []))
 		);
 	}
 
@@ -343,7 +343,6 @@ export class QuestService {
 
 		return this.http.post(url, body).pipe(
 			tap(data => {
-				console.warn(data);
 				return data;
 			})
 		);
@@ -358,7 +357,6 @@ export class QuestService {
 
 		return this.http.post(url, body).pipe(
 			tap(data => {
-				console.warn(data);
 				return data;
 			})
 		);
@@ -375,7 +373,6 @@ export class QuestService {
 
 		return this.http.post(url, body).pipe(
 			tap(data => {
-				console.warn(data);
 				return data;
 			})
 		);
@@ -399,7 +396,6 @@ export class QuestService {
 
 		return this.http.post(url, body).pipe(
 			tap(data => {
-				console.warn(data);
 				return data;
 			})
 		);
@@ -429,7 +425,6 @@ export class QuestService {
 
 		return this.http.post(url, body).pipe(
 			tap(data => {
-				console.warn(data);
 				return data;
 			})
 		);
@@ -444,7 +439,6 @@ export class QuestService {
 			params: params
 		}).pipe(
 			tap(data => {
-				console.warn(data);
 				return data;
 			})
 		);

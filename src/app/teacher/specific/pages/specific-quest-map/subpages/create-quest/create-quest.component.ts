@@ -232,7 +232,7 @@ export class CreateQuestComponent implements OnInit {
 			}
 
 			this.questService.editQuestMapCoordinateAt(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), quest._id, basisX, basisY).subscribe(() => {
-				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
+				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe((questmap) => {
 					this.questMap = new QuestMap(questmap);
 					this.questMap.setQuestMapDataSet(this.quests, [], new User(), new Experience(), true);
 				});
