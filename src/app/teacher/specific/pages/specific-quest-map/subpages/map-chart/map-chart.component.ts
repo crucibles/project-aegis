@@ -192,14 +192,17 @@ export class MapChartComponent implements OnInit {
 		}
 
 		var HTMLchart = document.getElementById("quest-map");
-		var ctx = (<HTMLCanvasElement>HTMLchart).getContext("2d");
 
-		let cc: any = {
-			data: QM,
-			options: options
-		};
+		if(<HTMLCanvasElement>HTMLchart) {
+			var ctx = (<HTMLCanvasElement>HTMLchart).getContext("2d");
 
-		this.chart = new Chart(ctx, cc);
+			let cc: any = {
+				data: QM,
+				options: options
+			};
+
+			this.chart = new Chart(ctx, cc);
+		}
 	}
 
 	/**

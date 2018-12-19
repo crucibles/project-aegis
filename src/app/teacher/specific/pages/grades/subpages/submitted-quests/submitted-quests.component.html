@@ -1,0 +1,74 @@
+<ng-container *ngIf="!quests">
+    Loading....
+    <img class="loading-icon" src="/assets/images/loading.gif" />
+</ng-container>
+
+<ng-container *ngIf="quests">
+	<h2>{{sectionService.getCurrentCourse().getCourseName()}} - {{currentSection.getSectionName()}}</h2>
+
+	<select #questSelect (click)="getQuestGrades(questSelect.value)" class="form-control" style="width: 200px;">
+		<option value=""></option>
+		<option *ngFor="let quest of quests" [value]="quest.getQuestId()">
+			{{quest.getQuestTitle()}}
+		</option>
+	</select>
+
+	<table id="hor-zebra" summary="Course List">
+		<thead>
+			<tr>
+				<th scope="col">Name</th>
+				<th scope="col" colspan="2" style="min-width: 200px;">Grades (Max XP: {{this.getQuestMaxXp(questSelect.value)}})</th>
+				<th scope="col">Date Submitted</th>
+				<th scope="col">Comment</th>
+				<th scope="col" colspan="2">File Uploaded</th>
+			</tr>
+		</thead>
+		<tbody>
+			<ng-container *ngIf="!submissions || submissions.length == 0">
+				<tr>
+					<td colspan="6" style="text-align: center">
+						No submissions on this quest yet.
+					</td>
+				</tr>
+			</ng-container>
+			<ng-container *ngIf="submissions">
+				<tr *ngFor="let submission of submissions; let i = index">
+					<td>{{this.toStudentName(submission.getUserId())}}</td>
+					<td>
+						<button *ngIf="isGraded[i]" 
+						class="btn btn-primary"
+						type="submit" 
+						(click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value, i)">Submit
+						</button>
+					</td>
+					<td style="width: fit-content;">
+						<input #inputGrade 
+							class="form-control" 
+							type="number" 
+							[value]="submission.getQuestSubmissionGrade(questSelect.value)" 
+							[disabled]="!isGraded[i]"
+							style="width: 100px;"/>
+					</td>
+					<td>{{this.pageService.formatDateTime(submission.getQuestSubmissionDate(questSelect.value))}}</td>
+					<td style="max-width: 200px; overflow: auto;">
+						<div *ngIf="!submission.getQuestSubmissionComment(questSelect.value)" style="color: red;"><i>No comment.</i></div>
+						{{submission.getQuestSubmissionComment(questSelect.value)}}
+					</td>
+					<td style="max-width: 200px; overflow: auto;">
+						<div *ngIf="!submission.getQuestSubmission(questSelect.value)"
+							style="color: red;"><i>No file(s) uploaded.</i>
+						</div>
+						{{submission.getQuestSubmission(questSelect.value)}}
+					</td>
+					<td>
+						<button *ngIf="submission.getQuestSubmission(questSelect.value)"
+							type="submit" 
+							class="btn btn-success" 
+							(click)="downloadFile(submission.getQuestSubmission(questSelect.value))">Download
+						</button>
+					</td>
+				</tr>
+			</ng-container>
+		</tbody>
+	</table>
+</ng-container>
