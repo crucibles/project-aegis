@@ -44,6 +44,12 @@ import {
     CreateQuestComponent
 } from 'teacher/specific/pages/specific-quest-map';
 
+import {
+    GradesSummaryComponent,
+    GraphSummaryComponent,
+    SubmittedQuestsComponent
+} from 'teacher/specific/pages/grades';
+
 const specificRoutes: Routes = [
 
     {
@@ -114,7 +120,28 @@ const specificRoutes: Routes = [
             {
                 path: 'grades/:sectionId',
                 component: GradesComponent,
-                canActivate: [AuthGuardService]
+                canActivate: [AuthGuardService],
+                children: [
+                    {
+                        path: '',
+                        redirectTo: 'subpages/grades-summary'
+                    },
+                    {
+                        path: 'subpages/grades-summary',
+                        component: GradesSummaryComponent,
+                        canActivate: [AuthGuardService]
+                    },
+                    {
+                        path: 'subpages/graph-summary',
+                        component: GraphSummaryComponent,
+                        canActivate: [AuthGuardService]
+                    },
+                    {
+                        path: 'subpages/submitted-quests',
+                        component: SubmittedQuestsComponent,
+                        canActivate: [AuthGuardService]
+                    }
+                ]
             },
             {
                 path: '**',

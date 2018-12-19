@@ -33,6 +33,6 @@ export class SpecificQuestMapComponent implements OnInit {
 			this.sectionService.searchSection(params.get('sectionId')).subscribe(res => {
                 this.sectionService.setCurrentSection(new Section(res[0].section));  
 			});
-		})
+		});
 	}
 }

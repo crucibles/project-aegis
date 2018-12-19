@@ -1,0 +1,12 @@
+<ng-container *ngIf="!studentGrades">
+	Loading....
+	<img class="loading-icon" src="/assets/images/loading.gif" />
+</ng-container>
+
+<ng-container *ngIf="studentGrades">
+	<div class="row">
+		<div style="display: block">
+			<canvas id="summary-graph" baseChart width="800" height="800"></canvas>
+		</div>
+	</div>
+</ng-container>

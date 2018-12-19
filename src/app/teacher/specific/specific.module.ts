@@ -49,6 +49,16 @@ import {
 	CreateQuestComponent 
 } from './pages/specific-quest-map/subpages/create-quest/create-quest.component';
 
+import { 
+	GradesNavbarComponent 
+} from './pages/grades/grades-navbar/grades-navbar.component';
+
+import {
+	GradesSummaryComponent,
+	GraphSummaryComponent,
+	SubmittedQuestsComponent
+} from './pages/grades';
+
 @NgModule({
 	imports: [
 		SharedModule,
@@ -70,7 +80,11 @@ import {
 		MapChartComponent,
 		SettingsComponent,
 		SummaryComponent,
-		CreateQuestComponent
+		CreateQuestComponent,
+		GradesNavbarComponent,
+		SubmittedQuestsComponent,
+		GradesSummaryComponent,
+		GraphSummaryComponent
 	]
 })
 
