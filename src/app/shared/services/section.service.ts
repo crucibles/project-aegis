@@ -127,7 +127,7 @@ export class SectionService {
 				// Returns data from api.js to sign-up.component.ts.
 				return data;
 			}),
-			catchError(this.handleError<User>(`creat course error course_name=${courseName}`))
+			catchError(this.handleError<User>(`creatCourseSection course_name=${courseName}`))
 		);
 	}
 
@@ -161,7 +161,7 @@ export class SectionService {
 			tap(data => {
 				return data;
 			}),
-			catchError(this.handleError<any>(`requesting failed for =${body}`))
+			catchError(this.handleError<any>(`addBadgeToStudent =${body}`))
 		);
 	}
 
@@ -182,7 +182,7 @@ export class SectionService {
 			tap(data => {
 				return data;
 			}),
-			catchError(this.handleError<any>(`requesting failed for =${body}`))
+			catchError(this.handleError<any>(`sendRequestToSection =${body}`))
 		);
 	}
 
@@ -204,7 +204,7 @@ export class SectionService {
 			tap(data => {
 				return data;
 			}),
-			catchError(this.handleError<any>(`requesting failed for =${body}`))
+			catchError(this.handleError<any>(`approveUserToSection =${body}`))
 		);
 	}
 
@@ -328,7 +328,7 @@ export class SectionService {
 				const outcome = h ?
 					'fetched course ' + section_id : 'did not find course ' + section_id;
 			}),
-			catchError(this.handleError<Course>(`getCourse course_id=${section_id}`))
+			catchError(this.handleError<Course>(`getCourseSection course_id=${section_id}`))
 		);
 	}
 
@@ -412,7 +412,7 @@ export class SectionService {
 					const outcome = students ?
 						'fetched students of section ' + section_id : 'did not find students of section ' + section_id;
 				}),
-				catchError(this.handleError<any>(`getUserSections section_id=${section_id}`))
+				catchError(this.handleError<any>(`getSectionStudents section_id=${section_id}`))
 			);
 	}
 
@@ -495,7 +495,7 @@ export class SectionService {
 						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
 					return sections;
 				}),
-				catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
+				catchError(this.handleError<any>(`getInstructorSections user_id=${user_id}`))
 			);
 	}
 
@@ -650,7 +650,7 @@ export class SectionService {
 					const outcome = data ?
 						'searched sections ' + string : 'did not find section ' + string;
 				}),
-				catchError(this.handleError<Observable<any>>(`getUserSections user_id=${string}`))
+				catchError(this.handleError<Observable<any>>(`searchSection user_id=${string}`))
 			);
 	}
 
