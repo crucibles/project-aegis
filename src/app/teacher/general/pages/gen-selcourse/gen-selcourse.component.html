@@ -24,7 +24,7 @@
 			<ng-container *ngIf="isSearching">
 				<!--Shows if no course of same code/name has been found-->
 				<tr *ngIf="!course_found || course_found.length == 0">
-					<td colspan="3" style="text-align: center">Course not found!</td>
+					<td colspan="4" style="text-align: center">Course not found!</td>
 				</tr>
 				<!--Shows if course has been found-->
 				<ng-container *ngIf="course_found && course_found.length != 0" [class.odd]="true">
@@ -49,7 +49,7 @@
 			<ng-container *ngIf="!isSearching">
 				<!--Shows if user has no enrolled course-->
 				<tr *ngIf="!sections || sections.length == 0">
-					<td colspan="3" style="text-align: center">You have no course created yet!
+					<td colspan="4" style="text-align: center">You have no course created yet!
 						<br>Create a course now.
 					</td>
 				</tr>

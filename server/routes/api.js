@@ -2069,11 +2069,11 @@ router.post('/signup', (req, res) => {
                                 };
 
                                 // Sends the email.
-                                // transporter.sendMail(mailOptions, function (err, res) {
-                                //     if (err) {
-                                //         throw (err);
-                                //     }
-                                // });
+                                transporter.sendMail(mailOptions, function (err, res) {
+                                    if (err) {
+                                        throw (err);
+                                    }
+                                });
                             }
 
                             response.data = newUserObj;
