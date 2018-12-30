@@ -27,7 +27,7 @@ import {
 export class SpecificComponent implements OnInit {
 
   private sectionId: string;
-  private isDataLoaded: boolean = false;
+  public isDataLoaded: boolean = false;
 
   constructor(
     private itemService: ItemService,

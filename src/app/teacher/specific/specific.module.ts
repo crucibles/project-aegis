@@ -9,10 +9,8 @@ import {
 } from 'shared/shared.module';
 
 import {
-	SpecificCharacterComponent,
 	SpecificMyCourseComponent,
 	SpecificNewsComponent,
-	SpecificProfileComponent,
 	SpecificQuestMapComponent,
 	GradesComponent
 } from 'teacher/specific/pages';
@@ -68,11 +66,9 @@ import {
 	],
 	declarations: [
 		GradesComponent,
-		SpecificCharacterComponent,
 		SpecificComponent,
 		SpecificMyCourseComponent,
 		SpecificNewsComponent,
-		SpecificProfileComponent,
 		SpecificQuestMapComponent,
 		SpecificSidetabComponent,
 		SpecificTopnavbarComponent,

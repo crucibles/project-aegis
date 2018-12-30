@@ -70,7 +70,7 @@ export class MapChartComponent implements OnInit {
 	options: any = {};
 	chartData: Array<any> = [];
 	// Stored here is the security questions in the sign up form.
-	private quests: Quest[] = new Array();
+	public quests: Quest[] = new Array();
 	private url = 'api/upload';
 	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 

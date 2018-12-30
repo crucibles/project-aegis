@@ -31,9 +31,9 @@ import {
     styleUrls: ['./sign-up.component.css']
 })
 export class SignUpComponent implements OnInit {
-    private signupForm: FormGroup;
+    public signupForm: FormGroup;
     // Stored here is the security questions in the sign up form.
-    private questions: string[] = new Array();
+    public questions: string[] = new Array();
 
     constructor(
         private formBuilder: FormBuilder,

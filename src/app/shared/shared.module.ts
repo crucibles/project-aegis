@@ -43,7 +43,7 @@ import {
   SortableTableDirective
 } from 'shared/pages';
 
-import { FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
+import { FileSelectDirective, FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
 
 
 @NgModule({
@@ -56,7 +56,8 @@ import { FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
     ProgressbarModule.forRoot(),
     TimepickerModule.forRoot(),
     TooltipModule.forRoot(),
-    AlertModule.forRoot()
+    AlertModule.forRoot(),
+    FileUploadModule
   ],
   exports: [
     CollapseModule,
@@ -80,7 +81,7 @@ import { FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
     SortableTableDirective,
     PageNotFoundComponent,
     BadgeModal,
-		FileSelectDirective
+		// FileSelectDirective
   ]
 })
 export class SharedModule { }

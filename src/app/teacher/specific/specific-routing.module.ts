@@ -17,10 +17,8 @@ import {
 } from 'teacher/specific/specific.component';
 
 import {
-    SpecificCharacterComponent,
     SpecificMyCourseComponent,
     SpecificNewsComponent,
-    SpecificProfileComponent,
     SpecificQuestMapComponent,
     GradesComponent
 } from 'teacher/specific/pages';
@@ -67,11 +65,6 @@ const specificRoutes: Routes = [
                 canActivate: [AuthGuardService]
             },
             {
-                path: 'specific-character/:sectionId',
-                component: SpecificCharacterComponent,
-                canActivate: [AuthGuardService]
-            },
-            {
                 path: 'specific-news/:sectionId',
                 component: SpecificNewsComponent,
                 canActivate: [AuthGuardService]
@@ -79,11 +72,6 @@ const specificRoutes: Routes = [
             {
                 path: 'specific-my-course/:sectionId',
                 component: SpecificMyCourseComponent,
-                canActivate: [AuthGuardService]
-            },
-            {
-                path: 'specific-profile/:sectionId',
-                component: SpecificProfileComponent,
                 canActivate: [AuthGuardService]
             },
             {

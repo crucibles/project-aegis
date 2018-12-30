@@ -43,7 +43,7 @@ export class GraphSummaryComponent implements OnInit {
     private quests: Quest[];
 
 	//student's grade
-    private studentGrades: StudentGrades[];
+    public studentGrades: StudentGrades[];
     private sectionGrades: Experience[];
 	
 	//class summary graph

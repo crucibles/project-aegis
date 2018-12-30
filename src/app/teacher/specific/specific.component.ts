@@ -24,7 +24,7 @@ import {
 })
 export class SpecificComponent implements OnInit {
 
-	private sectionId: string;
+	public sectionId: string;
 	private isDataLoaded: boolean = false;
 
 	constructor(

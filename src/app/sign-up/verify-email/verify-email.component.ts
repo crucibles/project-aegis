@@ -22,8 +22,8 @@ import {
     styleUrls: ['./verify-email.component.css']
 })
 export class VerifyEmailComponent implements OnInit {
-    email: String;
-    code: String;
+    public email: any;
+    public code: any;
 
     constructor(
         private router: Router,

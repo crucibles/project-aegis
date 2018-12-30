@@ -42,13 +42,13 @@ import {
 export class SummaryComponent implements OnInit {
 	// quests details
 	private questClicked: Quest;
-	private quests: Quest[];
+	public quests: Quest[];
 
 	// basic info
 	private currentSection: Section;
 
 	// quest map details
-	private questMap: QuestMap;
+	public questMap: QuestMap;
 
 	// modal
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;

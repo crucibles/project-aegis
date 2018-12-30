@@ -84,13 +84,16 @@ import {
 	VerifyEmailComponent 
 } from 'sign-up/verify-email/verify-email.component';
 
+import { FileSelectDirective, FileUploadModule } from 'ng2-file-upload';
+
 @NgModule({
 	declarations: [
 		AppComponent,
 		LogInComponent,
 		SignUpComponent,
 		ChangePasswordComponent,
-		VerifyEmailComponent
+		VerifyEmailComponent,
+		// FileSelectDirective,
 	],
 	imports: [
 		AppRoutingModule,
@@ -98,7 +101,8 @@ import {
 		SharedModule,
 		BrowserAnimationsModule,
 		ToastModule.forRoot(),
-		AlertModule.forRoot()
+		AlertModule.forRoot(),
+		FileUploadModule
 	],
 	providers: [
 		BadgeService,

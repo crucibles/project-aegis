@@ -58,7 +58,7 @@ export class MapChartComponent implements OnInit {
 
   	// quests details
 	private questClicked: Quest;
-	private quests: Quest[];
+	public quests: Quest[];
 
 	// quest map details
 	private questMap: QuestMap;

@@ -32,7 +32,7 @@ export class GradesSummaryComponent implements OnInit {
 	// basic page info
 	private currentSection: Section;
 	// student's grade
-	private studentGrades: StudentGrades[];
+	public studentGrades: StudentGrades[];
 	
 
 	constructor(

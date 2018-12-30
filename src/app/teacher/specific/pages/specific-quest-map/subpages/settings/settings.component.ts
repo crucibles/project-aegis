@@ -41,7 +41,7 @@ export class SettingsComponent implements OnInit {
 	private flatOnePercentage: number = 0;
     
     // quests details
-    private quests: Quest[];
+    public quests: Quest[];
 
     // basic info
 	private currentSection: Section;

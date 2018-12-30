@@ -53,7 +53,7 @@ export class SubmittedQuestsComponent implements OnInit {
 	private currentSection: Section;
 
 	// grades info
-    private quests: Quest[];
+    public quests: Quest[];
     private maxXp: number;
 	
 	//student's grade

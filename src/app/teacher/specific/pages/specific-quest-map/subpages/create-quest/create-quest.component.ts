@@ -47,7 +47,7 @@ export class CreateQuestComponent implements OnInit {
 	private currentSection: Section;
 
 	// Form structure
-	private createQuestForm: FormGroup;
+	public createQuestForm: FormGroup;
 
 	// create quest details
 	private questBadges: any[] = [];

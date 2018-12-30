@@ -33,9 +33,9 @@ export class SummaryComponent implements OnInit {
 	private currentUser: User;
 	private currentSection: Section;
 
-	private quests: Quest[] = new Array();
+	public quests: Quest[] = new Array();
 	// quest map details
-	private questMap: QuestMap;
+	public questMap: QuestMap;
 
     constructor(
 		private experienceService: ExperienceService,
