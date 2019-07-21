@@ -62,6 +62,7 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	ngOnInit() {
 		this.pageService.getChartObservable().subscribe(value => {
+			this.setNewExperience();
 			this.setNewSection();
 		});
 

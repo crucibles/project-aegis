@@ -6,10 +6,10 @@ const app = express();
 const busboyBodyParser = require('busboy-body-parser');
 
 // API file for interacting with MongoDB
-const api = require('./server/routes/api');
+const api = require('./server/routes');
 
 // Parsers
- app.use(bodyParser.json());
+app.use(bodyParser.json());
 
 
 // extended set to true: https://stackoverflow.com/questions/29960764/what-does-extended-mean-in-express-4-0

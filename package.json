@@ -9,7 +9,8 @@
     "build": "ng build --output-path=dist",
     "serve-api": "nodemon server",
     "test": "ng test",
-    "mongod": "\"cd /Program Files/MongoDB/Server/3.6/bin\" & mongod.exe"
+    "mongod": "\"cd /Program Files/MongoDB/Server/3.6/bin\" & mongod.exe",
+    "mongo": "\"cd /Program Files/MongoDB/Server/3.6/bin\" & mongo.exe"
   },
   "private": true,
   "dependencies": {

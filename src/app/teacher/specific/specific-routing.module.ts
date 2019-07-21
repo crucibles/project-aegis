@@ -20,7 +20,6 @@ import {
     SpecificCharacterComponent,
     SpecificMyCourseComponent,
     SpecificNewsComponent,
-    SpecificProfileComponent,
     SpecificQuestMapComponent,
     GradesComponent
 } from 'teacher/specific/pages';
@@ -79,11 +78,6 @@ const specificRoutes: Routes = [
             {
                 path: 'specific-my-course/:sectionId',
                 component: SpecificMyCourseComponent,
-                canActivate: [AuthGuardService]
-            },
-            {
-                path: 'specific-profile/:sectionId',
-                component: SpecificProfileComponent,
                 canActivate: [AuthGuardService]
             },
             {

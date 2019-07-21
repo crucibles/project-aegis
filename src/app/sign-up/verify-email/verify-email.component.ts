@@ -55,6 +55,16 @@ export class VerifyEmailComponent implements OnInit {
         });
     }
 
+    checkEmailAndCode(){
+        if(this.email && this.code){
+            return 1;
+        } else if(this.email && !this.code){
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
     // Redirects to the login page.
     goToLogin() {
         this.router.navigate(['/log-in']);

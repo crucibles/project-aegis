@@ -288,18 +288,15 @@ export class InventoryComponent implements OnInit {
 		});
 	}
 
+	/**
+	 * @description This function is used in general inventory page. It lets the teacher view all the badges
+	 * he/she created in the system.
+	 */
 	getTeacherBadges() {
-		//AHJ: unimplemented; add items relative to the teacher; 
-		//remove dummy below if itemService.getTeacherInventoryItems() get properly implemented
-		// this.badges = BADGES.map(badge => new Badge(badge));
-
-		this.badgeService.getAllbadges().subscribe(badge => {
+		console.warn(this.userService.getCurrentUser().getUserId());
+		this.badgeService.getTeacherBadges(this.userService.getCurrentUser().getUserId()).subscribe(badge => {
 			this.badges = badge.map(b => new Badge(b));
 		});
-
-		/*this.itemService.getTeacherInventoryItems().subscribe(items => {
-			this.items = items.map(item => new Item(item));
-		});*/
 	}
 
 	/**

@@ -45,14 +45,14 @@ export class SpecificMyCourseComponent implements OnInit {
 	private bsModalRef: BsModalRef;
 
 	//currently navigated section and its course 
-	private currentCourse: any;
-	private currentSection: Section;
+	currentCourse: any;
+	currentSection: Section;
 	private sectionBadges: Badge[];
 
 	//classmate's properties
 	private classmates: User[];
 	private classmateClicked: User;
-	private badgesDisplay: Badge[];
+	badgesDisplay: Badge[];
 
 	private isLoading: boolean = false;
 

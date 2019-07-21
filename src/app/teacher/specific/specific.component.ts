@@ -24,8 +24,8 @@ import {
 })
 export class SpecificComponent implements OnInit {
 
-	private sectionId: string;
-	private isDataLoaded: boolean = false;
+	sectionId: string;
+	isDataLoaded: boolean = false;
 
 	constructor(
 		private route: ActivatedRoute,

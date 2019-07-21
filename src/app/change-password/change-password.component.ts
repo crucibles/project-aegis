@@ -31,7 +31,7 @@ import {
 })
 
 export class ChangePasswordComponent implements OnInit {
-    private changePassForm: FormGroup;
+    changePassForm: FormGroup;
 
     constructor(
         private formBuilder: FormBuilder,

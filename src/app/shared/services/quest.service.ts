@@ -63,6 +63,9 @@ export class QuestService {
 
 	private experienceUrl = "api/experiences";
 
+	private secUrl = "api/sections";
+
+
 	constructor(
 		private http: HttpClient,
 		private sectionService: SectionService,
@@ -261,6 +264,28 @@ export class QuestService {
 	 */
 	getSectionQuest(section_id) {
 		return this.sectionService.getCurrentSection().getQuests();
+	}
+
+	getUserQuestsOfThisSection(user_id) {
+		// const url = this.secUrl;
+
+		// let params = new HttpParams()
+		// .set('id', user_id)
+		// .set('method', "classmateQuest");
+
+		// return this.http.get<any>(
+		// 	url, {
+		// 		params: params
+		// 	})
+		// 	.pipe(
+		// 		tap(quests => {
+		// 			this.classmateQuests = quests;
+		// 			localStorage.setItem("currentUserSections", JSON.stringify(sections));
+		// 			const outcome = sections ?
+		// 				'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+		// 		}),
+		// 		catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
+		// 	);
 	}
 
 	/**
