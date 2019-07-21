@@ -26,11 +26,11 @@ export class BadgeModal implements OnInit {
 
     @Input('content') content: any; 
 
-    private heading: string = "";
-    private body: string = "";
-    private image: string = "";
+     heading: string = "";
+     body: string = "";
+     image: string = "";
 
-    private bsModalRef: BsModalRef;
+     bsModalRef: BsModalRef;
 
     constructor(
         private modalService: BsModalService

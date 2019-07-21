@@ -19,7 +19,7 @@ export class SortableColumnComponent implements OnInit, OnDestroy {
     @Input('sort-direction')
     sortDirection: string = '';
 
-    private columnSortedSubscription: Subscription;
+    columnSortedSubscription: Subscription;
 
     @HostListener('click')
     sort() {

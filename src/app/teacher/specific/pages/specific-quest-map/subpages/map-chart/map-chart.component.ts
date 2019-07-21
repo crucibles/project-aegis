@@ -49,33 +49,33 @@ import 'chartjs-plugin-datalabels';
 })
 export class MapChartComponent implements OnInit {
 	// Stores the x- and y-coordinate respectively of the recently clicked point in the questmap chart
-	private x: any;
-	private y: any;
+	public x: any;
+	public y: any;
 
 	// basic info
-	private currentSection: Section;
-	private currentUser: User;
+	public currentSection: Section;
+	public currentUser: User;
 
   	// quests details
-	private questClicked: Quest;
-	private quests: Quest[];
+	public questClicked: Quest;
+	public quests: Quest[];
 
 	// quest map details
-	private questMap: QuestMap;
+	public questMap: QuestMap;
 
 	// quest map chart
-	private xTick: number;
-	private yTick: number;
-	private chart: Chart;
-	private chartColors: Array<any>;
-	private chartLabels: Array<any> = [];
-	private chartWidth: number;
-	private chartHeight: number;
+	public xTick: number;
+	public yTick: number;
+	public chart: Chart;
+	public chartColors: Array<any>;
+	public chartLabels: Array<any> = [];
+	public chartWidth: number;
+	public chartHeight: number;
 
 	// modal
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
-	private bsModalRef: BsModalRef;
-	private badgeNames: any = [];
+	public bsModalRef: BsModalRef;
+	public badgeNames: any = [];
 
   	constructor(
 		private badgeService: BadgeService,
