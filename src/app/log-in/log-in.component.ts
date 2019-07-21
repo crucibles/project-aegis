@@ -1,4 +1,4 @@
-// Core imports
+// Core Imports
 import {
     Component,
     OnInit
@@ -16,16 +16,7 @@ import {
     Router
 } from '@angular/router';
 
-// 3rd Party imports
-import {
-    AlertService
-} from 'shared/services/alert.service';
-
-import {
-    ToastsManager
-} from 'ng2-toastr';
-
-// Application imports
+// Application Imports
 import {
     User
 } from 'shared/models';
@@ -33,6 +24,15 @@ import {
 import {
     UserService
 } from 'shared/services';
+
+import {
+    AlertService
+} from 'shared/services/alert.service';
+
+// Third-Party Imports
+import {
+    ToastsManager
+} from 'ng2-toastr';
 
 @Component({
     selector: 'log-in',
@@ -51,7 +51,7 @@ export class LogInComponent implements OnInit {
     isLoggingIn: boolean = false;
 
     constructor(
-        formBuilder: FormBuilder,
+        private formBuilder: FormBuilder,
         private alertService: AlertService,
         private router: Router,
         private route: ActivatedRoute,
@@ -62,7 +62,6 @@ export class LogInComponent implements OnInit {
             email: [null, Validators.email],
             password: null
         });
-
     }
 
     ngOnInit() {
@@ -74,29 +73,34 @@ export class LogInComponent implements OnInit {
         let email = this.loginForm.value.email;
         let password = this.loginForm.value.password;
         this.isLoggingIn = true;
-        this.userService.logIn(email, password)
-            .subscribe(
-                user => {
-                    if (user) {
-                        user = new User(user);
-                        this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
-                        this.router.navigateByUrl(this.returnUrl? this.returnUrl: user.getUserType()+'/general/select-course');
-                    } else {
-                        this.toastr.warning("Invalid email or password.", "Error");
-                        this.isLoggingIn = false;
-                    }
-                }, error => {
-                    // login failed so display error
-                    this.alertService.error(error);
-                }
-            );
+        this.userService.logIn(email, password).subscribe(user => {
+            if (user) {
+                // User exists.
+                user = new User(user);
+                this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
+                this.router.navigateByUrl(this.returnUrl? this.returnUrl: user.getUserType()+'/general/select-course');
+            } else {
+                // Either non-existent user, wrong inputs, or unvalidated accounts.
+                this.toastr.warning("Invalid email or password.", "Error");
+                this.isLoggingIn = false;
+            }
+        }, error => {
+            // login failed so display error
+            this.alertService.error(error);
+        });
     }
 
+    /**
+     * Redirects the user to the sign-up page.
+     */
     userSignUp() {
         this.router.navigate(['/sign-up']);
     }
 
-    userChangePassword() {
+    /**
+     * Redirects the user to the password-recovery page.
+     */
+    recoverPassword() {
         this.router.navigate(['change-password']);
     }
 

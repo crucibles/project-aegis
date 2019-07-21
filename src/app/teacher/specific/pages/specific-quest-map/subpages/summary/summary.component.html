@@ -1,0 +1,118 @@
+<div *ngIf="!quests">
+	Loading...
+	<img class="loading-icon" src="/assets/images/loading.gif" />
+</div>
+
+<!-- Summary Table View -->
+<!-- <div *ngIf="quests">
+	<table id="hor-zebra" *ngIf="quests && questMap && quests.length > 0" class="quest-table">
+		<thead></thead>
+		<tbody>
+			<tr>
+				<td class="row-header">Quest</td>
+				<td *ngFor="let quest of questMap.getQuestInformationArray()">
+					{{quest.questLabel}}
+				</td>
+			</tr>
+			<tr>
+				<td class="row-header">Max EXP</td>
+				<td *ngFor="let quest of questMap.getQuestInformationArray()">
+					{{quest.quest.getQuestXp()}}
+				</td>
+			</tr>
+			<tr>
+				<td class="row-header">Max HP</td>
+				<td *ngFor="let quest of questMap.getQuestInformationArray()">
+					{{quest.quest.getQuestHp()}}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div> -->
+
+<!-- Summary Card View -->
+<div class="body" *ngIf="quests && questMap && quests.length > 0">
+	<div class="card" *ngFor="let quest of questMap.getQuestInformationArray()">
+		<div class="card-header"><h2>Quest {{quest.questLabel}}</h2></div>
+		<div class="card-body">
+			<div class="card-details">
+				<h4>HP: {{quest.quest.getQuestHp()}}</h4>
+				<h4>EXP: {{quest.quest.getQuestXp()}}</h4>
+			</div>
+		</div>
+		<div class="card-footer">
+			<button class="btn btn-primary" (click)="openQuest(quest.quest)">Full Details</button>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Template for Quests-->
+<ng-template #questTemplate>
+
+	<!-- Quest Modal Header/Title -->
+	<div class="modal-header">
+		<!-- Modal Header -->
+		<div class="modal-title">
+			<h4>{{this.questClicked.getQuestTitle()}}</h4>
+		</div>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<!-- Quest Information -->
+	<div class="modal-body">
+		<span class="questDesc">
+			<i>"{{this.questClicked.getQuestDescription()}}"</i>
+		</span>
+		<br>
+		<table>
+			<tr>
+				<td style="width: 50%">
+					<h5>Rewards:</h5>
+					<ol>
+						<li>{{this.questClicked.getQuestHp()}} HP</li>
+						<li>{{this.questClicked.getQuestXp()}} EXP</li>
+					</ol>
+				</td>
+				<td>
+					<h5>Links:</h5>
+					<ol>
+						<li *ngIf="!this.pageService.getPossibleLinks(this.questClicked.getQuestDescription())" style="color: red"><i>None</i></li>
+						<li *ngFor="let links of this.pageService.hyperLinks"><a href="{{links}}" target="_blank">{{links}}</a></li>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h5>Badges:</h5>
+					<ol>
+						<li *ngIf="this.questClicked.getQuestBadge().length == 0" style="color: red"><i>None</i></li>
+						<li *ngFor="let badge of badgeNames">{{badge}}</li>
+					</ol>
+				</td>
+				<td>
+					<h5>Quest Prerequisite(s):</h5>
+					<ol>
+						<li *ngIf="this.questClicked.getQuestPrerequisite().length == 0" style="color: red"><i>None</i></li>
+						<li *ngFor="let prereq of this.questClicked.getQuestPrerequisite()">{{this.getQuestTitle(prereq)}}</li>
+					</ol>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h5>Start Date:</h5>
+					<ol style="list-style: none;">
+						<li>{{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}</li>
+					</ol>
+				</td>
+				<td>
+					<h5>End Date:</h5>
+					<ol style="list-style: none;">
+						<li>{{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}</li>
+					</ol>
+				</td>
+			</tr>
+		</table>
+	</div>
+</ng-template>

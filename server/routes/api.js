@@ -5,9 +5,6 @@
 const express = require('express');
 const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
-const ObjectID = require('mongodb').ObjectID;
-const async = require('async');
-const nodemailer = require('nodemailer');
 const path = require("path");
 const multer = require('multer');
 var requestTime;
@@ -64,7 +61,7 @@ router.post('/upload', (req, res) => {
     upload(req, res, function (err) {
         if (err) {
             // An error occurred when uploading
-            return res.status(422).send("an Error occured")
+            return res.status(422).send("an Error occured: " + err);
         }
         // No error occured.
         // return res.send(path.substring(8, path.length));

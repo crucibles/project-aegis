@@ -7,8 +7,6 @@ const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
-const nodemailer = require('nodemailer');
-const path = require("path");
 const multer = require('multer');
 var requestTime;
 var mongodb;

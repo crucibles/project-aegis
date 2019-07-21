@@ -1,13 +1,11 @@
 table {
     text-align: left;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto 0 auto;
 }
 
 button {
-    margin-left: auto;
-    margin-right: auto;
     width: 100%;
+    margin: 0 auto 0 auto;
 }
 
 h2 {
@@ -16,9 +14,7 @@ h2 {
 
 .form-horizontal {
     width: 350px;
-    margin-top: 30px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 30px auto 0 auto;
 }
 
 .form-control {

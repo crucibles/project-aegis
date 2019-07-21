@@ -1,0 +1,42 @@
+.required-text {
+    color: red;
+}
+
+.information-input {
+    width: 300px;
+}
+
+.row {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 15px;
+}
+
+.col1 {
+    width: 200px;
+}
+
+.col2 {
+    width: 350px;
+}
+
+.col3 {
+    width: 100px;
+}
+
+.buttons {
+    text-align: center;
+    width: 650px;
+}
+
+.container {
+    padding-left: 0px;
+}
+
+table {
+    width: 650px;
+}
+
+button {
+    width: 150px;
+}

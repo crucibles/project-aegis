@@ -152,7 +152,6 @@ export class CreateCourseComponent implements OnInit {
 	}
 
 	submitCourseSection() {
-		console.warn(this.sectionForm);
 		let newSection: Section = new Section();
 		let sched = [];
 		sched = this.sectionForm.value.scheduleDays;
@@ -167,7 +166,6 @@ export class CreateCourseComponent implements OnInit {
 		});
 
 		newSection.setSection("", this.sectionForm.value.courseSection, [], this.currentUser.getUserFullName(), [], [], [], schedule);
-		console.warn("NEW SECTION", newSection);
 		let newCourse: Course = new Course();
 		newCourse.setCourse(this.sectionForm.value.courseName, this.sectionForm.value.courseDescription);
 		//AHJ: unimplemented; use section service to add section and course to the database
@@ -181,7 +179,7 @@ export class CreateCourseComponent implements OnInit {
 			[],
 			this.badgeService.getDefaultSectionBadges(),
 			schedule
-		).subscribe(marj => {
+		).subscribe(section => {
 			this.pageService.isCourseCreated(true);
 			this.toastr.success(this.sectionForm.value.courseName, "Created Course success!");
 		});
@@ -208,7 +206,6 @@ export class CreateCourseComponent implements OnInit {
      */
     getFormatTime(date_obj: Date) {
 		// formats a javascript Date object into a 12h AM/PM time string
-		console.log(date_obj);
 		var hour = date_obj.getHours();
 		var minute = date_obj.getMinutes();
 		var amPM = (hour > 11) ? " PM" : " AM";

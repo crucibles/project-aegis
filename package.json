@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "concurrently --kill-others  \"npm run serve\" \"npm run mongod\" \"npm run serve-api\" ",
-    "serve": "ng serve --proxy-config proxy.conf.json",
+    "serve": "ng serve --proxy-config proxy.conf.json --host 0.0.0.0",
     "build": "ng build --output-path=dist",
     "serve-api": "nodemon server",
     "test": "ng test",

@@ -1,0 +1,31 @@
+<ng-container *ngIf="!studentGrades">
+	Loading....
+	<img class="loading-icon" src="/assets/images/loading.gif" />
+</ng-container>
+
+<!--Summary table (Class record)-->
+<ng-container *ngIf="studentGrades">
+	<table id="hor-zebra" summary="Course List">
+		<thead>
+			<tr>
+				<th scope="col">Student #</th>
+				<th scope="col">Name</th>
+				<th scope="col">Grades</th>
+			</tr>
+		</thead>
+		<tbody>
+			<ng-container *ngIf="!studentGrades || studentGrades.length == 0">
+				<tr>
+					<td colspan="3" style="text-align: center">
+						You have no students for this section yet.
+					</td>
+				</tr>
+			</ng-container>
+				<tr *ngFor="let student of studentGrades">
+					<td>{{student.student.getUserSchoolId()}}</td>
+					<td>{{student.student.getUserFullName()}}</td>
+					<td>{{student.total}}</td>
+				</tr>
+		</tbody>
+	</table>
+</ng-container>

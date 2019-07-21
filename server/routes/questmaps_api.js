@@ -6,9 +6,6 @@ const express = require('express');
 const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
-const async = require('async');
-const nodemailer = require('nodemailer');
-const path = require("path");
 const multer = require('multer');
 var requestTime;
 var mongodb;
@@ -16,15 +13,6 @@ var mongodb;
 router.use(function timeLog(req, res, next) {
     requestTime = Date.now();
     next();
-});
-
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads');
-    },
-    filename: function (req, file, cb) {
-        cb(null, requestTime + "." + file.originalname);
-    }
 });
 
 MongoClient.connect('mongodb://127.0.0.1:27017/up-goe-db', { poolSize: 10, autoReconnect: true }, (err, db) => {

@@ -204,8 +204,6 @@ export class QuestMap {
 				}
 			} else { // if user is participant (either 'ongoing' or 'done'); ongoing if has submitted
 				if (experience.hasSubmittedQuest(quest.getQuestId())) {
-					console.log(quest.getQuestTitle());
-					//orange
 					return "#FF8000";
 				} else {
 					//blue
