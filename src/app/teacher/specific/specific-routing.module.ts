@@ -20,7 +20,6 @@ import {
   SpecificCharacterComponent,
   SpecificMyCourseComponent,
   SpecificNewsComponent, 
-  SpecificProfileComponent,
   SpecificQuestMapComponent,
   GradesComponent
 } from 'teacher/specific/pages';
@@ -28,14 +27,6 @@ import {
 import { 
   AuthGuardService 
 } from 'shared/services/auth-guard.service';
-
-import { 
-  GeneralComponent 
-} from 'teacher/general/general.component';
-
-import { 
-  GenSelcourseComponent 
-} from 'teacher/general/pages';
 
 const specificRoutes: Routes = [
 
@@ -66,11 +57,6 @@ const specificRoutes: Routes = [
       {
         path: 'specific-my-course/:sectionId',
         component: SpecificMyCourseComponent,
-        canActivate: [AuthGuardService] 
-      },
-      {
-        path: 'specific-profile/:sectionId',
-        component: SpecificProfileComponent,
         canActivate: [AuthGuardService] 
       },
       {

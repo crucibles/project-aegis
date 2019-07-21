@@ -41,14 +41,14 @@ import {
 })
 export class LogInComponent implements OnInit {
     public signupForm: FormGroup;
-    private loginForm: FormGroup;
+    loginForm: FormGroup;
     returnUrl: string;
 
     /**
      * Determines whether the user is still logging in or not.
      * Mainly used for the log-in button (whether it is 'Log In' or 'Logging In...')
      */
-    private isLoggingIn: boolean = false;
+    isLoggingIn: boolean = false;
 
     constructor(
         formBuilder: FormBuilder,

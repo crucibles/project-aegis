@@ -57,12 +57,12 @@ import {
 export class GradesComponent implements OnInit {
     @Input('hello') content: any;
     // basic page info
-    private currentUser: any;
+    currentUser: any;
     private currentSection: Section;
 
     // grades info
-    private quests: Quest[];
-    private maxXp: number;
+    quests: Quest[];
+    maxXp: number;
 
     //student's grade
     private studentGrades: StudentGrades[];

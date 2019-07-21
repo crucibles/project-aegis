@@ -5,15 +5,15 @@
 
     <div class="container-body">
         <br>
-        <p *ngIf="email && code">
+        <p *ngIf="checkEmailAndCode() == 1">
             Hello USER! <br>Your email {{email}} is now verified!
         </p>
 
-        <p *ngIf="!email && code">
+        <p *ngIf="checkEmailAndCode() == 2">
             Hello USER! <br>The verification failed. You can't login to the system.
         </p>
 
-        <p *ngIf="!email && !code">
+        <p *ngIf="checkEmailAndCode() == 3">
             Restricted access detected! <br>This will not serve you anything.
         </p>
 

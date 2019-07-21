@@ -12,7 +12,6 @@ import {
   SpecificCharacterComponent,
   SpecificMyCourseComponent,
   SpecificNewsComponent,
-  SpecificProfileComponent,
   SpecificQuestMapComponent,
   GradesComponent
 } from 'teacher/specific/pages';
@@ -54,7 +53,6 @@ import {
     SpecificComponent,
     SpecificMyCourseComponent,
     SpecificNewsComponent,
-    SpecificProfileComponent,
     SpecificQuestMapComponent,
     SpecificSidetabComponent,
     SpecificTopnavbarComponent

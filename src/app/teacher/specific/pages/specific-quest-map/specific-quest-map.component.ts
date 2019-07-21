@@ -97,13 +97,13 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	//modal
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
 	@ViewChild('createQuestTemplate') createQuestTemplate: TemplateRef<any>;
-	private isCreateModalReady: boolean = false;
+	isCreateModalReady: boolean = false;
 	private bsModalRef: BsModalRef;
 	private createQuestForm: FormGroup;
 
 	// quests details
 	private questClicked: Quest;
-	private quests: Quest[];
+	quests: Quest[];
 
 	// quest map details
 	questMap: QuestMap;

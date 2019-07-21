@@ -13,7 +13,6 @@ import {
     GenSelcourseComponent,
     GenNewsComponent,
     GenProfileComponent,
-    GenAchievementsComponent,
     AboutUsComponent
 } from 'student/general/pages';
 
@@ -48,11 +47,6 @@ const generalRoutes: Routes = [
             {
                 path: 'select-course',
                 component: GenSelcourseComponent,
-                canActivate: [AuthGuardService] 
-            },
-            {
-                path: 'achievements',
-                component: GenAchievementsComponent,
                 canActivate: [AuthGuardService] 
             },
             {

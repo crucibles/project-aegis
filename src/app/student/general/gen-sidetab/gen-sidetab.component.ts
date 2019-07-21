@@ -28,6 +28,7 @@ import {
 
 import {
 	FileSelectDirective,
+	FileUploadModule,
 	FileUploader
 } from 'ng2-file-upload/ng2-file-upload';
 
@@ -40,21 +41,10 @@ import {
 	BsModalService
 } from 'ngx-bootstrap';
 
-import {
-	Observable
-} from 'rxjs/Observable';
-
-import {
-	IfObservable
-} from 'rxjs/observable/IfObservable';
-
 
 //Application Imports
 import {
-	CommentPost,
-	Course,
 	Quest,
-	Section,
 	User,
 	imageDir,
 	Badge
@@ -63,7 +53,6 @@ import {
 import {
 	CommentPostService,
 	ExperienceService,
-	FileService,
 	PageService,
 	QuestService,
 	SectionService,

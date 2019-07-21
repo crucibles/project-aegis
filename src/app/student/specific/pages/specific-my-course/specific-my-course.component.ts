@@ -41,18 +41,18 @@ import {
 })
 export class SpecificMyCourseComponent implements OnInit {
 	//modal
-	private bsModalRef: BsModalRef;
+	bsModalRef: BsModalRef;
 
 	//currently navigated section and its course 
-	private currentCourse: any;
-	private currentSection: Section;
-	private sectionBadges: Badge[];
+	currentCourse: any;
+	currentSection: Section;
+	sectionBadges: Badge[];
 
 	//classmate's properties
 	private classmates: User[];
 	private classmateClicked: User;
 	private badgesDisplay: Badge[] = [];
-	private instructorName = "";
+	instructorName = "";
 
 
 	constructor(

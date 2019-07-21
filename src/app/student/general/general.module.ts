@@ -18,7 +18,6 @@ import {
   GenSelcourseComponent,
   GenNewsComponent,
   GenProfileComponent,
-  GenAchievementsComponent,
   AboutUsComponent
 } from 'student/general/pages';
 
@@ -49,7 +48,6 @@ import {
     AboutUsComponent,
     GeneralComponent,
     GenSidetabComponent,
-    GenAchievementsComponent,
     GenNewsComponent,
     GenProfileComponent,
     GenTopnavbarComponent,
