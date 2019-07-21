@@ -70,8 +70,8 @@ export class MapChartComponent implements OnInit {
 	options: any = {};
 	chartData: Array<any> = [];
 	// Stored here is the security questions in the sign up form.
-	private quests: Quest[] = new Array();
-	private url = 'api/upload';
+	 quests: Quest[] = new Array();
+	 url = 'api/upload';
 	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 
 	sectionEXP: Experience;
@@ -96,13 +96,13 @@ export class MapChartComponent implements OnInit {
 
 
 	commentBox: any = "";
-	private questModalRef: BsModalRef;
-	private lbModalRef: BsModalRef;
-	private currentSection: Section;
-	private questClicked: Quest;
-	private leaderboardRecords;
-	private questTitle;
-	private badgeNames: any = [];
+	 questModalRef: BsModalRef;
+	 lbModalRef: BsModalRef;
+	 currentSection: Section;
+	 questClicked: Quest;
+	 leaderboardRecords;
+	 questTitle;
+	 badgeNames: any = [];
 
 	constructor(
 		private experienceService: ExperienceService,

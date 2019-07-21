@@ -49,19 +49,19 @@ import {
 })
 export class SubmittedQuestsComponent implements OnInit {
 	// basic page info
-	private currentUser: any;
-	private currentSection: Section;
+	public currentUser: any;
+	public currentSection: Section;
 
 	// grades info
-    private quests: Quest[];
-    private maxXp: number;
+    public quests: Quest[];
+    public maxXp: number;
 	
 	//student's grade
-    private studentGrades: StudentGrades[];
-    private sectionGrades: Experience[];
-    private submissions: Experience[];
-    private questStudents: any = [];
-    private isGraded: boolean[] = [];
+    public studentGrades: StudentGrades[];
+    public sectionGrades: Experience[];
+    public submissions: Experience[];
+    public questStudents: any = [];
+    public isGraded: boolean[] = [];
 
 	constructor(
 		private badgeService: BadgeService,

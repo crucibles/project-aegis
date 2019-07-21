@@ -29,13 +29,13 @@ import {
 })
 export class SummaryComponent implements OnInit {
 
-	private sectionEXP: Experience;
-	private currentUser: User;
-	private currentSection: Section;
+	public sectionEXP: Experience;
+	public currentUser: User;
+	public currentSection: Section;
 
-	private quests: Quest[] = new Array();
+	public quests: Quest[] = new Array();
 	// quest map details
-	private questMap: QuestMap;
+	public questMap: QuestMap;
 
     constructor(
 		private experienceService: ExperienceService,

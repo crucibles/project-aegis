@@ -36,15 +36,15 @@ import {
 })
 export class SettingsComponent implements OnInit {
 	// quest map details
-	private questMap: QuestMap;
-	private maxExp: number = 0;
-	private flatOnePercentage: number = 0;
+	 questMap: QuestMap;
+	 maxExp: number = 0;
+	 flatOnePercentage: number = 0;
     
     // quests details
-    private quests: Quest[];
+     quests: Quest[];
 
     // basic info
-	private currentSection: Section;
+	 currentSection: Section;
 
     constructor(
         private questService: QuestService,

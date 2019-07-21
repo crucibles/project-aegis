@@ -41,19 +41,19 @@ import {
 })
 export class SummaryComponent implements OnInit {
 	// quests details
-	private questClicked: Quest;
-	private quests: Quest[];
+	 questClicked: Quest;
+	 quests: Quest[];
 
 	// basic info
-	private currentSection: Section;
+	 currentSection: Section;
 
 	// quest map details
-	private questMap: QuestMap;
+	 questMap: QuestMap;
 
 	// modal
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
-	private bsModalRef: BsModalRef;
-	private badgeNames: any = [];
+	 bsModalRef: BsModalRef;
+	 badgeNames: any = [];
 
 	constructor(
 		private badgeService: BadgeService,

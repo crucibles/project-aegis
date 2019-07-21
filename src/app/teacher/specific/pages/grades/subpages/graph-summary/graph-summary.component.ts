@@ -37,14 +37,14 @@ import {
 })
 export class GraphSummaryComponent implements OnInit {
 	// basic page info
-	private currentSection: Section;
+	public currentSection: Section;
 
 	// grades info
-    private quests: Quest[];
+    public quests: Quest[];
 
 	//student's grade
-    private studentGrades: StudentGrades[];
-    private sectionGrades: Experience[];
+    public studentGrades: StudentGrades[];
+    public sectionGrades: Experience[];
 	
 	//class summary graph
     chart: Chart;

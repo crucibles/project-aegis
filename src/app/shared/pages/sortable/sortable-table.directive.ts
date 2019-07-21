@@ -12,7 +12,7 @@ export class SortableTableDirective implements OnInit, OnDestroy {
     @Output()
     sorted = new EventEmitter();
 
-    private columnSortedSubscription: Subscription;
+    columnSortedSubscription: Subscription;
 
     ngOnInit() {
         this.columnSortedSubscription = this.sortService.columnSorted$.subscribe(event => {

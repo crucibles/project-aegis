@@ -40,23 +40,23 @@ import {
 })
 export class CreateQuestComponent implements OnInit {
 	// The x- and y-coordinate respectively of the recently clicked point in the questmap chart
-	private x: any;
-	private y: any;
+	public x: any;
+	public y: any;
 
 	// Basic info
-	private currentSection: Section;
+	public currentSection: Section;
 
 	// Form structure
-	private createQuestForm: FormGroup;
+	public createQuestForm: FormGroup;
 
 	// create quest details
-	private questBadges: any[] = [];
+	public questBadges: any[] = [];
 
 	// quests details
-	private quests: Quest[];
+	public quests: Quest[];
 
 	// quest map details
-	private questMap: QuestMap;
+	public questMap: QuestMap;
 
 	constructor(
 		private badgeService: BadgeService,
