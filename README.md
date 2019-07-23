@@ -1,6 +1,6 @@
 # PROJECT AEGIS
 
-Automated Education Gamified Instruction System (correct this if wrong)
+Automated Education Gamified Instruction System
 
 A project for gamification of education by:
 <ul>
