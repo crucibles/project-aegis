@@ -50,3 +50,45 @@ To back up your current DB and push it to git. (Mongo Dump)
 3. mongodump -d "database_name" -p "location to save"
 
 Sample: mongodump -d up-goe-db -p C:\Users\cedric\project-aegis\db_backups\up-goe-db
+
+
+## Deploying the application
+Build the angular app, put the dist folder to the server folders.
+Set up the server to point to index.html and to that dist/
+
+For Test Deployment:
+
+Pre-requirments:
+
+1. latest version of master
+2. npm install -g localtunnel  // reference: https://www.npmjs.com/package/localtunnel
+
+
+Deploying...
+
+Step 1
+Open your latest code.
+In the terminal, instead of the usual "npm start" for development, I added a deploy script.
+
+
+Run "npm run deploy"
+
+
+Step 2
+After a successful run of "npm run deploy"
+Proceed to localhost:3000 and test it
+If it's okay proceed to Step 3
+
+
+Step 3
+Make your pc as a server using local tunnel
+
+run "lt --port 3000" in another terminal
+
+
+
+Step 4
+There will be a hostname that will be given, try that hostname accessing in your browser.
+
+
+Voila!!
