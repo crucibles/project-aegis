@@ -28,7 +28,7 @@
     "@types/chart.js": "^2.7.15",
     "angular-ui-bootstrap": "^2.5.6",
     "body-parser": "^1.18.2",
-    "bootstrap": "^4.1.2",
+    "bootstrap": "^4.3.1",
     "busboy-body-parser": "^0.3.2",
     "chart.js": "^2.7.0",
     "chartjs-plugin-datalabels": "^0.3.0",
